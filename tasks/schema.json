@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wajidahmad0305/autobench/tasks/schema.json",
+  "title": "AutoBench Task",
+  "description": "Specification for a single AutoBench task. Every task file under tasks/<category>/ must validate against this schema.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "category",
+    "difficulty",
+    "description",
+    "user_message",
+    "context",
+    "ground_truth",
+    "reliability",
+    "provenance"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^[a-z_]+\\.[0-9]{3}$",
+      "description": "Unique identifier, format '<category>.<zero-padded-index>' e.g. 'crm_enrichment.001'."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "crm_enrichment",
+        "invoice_extraction",
+        "lead_qualification",
+        "support_triage",
+        "calendar_coordination"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"],
+      "description": "Author's difficulty estimate. Refined after first evaluation runs."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable summary of what the agent is expected to accomplish."
+    },
+    "user_message": {
+      "type": "string",
+      "description": "The initial message the simulated user (or the caller) sends to the agent."
+    },
+    "context": {
+      "type": "object",
+      "required": ["system_prompt", "available_tools", "initial_state"],
+      "properties": {
+        "system_prompt": {
+          "type": "string",
+          "description": "System prompt the agent runs under. Should include any policy the agent must follow."
+        },
+        "available_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tool names the agent has access to. Definitions live in a shared tools/ registry."
+        },
+        "initial_state": {
+          "type": "object",
+          "description": "Snapshot of the mock backend state at task start (e.g. CRM records, calendar entries, ticket queue)."
+        }
+      }
+    },
+    "ground_truth": {
+      "type": "object",
+      "required": ["expected_final_state"],
+      "properties": {
+        "expected_final_state": {
+          "type": "object",
+          "description": "State the backend should be in when the task ends. Compared against actual state at completion."
+        },
+        "required_tool_calls": {
+          "type": "array",
+          "description": "Tool calls that MUST occur for the task to be considered correctly executed. Order-sensitive only when 'order_sensitive' is true.",
+          "items": {
+            "type": "object",
+            "required": ["tool", "args_contain"],
+            "properties": {
+              "tool": { "type": "string" },
+              "args_contain": {
+                "type": "object",
+                "description": "Key/value pairs that the tool call arguments must contain (subset match)."
+              },
+              "order_sensitive": { "type": "boolean", "default": false }
+            }
+          }
+        },
+        "acceptable_responses": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Semantic criteria or regex the agent's final message must satisfy. Evaluated by an LLM judge with confidence threshold."
+        }
+      }
+    },
+    "reliability": {
+      "type": "object",
+      "description": "Reliability-focused expectations that go beyond binary task success.",
+      "properties": {
+        "hallucination_check": {
+          "type": "object",
+          "properties": {
+            "forbidden_claims": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Claims the agent must NOT make (e.g. inventing a company detail, promising a refund not permitted by policy)."
+            },
+            "required_disclosures": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Statements the agent MUST include (e.g. 'confirm before booking')."
+            }
+          }
+        },
+        "policy_rules": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Domain rules the agent must follow. Failure to follow counts as a policy violation, not a task failure."
+        },
+        "max_tool_calls": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Trials exceeding this are terminated and counted as failures."
+        },
+        "expected_cost_range_usd": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Expected [min, max] USD cost for a well-behaved agent. Used to flag outliers, not to fail runs."
+        },
+        "expected_latency_seconds": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "failure_injection": {
+          "type": "object",
+          "description": "If present, the harness injects a controlled failure to test recovery.",
+          "properties": {
+            "tool": { "type": "string" },
+            "on_call_index": { "type": "integer", "minimum": 1 },
+            "error_message": { "type": "string" },
+            "expected_recovery": { "type": "string" }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["author", "created", "domain_source"],
+      "properties": {
+        "author": { "type": "string" },
+        "created": { "type": "string", "format": "date" },
+        "domain_source": {
+          "type": "string",
+          "description": "One of: 'synthetic', 'real-anonymised', 'literature-derived'. Real-anonymised tasks must be scrubbed of any client-identifying data."
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

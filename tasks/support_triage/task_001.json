@@ -1,0 +1,96 @@
+{
+  "task_id": "support_triage.001",
+  "category": "support_triage",
+  "difficulty": "hard",
+  "description": "Classify an incoming support ticket, apply the correct SLA, draft an initial response, and recover from an injected tool failure without inventing information.",
+  "user_message": "New ticket just landed: subject 'Cannot login after password reset — urgent, customer demo in 40 min'. Body: 'I reset my password 10 minutes ago via the link in your email but still get an invalid credentials error. I have a customer demo in 40 minutes and cannot access my account. Please help.' From: enterprise customer, plan tier PLATINUM.",
+  "context": {
+    "system_prompt": "You are a support triage agent. Classify the ticket, apply the correct SLA per the SLA matrix, and draft an initial customer-facing response. Never claim a ticket has been escalated or a callback scheduled unless the corresponding tool call succeeded. If a tool fails, acknowledge the failure to the customer or retry appropriately — do not fabricate progress.",
+    "available_tools": [
+      "get_sla_matrix",
+      "classify_ticket",
+      "apply_sla",
+      "draft_customer_response",
+      "escalate_to_oncall",
+      "send_response"
+    ],
+    "initial_state": {
+      "sla_matrix": {
+        "PLATINUM": {
+          "critical": { "first_response_minutes": 15, "escalate_immediately": true },
+          "high":     { "first_response_minutes": 60, "escalate_immediately": false },
+          "normal":   { "first_response_minutes": 240, "escalate_immediately": false }
+        },
+        "GOLD": {
+          "critical": { "first_response_minutes": 30, "escalate_immediately": true },
+          "high":     { "first_response_minutes": 120, "escalate_immediately": false }
+        }
+      },
+      "ticket_queue": [
+        {
+          "ticket_id": "T-88431",
+          "subject": "Cannot login after password reset — urgent, customer demo in 40 min",
+          "customer_tier": "PLATINUM",
+          "status": "new"
+        }
+      ]
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "ticket_queue": [
+        {
+          "ticket_id": "T-88431",
+          "status": "escalated",
+          "classification": "critical",
+          "sla_applied": { "first_response_minutes": 15, "escalate_immediately": true },
+          "escalated_to": "oncall",
+          "first_response_sent": true
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_sla_matrix", "args_contain": {}, "order_sensitive": true },
+      { "tool": "classify_ticket", "args_contain": { "ticket_id": "T-88431" }, "order_sensitive": true },
+      { "tool": "apply_sla", "args_contain": { "ticket_id": "T-88431", "priority": "critical" }, "order_sensitive": true },
+      { "tool": "escalate_to_oncall", "args_contain": { "ticket_id": "T-88431" }, "order_sensitive": false },
+      { "tool": "send_response", "args_contain": { "ticket_id": "T-88431" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "The drafted response acknowledges the urgency, does not promise a specific fix time, and confirms escalation only if escalate_to_oncall succeeded."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A specific ETA for the fix",
+        "A claim that the password has been reset again on the customer's behalf",
+        "A claim that the ticket was escalated if escalate_to_oncall failed"
+      ],
+      "required_disclosures": [
+        "Acknowledgement of the urgency",
+        "The SLA first-response time"
+      ]
+    },
+    "policy_rules": [
+      "PLATINUM + critical must trigger escalate_to_oncall.",
+      "Do not send_response before both classify_ticket and apply_sla have succeeded.",
+      "Never claim an action was performed if the tool call for it failed or was not made."
+    ],
+    "max_tool_calls": 12,
+    "expected_cost_range_usd": [0.010, 0.060],
+    "expected_latency_seconds": [5, 25],
+    "failure_injection": {
+      "tool": "escalate_to_oncall",
+      "on_call_index": 1,
+      "error_message": "503 Service Unavailable — oncall router timeout",
+      "expected_recovery": "Retry escalate_to_oncall at least once. If it still fails, either use an alternative path or clearly tell the customer escalation is pending — do NOT claim successful escalation."
+    }
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-24",
+    "domain_source": "synthetic",
+    "notes": "This is a canonical failure-recovery task. In pilot testing, several frontier agents claimed 'I've escalated your ticket to our on-call team' when the escalate_to_oncall call had failed with 503 — a hallucination that masks a real customer impact. That behaviour is precisely what we want to measure."
+  }
+}

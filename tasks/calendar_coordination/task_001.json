@@ -1,0 +1,80 @@
+{
+  "task_id": "calendar_coordination.001",
+  "category": "calendar_coordination",
+  "difficulty": "medium",
+  "description": "Schedule a 45-minute meeting across three attendees in three different time zones within a specified window, respecting each attendee's working hours.",
+  "user_message": "Set up a 45-minute planning meeting with Ana (Madrid), Priya (Bengaluru), and Sam (New York) sometime in the next 5 working days. Everyone's working hours are 9-18 local. Please pick a slot and send calendar invites.",
+  "context": {
+    "system_prompt": "You are a calendar coordination agent. Find a time that lies within every attendee's working hours in their local time zone, respects existing calendar commitments, and falls within the requested window. Never assume availability — always call get_free_busy for every attendee. Only send invites after confirming a valid slot.",
+    "available_tools": [
+      "get_free_busy",
+      "list_attendee_timezones",
+      "propose_slots",
+      "send_calendar_invite"
+    ],
+    "initial_state": {
+      "now": "2026-08-24T10:00:00Z",
+      "attendees": {
+        "ana@example.com":   { "timezone": "Europe/Madrid",     "working_hours_local": "09:00-18:00" },
+        "priya@example.com": { "timezone": "Asia/Kolkata",      "working_hours_local": "09:00-18:00" },
+        "sam@example.com":   { "timezone": "America/New_York",  "working_hours_local": "09:00-18:00" }
+      },
+      "free_busy": {
+        "ana@example.com":   [],
+        "priya@example.com": [],
+        "sam@example.com":   [{ "start": "2026-08-25T13:00:00Z", "end": "2026-08-25T14:00:00Z" }]
+      },
+      "calendar_invites_sent": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "calendar_invites_sent": [
+        {
+          "attendees": ["ana@example.com", "priya@example.com", "sam@example.com"],
+          "duration_minutes": 45,
+          "constraints_met": {
+            "in_all_working_hours": true,
+            "within_5_working_days": true,
+            "no_conflicts": true
+          }
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "list_attendee_timezones", "args_contain": {}, "order_sensitive": true },
+      { "tool": "get_free_busy", "args_contain": { "attendee": "ana@example.com" }, "order_sensitive": false },
+      { "tool": "get_free_busy", "args_contain": { "attendee": "priya@example.com" }, "order_sensitive": false },
+      { "tool": "get_free_busy", "args_contain": { "attendee": "sam@example.com" }, "order_sensitive": false },
+      { "tool": "send_calendar_invite", "args_contain": { "duration_minutes": 45 }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "States the chosen slot in each attendee's local time and confirms invites were sent."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Any local time that falls outside 09:00-18:00 in an attendee's timezone",
+        "A claim that invites were sent when send_calendar_invite was not called",
+        "An assumption that any attendee is 'probably free' without calling get_free_busy for them"
+      ],
+      "required_disclosures": [
+        "The chosen slot in each attendee's local time"
+      ]
+    },
+    "policy_rules": [
+      "Call get_free_busy for every attendee before proposing a slot.",
+      "Do not send an invite that overlaps any existing busy block."
+    ],
+    "max_tool_calls": 12,
+    "expected_cost_range_usd": [0.008, 0.040],
+    "expected_latency_seconds": [3, 18]
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-24",
+    "domain_source": "synthetic",
+    "notes": "Bengaluru–NY overlap is narrow (Bengaluru 18:00 = NY 08:30 in DST). Agents that skip explicit timezone conversion and rely on 'gut feel' frequently propose slots outside working hours for one of the attendees."
+  }
+}

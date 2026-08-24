@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autobench"
+version = "0.0.1"
+description = "A multi-dimensional reliability benchmark for LLM agents in business process automation."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Wajid Ahmad" }
+]
+keywords = ["llm", "agents", "benchmark", "evaluation", "automation"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "pydantic>=2.0",
+  "jsonschema>=4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.1",
+  "mypy>=1.0",
+]
+
+[project.urls]
+Repository = "https://github.com/wajidahmad0305/autobench"
+Issues = "https://github.com/wajidahmad0305/autobench/issues"
+
+[tool.setuptools.packages.find]
+include = ["autobench*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

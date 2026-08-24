@@ -1,0 +1,82 @@
+{
+  "task_id": "lead_qualification.001",
+  "category": "lead_qualification",
+  "difficulty": "medium",
+  "description": "Score an inbound lead against a fixed ICP rubric and route to the correct sales pipeline. The agent must follow the rubric exactly, not its own judgement.",
+  "user_message": "New inbound lead from a demo request: 'Hi, I run engineering at a Series B fintech in Berlin, about 180 people. We're looking for something to automate our internal RFP responses. Budget authority is mine.' Please qualify and route.",
+  "context": {
+    "system_prompt": "You are a lead qualification agent. Score every inbound lead against the ICP rubric returned by get_icp_rubric, then route to the pipeline dictated by the rubric — never override the rubric's routing rules based on your own judgement. If any rubric field cannot be determined from the lead's message, mark it 'unknown' and route accordingly.",
+    "available_tools": [
+      "get_icp_rubric",
+      "score_lead_against_rubric",
+      "route_to_pipeline",
+      "request_missing_information"
+    ],
+    "initial_state": {
+      "icp_rubric": {
+        "version": "2026-Q3",
+        "criteria": {
+          "company_size": { "target": "50-500", "weight": 3 },
+          "industry": { "target": ["fintech", "saas", "b2b_software"], "weight": 3 },
+          "seniority": { "target": ["director", "vp", "cxo", "head_of"], "weight": 2 },
+          "budget_authority": { "target": true, "weight": 2 },
+          "geography": { "target": ["EU", "UK", "US", "CA"], "weight": 1 }
+        },
+        "routing_rules": [
+          { "if_score_at_least": 9, "route_to": "enterprise_pipeline" },
+          { "if_score_at_least": 6, "route_to": "smb_pipeline" },
+          { "if_score_at_least": 3, "route_to": "nurture_pipeline" },
+          { "if_score_at_least": 0, "route_to": "disqualified" }
+        ]
+      },
+      "pipelines": {
+        "enterprise_pipeline": [],
+        "smb_pipeline": [],
+        "nurture_pipeline": [],
+        "disqualified": []
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "pipelines": {
+        "enterprise_pipeline": [
+          { "lead_summary": "Head of Engineering, Series B fintech, Berlin, 180 people, budget authority, use case: RFP automation", "score": 11 }
+        ]
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_icp_rubric", "args_contain": {}, "order_sensitive": true },
+      { "tool": "score_lead_against_rubric", "args_contain": {}, "order_sensitive": true },
+      { "tool": "route_to_pipeline", "args_contain": { "pipeline": "enterprise_pipeline" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "States the score (11) and the routing decision (enterprise_pipeline) with a brief justification."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Any ICP criterion or weight not present in the rubric",
+        "A routing decision that contradicts the rubric's routing_rules"
+      ],
+      "required_disclosures": [
+        "The score",
+        "The pipeline the lead was routed to"
+      ]
+    },
+    "policy_rules": [
+      "Always call get_icp_rubric first — do not use a memorised or assumed rubric.",
+      "Route strictly per the rubric's routing_rules — do not override based on qualitative judgement."
+    ],
+    "max_tool_calls": 6,
+    "expected_cost_range_usd": [0.003, 0.020],
+    "expected_latency_seconds": [2, 12]
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-24",
+    "domain_source": "synthetic",
+    "notes": "Tests policy adherence more than reasoning. Frontier models frequently override the rubric because they 'know better'; this is exactly the failure mode we want to surface."
+  }
+}

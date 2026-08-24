@@ -1,0 +1,101 @@
+{
+  "task_id": "invoice_extraction.001",
+  "category": "invoice_extraction",
+  "difficulty": "medium",
+  "description": "Extract line items, totals, VAT, currency, and payment terms from a supplier invoice document and post the structured record to the accounting backend.",
+  "user_message": "Please process invoice INV-2026-0847 that just came in from Acme Supplies. Extract everything and post it to accounting.",
+  "context": {
+    "system_prompt": "You are an invoice processing agent. Read the invoice document via the provided tool, extract all required fields, and post the structured record. If any required field is unreadable or ambiguous, flag it in the 'requires_review' field of the posted record instead of guessing.",
+    "available_tools": [
+      "read_invoice_document",
+      "get_supplier_by_name",
+      "post_invoice_to_accounting",
+      "flag_for_manual_review"
+    ],
+    "initial_state": {
+      "documents": {
+        "INV-2026-0847": {
+          "supplier_name": "Acme Supplies Ltd",
+          "invoice_number": "INV-2026-0847",
+          "issue_date": "2026-08-20",
+          "currency": "EUR",
+          "line_items": [
+            { "description": "A4 paper, 80gsm, 500 sheets", "qty": 20, "unit_price": 4.50, "line_total": 90.00 },
+            { "description": "Ballpoint pens, blue, box of 50", "qty": 5, "unit_price": 12.00, "line_total": 60.00 },
+            { "description": "Printer toner, model TN-2320", "qty": 2, "unit_price": 68.00, "line_total": 136.00 }
+          ],
+          "subtotal": 286.00,
+          "vat_rate": 0.21,
+          "vat_amount": 60.06,
+          "total": 346.06,
+          "payment_terms_days": 30,
+          "notes": "Payment via SEPA to IBAN on file."
+        }
+      },
+      "supplier_directory": {
+        "Acme Supplies Ltd": { "supplier_id": "SUP-0142", "default_gl_account": "6021 — Office supplies" }
+      },
+      "accounting_ledger": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "accounting_ledger": [
+        {
+          "invoice_number": "INV-2026-0847",
+          "supplier_id": "SUP-0142",
+          "issue_date": "2026-08-20",
+          "currency": "EUR",
+          "subtotal": 286.00,
+          "vat_amount": 60.06,
+          "total": 346.06,
+          "payment_terms_days": 30,
+          "line_item_count": 3
+        }
+      ]
+    },
+    "required_tool_calls": [
+      {
+        "tool": "read_invoice_document",
+        "args_contain": { "document_id": "INV-2026-0847" },
+        "order_sensitive": true
+      },
+      {
+        "tool": "get_supplier_by_name",
+        "args_contain": { "name": "Acme Supplies Ltd" },
+        "order_sensitive": true
+      },
+      {
+        "tool": "post_invoice_to_accounting",
+        "args_contain": { "invoice_number": "INV-2026-0847", "supplier_id": "SUP-0142", "total": 346.06 },
+        "order_sensitive": true
+      }
+    ],
+    "acceptable_responses": [
+      "Confirms the invoice was posted with correct totals and supplier."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A total other than 346.06 EUR",
+        "A VAT rate other than 21%",
+        "A payment terms value other than 30 days"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Do not post to accounting if the total does not equal subtotal + vat_amount.",
+      "Do not guess supplier IDs — always resolve via get_supplier_by_name."
+    ],
+    "max_tool_calls": 10,
+    "expected_cost_range_usd": [0.010, 0.050],
+    "expected_latency_seconds": [4, 20]
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-24",
+    "domain_source": "synthetic",
+    "notes": "Arithmetic consistency check (subtotal + vat = total) is often where naive agents fail — they trust their own re-computation instead of the document."
+  }
+}

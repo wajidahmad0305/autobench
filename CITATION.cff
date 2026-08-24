@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use AutoBench, please cite it using the metadata below."
+title: "AutoBench: A Multi-Dimensional Reliability Benchmark for LLM Agents in Business Process Automation"
+type: software
+authors:
+  - family-names: Ahmad
+    given-names: Wajid
+    affiliation: "Riga Nordic University"
+repository-code: "https://github.com/wajidahmad0305/autobench"
+license: MIT
+keywords:
+  - large-language-models
+  - llm-agents
+  - agent-evaluation
+  - benchmark
+  - business-process-automation
+  - tool-use
+  - reliability

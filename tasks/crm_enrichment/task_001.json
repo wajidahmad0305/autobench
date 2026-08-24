@@ -1,0 +1,99 @@
+{
+  "task_id": "crm_enrichment.001",
+  "category": "crm_enrichment",
+  "difficulty": "easy",
+  "description": "Given an inbound lead's email and name, enrich the CRM record with company, role, industry, and company size.",
+  "user_message": "New lead came in from the website. Can you enrich the record for maria.hernandez@example-tech.io — full name Maria Hernandez — and save it back to the CRM?",
+  "context": {
+    "system_prompt": "You are a CRM enrichment agent. Use the provided tools to look up company information from the lead's email domain and enrich the CRM record. Do not invent details you cannot verify from tool output. If a field cannot be verified, leave it null and note it in your response.",
+    "available_tools": [
+      "lookup_company_by_domain",
+      "lookup_person_by_email",
+      "get_crm_record",
+      "update_crm_record"
+    ],
+    "initial_state": {
+      "crm_records": {
+        "lead_9182": {
+          "email": "maria.hernandez@example-tech.io",
+          "full_name": "Maria Hernandez",
+          "company": null,
+          "role": null,
+          "industry": null,
+          "company_size": null,
+          "source": "website_form",
+          "created_at": "2026-08-24T10:14:00Z"
+        }
+      },
+      "company_directory": {
+        "example-tech.io": {
+          "name": "Example Tech S.L.",
+          "industry": "SaaS — HR software",
+          "size_bucket": "50-200",
+          "hq_country": "Spain"
+        }
+      },
+      "person_directory": {
+        "maria.hernandez@example-tech.io": {
+          "title": "Head of People Operations",
+          "linkedin": "linkedin.com/in/maria-hernandez-example"
+        }
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "crm_records": {
+        "lead_9182": {
+          "company": "Example Tech S.L.",
+          "role": "Head of People Operations",
+          "industry": "SaaS — HR software",
+          "company_size": "50-200"
+        }
+      }
+    },
+    "required_tool_calls": [
+      {
+        "tool": "lookup_company_by_domain",
+        "args_contain": { "domain": "example-tech.io" },
+        "order_sensitive": false
+      },
+      {
+        "tool": "lookup_person_by_email",
+        "args_contain": { "email": "maria.hernandez@example-tech.io" },
+        "order_sensitive": false
+      },
+      {
+        "tool": "update_crm_record",
+        "args_contain": { "record_id": "lead_9182" },
+        "order_sensitive": false
+      }
+    ],
+    "acceptable_responses": [
+      "Confirms the CRM record was updated and lists the enriched fields."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Any revenue figure for Example Tech S.L.",
+        "Any employee count more precise than the '50-200' bucket",
+        "Any role for Maria Hernandez other than 'Head of People Operations'"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Do not invent fields not present in tool output.",
+      "Do not overwrite non-null CRM fields without explicit user instruction."
+    ],
+    "max_tool_calls": 8,
+    "expected_cost_range_usd": [0.005, 0.030],
+    "expected_latency_seconds": [3, 15]
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-24",
+    "domain_source": "synthetic",
+    "notes": "Seed task. Straightforward happy path. Used primarily to verify harness plumbing before harder tasks land."
+  }
+}
