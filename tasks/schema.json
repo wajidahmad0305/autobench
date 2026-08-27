@@ -114,6 +114,7 @@
     "reliability": {
       "type": "object",
       "description": "Reliability-focused expectations that go beyond binary task success.",
+      "required": ["k_trials", "cost_budget_usd", "latency_budget_ms"],
       "properties": {
         "hallucination_check": {
           "type": "object",

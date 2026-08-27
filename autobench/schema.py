@@ -103,9 +103,9 @@ class Reliability(BaseModel):
     expected_latency_seconds: tuple[float, float] | None = None
     fault_injection_rules: list[FaultInjectionRule] = Field(default_factory=list)
     forbidden_actions: list[str] = Field(default_factory=list)
-    k_trials: int | None = Field(default=None, ge=1)
-    cost_budget_usd: float | None = Field(default=None, ge=0)
-    latency_budget_ms: int | None = Field(default=None, ge=0)
+    k_trials: int = Field(ge=1)
+    cost_budget_usd: float = Field(ge=0)
+    latency_budget_ms: int = Field(ge=0)
 
 
 class TaskSpec(BaseModel):

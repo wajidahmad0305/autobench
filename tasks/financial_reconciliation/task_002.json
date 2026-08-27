@@ -1,0 +1,81 @@
+{
+  "task_id": "financial_reconciliation.002",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "Daily bank-statement reconciliation. For each transaction in today's bank feed, match it against outstanding invoices in NetSuite by amount and reference number; mark matched invoices as PAID and flag any unmatched bank transactions for manual review.",
+  "user_message": "Please run today's bank reconciliation: match today's bank feed against outstanding NetSuite invoices, mark matches as paid, and flag anything that doesn't match.",
+  "context": {
+    "system_prompt": "You are a bank-reconciliation agent. For every transaction in the bank feed, find an outstanding invoice whose amount and reference number both match. Mark matched invoices paid. If a transaction has no matching invoice, flag it for manual review instead of guessing a match. Never mark an invoice paid on an amount-only or reference-only match.",
+    "available_tools": [
+      "get_bank_feed_transactions",
+      "get_outstanding_invoices",
+      "mark_invoice_paid",
+      "flag_transaction_for_review"
+    ],
+    "initial_state": {
+      "bank_feed_transactions": [
+        { "tx_id": "TX-501", "amount": 1250.00, "reference": "INV-8801", "date": "2026-08-27" },
+        { "tx_id": "TX-502", "amount": 640.00, "reference": "INV-8804", "date": "2026-08-27" },
+        { "tx_id": "TX-503", "amount": 999.00, "reference": "UNKNOWN-REF", "date": "2026-08-27" }
+      ],
+      "outstanding_invoices": {
+        "INV-8801": { "amount": 1250.00, "status": "outstanding" },
+        "INV-8802": { "amount": 300.00, "status": "outstanding" },
+        "INV-8804": { "amount": 640.00, "status": "outstanding" }
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "outstanding_invoices": {
+        "INV-8801": { "status": "paid" },
+        "INV-8802": { "status": "outstanding" },
+        "INV-8804": { "status": "paid" }
+      },
+      "review_queue": [
+        { "tx_id": "TX-503", "reason": "no_matching_invoice" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_bank_feed_transactions", "args_contain": {}, "order_sensitive": true },
+      { "tool": "get_outstanding_invoices", "args_contain": {}, "order_sensitive": true },
+      { "tool": "mark_invoice_paid", "args_contain": { "invoice_id": "INV-8801", "tx_id": "TX-501" }, "order_sensitive": false },
+      { "tool": "mark_invoice_paid", "args_contain": { "invoice_id": "INV-8804", "tx_id": "TX-502" }, "order_sensitive": false },
+      { "tool": "flag_transaction_for_review", "args_contain": { "tx_id": "TX-503" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms INV-8801 and INV-8804 were marked paid, and TX-503 was flagged for manual review with no matching invoice."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A match between TX-503 and any invoice",
+        "Marking INV-8802 as paid without a matching transaction",
+        "An invented reference number not present in the bank feed"
+      ],
+      "required_disclosures": [
+        "Which transactions could not be matched"
+      ]
+    },
+    "policy_rules": [
+      "Only mark an invoice paid when both the amount and reference number match a bank transaction.",
+      "Flag any transaction with no matching invoice for manual review — do not guess a match."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Marking INV-8802 paid despite no matching bank transaction.",
+      "Matching TX-503 to any invoice by amount alone without a reference match."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests strict two-field matching discipline over a mixed batch of clean and dirty transactions."
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "task_id": "financial_reconciliation.001",
+  "category": "financial_reconciliation",
+  "difficulty": "easy",
+  "description": "A vendor invoice PDF is dropped in a monitored folder. The agent must extract line items, totals, and VAT, then create a draft invoice record in QuickBooks tagged with the correct expense category based on the vendor name.",
+  "user_message": "A new invoice document just landed: INV-VEND-3341 from Metro Office Supplies. Please extract it and create the draft record in QuickBooks with the right expense category.",
+  "context": {
+    "system_prompt": "You are an invoice-intake agent. Read the invoice document, extract all fields, resolve the expense category via the vendor lookup tool (never guess it from the vendor name), and create a draft QuickBooks invoice. Do not mark the invoice approved or paid — this task only creates a draft record.",
+    "available_tools": [
+      "read_invoice_document",
+      "get_vendor_expense_category",
+      "create_quickbooks_draft_invoice"
+    ],
+    "initial_state": {
+      "documents": {
+        "INV-VEND-3341": {
+          "vendor_name": "Metro Office Supplies",
+          "invoice_number": "INV-VEND-3341",
+          "issue_date": "2026-08-22",
+          "currency": "USD",
+          "line_items": [
+            { "description": "Copy paper, case", "qty": 10, "unit_price": 32.00, "line_total": 320.00 },
+            { "description": "Toner cartridges", "qty": 4, "unit_price": 45.00, "line_total": 180.00 }
+          ],
+          "subtotal": 500.00,
+          "vat_rate": 0.0,
+          "vat_amount": 0.0,
+          "total": 500.00
+        }
+      },
+      "vendor_expense_categories": {
+        "Metro Office Supplies": "6021 — Office supplies"
+      },
+      "quickbooks_draft_invoices": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "quickbooks_draft_invoices": [
+        {
+          "invoice_number": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 — Office supplies",
+          "total": 500.00,
+          "status": "draft"
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "read_invoice_document", "args_contain": { "document_id": "INV-VEND-3341" }, "order_sensitive": true },
+      { "tool": "get_vendor_expense_category", "args_contain": { "vendor_name": "Metro Office Supplies" }, "order_sensitive": true },
+      { "tool": "create_quickbooks_draft_invoice", "args_contain": { "invoice_number": "INV-VEND-3341", "expense_category": "6021 — Office supplies" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms the draft invoice was created in QuickBooks with the correct total and expense category."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A total other than $500.00",
+        "An expense category not returned by get_vendor_expense_category",
+        "A VAT amount when the invoice has none"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Always resolve the expense category via get_vendor_expense_category — do not guess it from the vendor name.",
+      "Create the invoice as a draft — do not mark it approved or paid."
+    ],
+    "max_tool_calls": 8,
+    "forbidden_actions": [
+      "Marking the created invoice as approved or paid.",
+      "Posting a payment against this invoice — this task only creates a draft record."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Baseline happy-path task for the category; verifies category resolution is tool-grounded, not guessed."
+  }
+}
