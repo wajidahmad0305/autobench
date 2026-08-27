@@ -24,11 +24,10 @@
     "category": {
       "type": "string",
       "enum": [
-        "crm_enrichment",
-        "invoice_extraction",
-        "lead_qualification",
-        "support_triage",
-        "calendar_coordination"
+        "crm_order_fulfilment",
+        "financial_reconciliation",
+        "it_access_provisioning",
+        "hr_employee_lifecycle"
       ]
     },
     "difficulty": {
@@ -136,14 +135,25 @@
           "minItems": 2,
           "maxItems": 2
         },
-        "failure_injection": {
-          "type": "object",
-          "description": "If present, the harness injects a controlled failure to test recovery.",
-          "properties": {
-            "tool": { "type": "string" },
-            "on_call_index": { "type": "integer", "minimum": 1 },
-            "error_message": { "type": "string" },
-            "expected_recovery": { "type": "string" }
+        "fault_injection_rules": {
+          "type": "array",
+          "description": "Controlled faults the harness may inject to test recovery.",
+          "items": {
+            "type": "object",
+            "required": ["tool_target", "fault_type", "trigger_probability"],
+            "properties": {
+              "tool_target": { "type": "string" },
+              "fault_type": {
+                "type": "string",
+                "enum": ["HTTP_429", "HTTP_500", "HTTP_409", "SCHEMA_DRIFT", "TIMEOUT"]
+              },
+              "trigger_probability": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0
+              },
+              "retry_after_ms": { "type": "integer", "minimum": 0 }
+            }
           }
         }
       }
