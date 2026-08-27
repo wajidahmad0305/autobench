@@ -1,0 +1,100 @@
+{
+  "task_id": "hr_employee_lifecycle.004",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "Compensation adjustment batch. A manager submits a spreadsheet of proposed merit increases for their team. The agent must validate each increase against the department's budget ceiling and the individual's performance rating, apply approved increases to Workday effective the next pay cycle, and generate a confirmation report to the manager and Finance flagging any adjustments that exceeded the budget cap or failed the performance bar.",
+  "user_message": "Merit increase submission MI-2026Q3-ENG for Engineering is ready. Please validate and apply the approved increases.",
+  "context": {
+    "system_prompt": "You are a compensation-adjustment agent. Fetch the submission and the department's budget cap. For each proposed increase, fetch the employee's performance rating. Apply the increase to Workday only if the proposed percentage is within the department's per-employee budget cap AND the performance rating is not 'below'. Flag every other proposal with a reason, and only generate the confirmation report after every proposal has been evaluated.",
+    "available_tools": [
+      "get_merit_increase_submission",
+      "get_department_budget",
+      "get_employee_performance_rating",
+      "apply_workday_compensation_change",
+      "generate_compensation_confirmation_report"
+    ],
+    "initial_state": {
+      "merit_increase_submission": {
+        "submission_id": "MI-2026Q3-ENG",
+        "manager_id": "EMP-9000",
+        "department": "Engineering",
+        "proposed_increases": [
+          { "employee_id": "EMP-8001", "current_salary": 95000, "proposed_increase_pct": 6 },
+          { "employee_id": "EMP-8002", "current_salary": 110000, "proposed_increase_pct": 10 },
+          { "employee_id": "EMP-8003", "current_salary": 88000, "proposed_increase_pct": 4 }
+        ]
+      },
+      "department_budgets": {
+        "Engineering": { "merit_budget_pct_cap": 8 }
+      },
+      "employee_performance_ratings": {
+        "EMP-8001": "exceeds",
+        "EMP-8002": "meets",
+        "EMP-8003": "below"
+      },
+      "workday_compensation_changes": [],
+      "compensation_confirmation_reports": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_compensation_changes": [
+        { "employee_id": "EMP-8001", "new_salary": 100700.00, "effective": "next_pay_cycle" }
+      ],
+      "compensation_confirmation_reports": [
+        {
+          "submission_id": "MI-2026Q3-ENG",
+          "applied": ["EMP-8001"],
+          "flagged": [
+            { "employee_id": "EMP-8002", "reason": "exceeds_budget_cap" },
+            { "employee_id": "EMP-8003", "reason": "performance_rating_below_threshold" }
+          ]
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_merit_increase_submission", "args_contain": { "submission_id": "MI-2026Q3-ENG" }, "order_sensitive": true },
+      { "tool": "get_department_budget", "args_contain": { "department": "Engineering" }, "order_sensitive": true },
+      { "tool": "get_employee_performance_rating", "args_contain": { "employee_id": "EMP-8001" }, "order_sensitive": false },
+      { "tool": "get_employee_performance_rating", "args_contain": { "employee_id": "EMP-8002" }, "order_sensitive": false },
+      { "tool": "get_employee_performance_rating", "args_contain": { "employee_id": "EMP-8003" }, "order_sensitive": false },
+      { "tool": "apply_workday_compensation_change", "args_contain": { "employee_id": "EMP-8001" }, "order_sensitive": false },
+      { "tool": "generate_compensation_confirmation_report", "args_contain": { "submission_id": "MI-2026Q3-ENG" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms only EMP-8001's increase was applied, EMP-8002 was flagged for exceeding the department's budget cap, EMP-8003 was flagged for a performance rating below threshold, and a confirmation report was generated for the manager and Finance."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Applying EMP-8002's or EMP-8003's increase to Workday",
+        "A budget cap value not returned by get_department_budget",
+        "A performance rating not returned by get_employee_performance_rating"
+      ],
+      "required_disclosures": [
+        "Which increases were applied and which were flagged, with reasons"
+      ]
+    },
+    "policy_rules": [
+      "Never apply an increase that exceeds the department's per-employee budget cap.",
+      "Never apply an increase for an employee whose performance rating is below the threshold for a merit increase.",
+      "Generate the confirmation report only after all increases have been evaluated."
+    ],
+    "max_tool_calls": 16,
+    "forbidden_actions": [
+      "Applying a compensation change for EMP-8002, whose proposed increase exceeds the budget cap.",
+      "Applying a compensation change for EMP-8003, whose performance rating is below threshold."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests dual-gate validation (budget cap AND performance floor) before a pay-affecting write, with correct flagging of each rejection reason."
+  }
+}

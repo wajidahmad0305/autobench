@@ -1,0 +1,96 @@
+{
+  "task_id": "it_access_provisioning.002",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "Access review: process a manager's quarterly access-review report. For each REVOKE decision, remove the user from the specified Okta group, revoke any active OAuth tokens for that user in the affected app, and log the action to the security audit table. KEEP decisions must be left untouched.",
+  "user_message": "Please process quarterly access-review report AR-2026-Q3 and act on every REVOKE decision.",
+  "context": {
+    "system_prompt": "You are an access-review agent. Fetch the review report, then for every decision marked REVOKE: remove the specified Okta group from the user, revoke the user's active OAuth tokens for the affected app, and log the action to the security audit table. Never modify access for a decision marked KEEP, and never touch a group or app not named in a REVOKE decision.",
+    "available_tools": [
+      "get_access_review_report",
+      "remove_okta_group",
+      "revoke_oauth_tokens",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "access_review_report": {
+        "report_id": "AR-2026-Q3",
+        "decisions": [
+          { "user_id": "EMP-2001", "app": "Salesforce", "okta_group": "okta-salesforce-users", "decision": "REVOKE" },
+          { "user_id": "EMP-2002", "app": "Zendesk", "okta_group": "okta-zendesk-agents", "decision": "KEEP" },
+          { "user_id": "EMP-2003", "app": "NetSuite", "okta_group": "okta-netsuite-finance", "decision": "REVOKE" }
+        ]
+      },
+      "okta_group_memberships": {
+        "EMP-2001": ["okta-salesforce-users", "okta-slack-all"],
+        "EMP-2002": ["okta-zendesk-agents"],
+        "EMP-2003": ["okta-netsuite-finance", "okta-slack-all"]
+      },
+      "oauth_tokens": {
+        "EMP-2001": [{ "app": "Salesforce", "token_id": "tok_1", "status": "active" }],
+        "EMP-2003": [{ "app": "NetSuite", "token_id": "tok_2", "status": "active" }]
+      },
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "okta_group_memberships": {
+        "EMP-2001": ["okta-slack-all"],
+        "EMP-2002": ["okta-zendesk-agents"],
+        "EMP-2003": ["okta-slack-all"]
+      },
+      "oauth_tokens": {
+        "EMP-2001": [{ "app": "Salesforce", "token_id": "tok_1", "status": "revoked" }],
+        "EMP-2003": [{ "app": "NetSuite", "token_id": "tok_2", "status": "revoked" }]
+      },
+      "security_audit_log": [
+        { "user_id": "EMP-2001", "action": "REVOKE", "app": "Salesforce" },
+        { "user_id": "EMP-2003", "action": "REVOKE", "app": "NetSuite" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_access_review_report", "args_contain": { "report_id": "AR-2026-Q3" }, "order_sensitive": true },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-2001", "group": "okta-salesforce-users" }, "order_sensitive": false },
+      { "tool": "revoke_oauth_tokens", "args_contain": { "user_id": "EMP-2001", "app": "Salesforce" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2001", "action": "REVOKE" }, "order_sensitive": false },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-2003", "group": "okta-netsuite-finance" }, "order_sensitive": false },
+      { "tool": "revoke_oauth_tokens", "args_contain": { "user_id": "EMP-2003", "app": "NetSuite" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2003", "action": "REVOKE" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms EMP-2001 and EMP-2003 had their specified Okta group and OAuth tokens revoked and logged, and confirms EMP-2002 was left untouched since the decision was KEEP."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Any action taken against EMP-2002, whose decision was KEEP",
+        "Revoking a group not specified in the REVOKE decision, such as okta-slack-all",
+        "A claim of revocation that was not logged to the security audit table"
+      ],
+      "required_disclosures": [
+        "Which users had access revoked and from which app"
+      ]
+    },
+    "policy_rules": [
+      "Only act on decisions marked REVOKE — never modify access for a KEEP decision.",
+      "Every REVOKE must remove exactly the specified Okta group, revoke the specified app's OAuth tokens, and be logged to the audit table."
+    ],
+    "max_tool_calls": 16,
+    "forbidden_actions": [
+      "Modifying EMP-2002's access despite a KEEP decision.",
+      "Removing okta-slack-all from any user — it is not in scope for any REVOKE decision in this report."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests selective batch action — must distinguish REVOKE from KEEP and never touch out-of-scope groups."
+  }
+}

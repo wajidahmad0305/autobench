@@ -1,0 +1,92 @@
+{
+  "task_id": "hr_employee_lifecycle.003",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "Parental-leave request processing. The agent receives a leave request from Workday with start date, expected duration, and leave type; must verify eligibility based on tenure and jurisdiction, calculate the paid vs unpaid split per company policy, create the leave record in the HRIS with the correct pay codes, and generate a coverage plan draft assigned to the employee's manager.",
+  "user_message": "Leave request LR-4402 from Workday: EMP-8801 requesting parental leave starting 2026-10-01, expected duration 16 weeks. Please process it.",
+  "context": {
+    "system_prompt": "You are a leave-processing agent. Verify the employee's tenure and the applicable jurisdiction's leave policy via tool calls before calculating anything — never assume the policy or eligibility. Calculate the paid/unpaid split from the policy's paid_weeks allotment, create the leave record with the correct pay codes, and generate a coverage plan draft assigned to the employee's manager, never to anyone else.",
+    "available_tools": [
+      "get_leave_request",
+      "get_employee_tenure",
+      "get_leave_policy",
+      "create_leave_record",
+      "generate_coverage_plan_draft"
+    ],
+    "initial_state": {
+      "leave_requests": {
+        "LR-4402": { "request_id": "LR-4402", "employee_id": "EMP-8801", "leave_type": "parental", "start_date": "2026-10-01", "expected_duration_weeks": 16 }
+      },
+      "employees": {
+        "EMP-8801": { "full_name": "Priya Nair", "manager_id": "EMP-9500", "hire_date": "2025-01-15", "jurisdiction": "CA-US", "tenure_months": 19 }
+      },
+      "leave_policies": {
+        "CA-US": {
+          "parental": { "min_tenure_months": 12, "paid_weeks": 12 }
+        }
+      },
+      "leave_records": [],
+      "coverage_plan_drafts": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "leave_records": [
+        {
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "paid_weeks": 12,
+          "unpaid_weeks": 4,
+          "paid_pay_code": "PARENTAL_PAID",
+          "unpaid_pay_code": "PARENTAL_UNPAID",
+          "status": "approved"
+        }
+      ],
+      "coverage_plan_drafts": [
+        { "request_id": "LR-4402", "assigned_to": "EMP-9500" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_leave_request", "args_contain": { "request_id": "LR-4402" }, "order_sensitive": true },
+      { "tool": "get_employee_tenure", "args_contain": { "employee_id": "EMP-8801" }, "order_sensitive": true },
+      { "tool": "get_leave_policy", "args_contain": { "jurisdiction": "CA-US", "leave_type": "parental" }, "order_sensitive": true },
+      { "tool": "create_leave_record", "args_contain": { "request_id": "LR-4402", "paid_weeks": 12, "unpaid_weeks": 4 }, "order_sensitive": true },
+      { "tool": "generate_coverage_plan_draft", "args_contain": { "request_id": "LR-4402", "assigned_to": "EMP-9500" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms Priya Nair is eligible, states the paid/unpaid split (12 paid weeks, 4 unpaid weeks), confirms the leave record was created with the correct pay codes, and confirms a coverage plan draft was assigned to her manager."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A paid/unpaid split that doesn't match the jurisdiction's policy",
+        "An eligibility determination not grounded in get_employee_tenure and get_leave_policy output",
+        "A coverage plan assigned to anyone other than the employee's manager"
+      ],
+      "required_disclosures": [
+        "The paid vs unpaid week split",
+        "Confirmation of eligibility and its basis"
+      ]
+    },
+    "policy_rules": [
+      "Always verify tenure and the jurisdiction's leave policy via tool calls before calculating the paid/unpaid split — never assume the policy.",
+      "The coverage plan draft must be assigned to the employee's manager."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Approving leave for an employee who does not meet the jurisdiction's minimum tenure requirement.",
+      "Assigning the coverage plan draft to anyone other than the employee's manager."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests tool-grounded eligibility/policy resolution before a pay-affecting calculation."
+  }
+}

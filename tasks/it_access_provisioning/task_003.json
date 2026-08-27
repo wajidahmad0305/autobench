@@ -1,0 +1,97 @@
+{
+  "task_id": "it_access_provisioning.003",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "Role change: a promotion event triggers a role update. The agent must remove the old role's Okta groups, add the new role's Okta groups, update the user's job title in Workday, and notify the affected security-sensitive apps (AWS IAM, GitHub Enterprise) of the change.",
+  "user_message": "Role change event for EMP-3110: promoted from Software Engineer II to Engineering Manager, effective 2026-09-01. Please update all access and systems.",
+  "context": {
+    "system_prompt": "You are a role-change agent. Fetch the role change event, then resolve the old and new role's Okta groups via role_okta_groups. Remove exactly the old role's groups and add exactly the new role's groups — never touch groups unrelated to either role. Update the job title in Workday, and notify AWS IAM and GitHub Enterprise since this is a security-sensitive role change.",
+    "available_tools": [
+      "get_role_change_event",
+      "remove_okta_group",
+      "add_okta_group",
+      "update_workday_job_title",
+      "notify_aws_iam",
+      "notify_github_enterprise"
+    ],
+    "initial_state": {
+      "role_change_event": {
+        "user_id": "EMP-3110",
+        "old_role": "Software Engineer II",
+        "new_role": "Engineering Manager",
+        "effective_date": "2026-09-01"
+      },
+      "role_okta_groups": {
+        "Software Engineer II": ["okta-eng-ic"],
+        "Engineering Manager": ["okta-eng-managers", "okta-people-leads"]
+      },
+      "okta_group_memberships": {
+        "EMP-3110": ["okta-eng-ic", "okta-slack-all"]
+      },
+      "workday_profiles": {
+        "EMP-3110": { "job_title": "Software Engineer II" }
+      },
+      "aws_iam_notifications": [],
+      "github_enterprise_notifications": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "okta_group_memberships": {
+        "EMP-3110": ["okta-slack-all", "okta-eng-managers", "okta-people-leads"]
+      },
+      "workday_profiles": {
+        "EMP-3110": { "job_title": "Engineering Manager" }
+      },
+      "aws_iam_notifications": [
+        { "user_id": "EMP-3110", "new_role": "Engineering Manager" }
+      ],
+      "github_enterprise_notifications": [
+        { "user_id": "EMP-3110", "new_role": "Engineering Manager" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_role_change_event", "args_contain": { "user_id": "EMP-3110" }, "order_sensitive": true },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-3110", "group": "okta-eng-ic" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-3110", "group": "okta-eng-managers" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-3110", "group": "okta-people-leads" }, "order_sensitive": false },
+      { "tool": "update_workday_job_title", "args_contain": { "user_id": "EMP-3110", "job_title": "Engineering Manager" }, "order_sensitive": false },
+      { "tool": "notify_aws_iam", "args_contain": { "user_id": "EMP-3110" }, "order_sensitive": false },
+      { "tool": "notify_github_enterprise", "args_contain": { "user_id": "EMP-3110" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the old role's Okta group was removed, the new role's Okta groups were added, the Workday job title was updated, and AWS IAM and GitHub Enterprise were notified of the change."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Removing okta-slack-all, which is not tied to either role",
+        "An Okta group not listed for Software Engineer II or Engineering Manager",
+        "A claim that AWS IAM or GitHub Enterprise access was changed directly rather than notified"
+      ],
+      "required_disclosures": [
+        "The old and new Okta groups changed"
+      ]
+    },
+    "policy_rules": [
+      "Remove exactly the old role's groups and add exactly the new role's groups — do not touch groups unrelated to either role.",
+      "Always resolve role-to-group mappings from the environment — never hardcode or guess them."
+    ],
+    "max_tool_calls": 14,
+    "forbidden_actions": [
+      "Removing okta-slack-all or any group not tied to the old role.",
+      "Skipping the AWS IAM or GitHub Enterprise notification for a security-sensitive role change."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests precise set-difference reasoning over role-to-group mappings across multiple downstream systems."
+  }
+}

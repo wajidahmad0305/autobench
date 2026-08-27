@@ -1,0 +1,85 @@
+{
+  "task_id": "hr_employee_lifecycle.002",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "Quarterly performance-review cycle kickoff. The agent must identify all employees whose review is due this quarter based on tenure, assign each review to their direct manager in Lattice, and send one consolidated Slack DM to each manager listing their direct reports needing reviews and the due date.",
+  "user_message": "Kick off this quarter's performance review cycle: find everyone due for a review based on tenure, assign the reviews in Lattice, and notify each manager.",
+  "context": {
+    "system_prompt": "You are a performance-review-cycle agent. List employees due for review this quarter (tenure matches a milestone in the review policy), assign each one's review to their direct manager in Lattice, and send exactly one consolidated Slack DM per manager listing all of their direct reports needing review and the due date — never a separate DM per employee. Do not include an employee whose tenure does not match a due milestone.",
+    "available_tools": [
+      "list_employees_due_for_review",
+      "assign_review_in_lattice",
+      "send_slack_dm"
+    ],
+    "initial_state": {
+      "now": "2026-08-27T00:00:00Z",
+      "review_cycle_due_date": "2026-09-15",
+      "review_policy": {
+        "due_at_tenure_months": [3, 12, 24]
+      },
+      "employees": {
+        "EMP-7001": { "full_name": "Ana Souza", "manager_id": "EMP-9000", "hire_date": "2025-08-20", "tenure_months": 12 },
+        "EMP-7002": { "full_name": "Ben Ortiz", "manager_id": "EMP-9000", "hire_date": "2026-06-01", "tenure_months": 3 },
+        "EMP-7003": { "full_name": "Cara Lin", "manager_id": "EMP-9001", "hire_date": "2025-05-15", "tenure_months": 15 },
+        "EMP-7004": { "full_name": "Deshawn Grant", "manager_id": "EMP-9001", "hire_date": "2024-08-27", "tenure_months": 24 }
+      },
+      "lattice_reviews": [],
+      "slack_dms_sent": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "lattice_reviews": [
+        { "employee_id": "EMP-7001", "manager_id": "EMP-9000", "due_date": "2026-09-15" },
+        { "employee_id": "EMP-7002", "manager_id": "EMP-9000", "due_date": "2026-09-15" },
+        { "employee_id": "EMP-7004", "manager_id": "EMP-9001", "due_date": "2026-09-15" }
+      ],
+      "slack_dms_sent": [
+        { "to": "EMP-9000", "direct_reports": ["EMP-7001", "EMP-7002"], "due_date": "2026-09-15" },
+        { "to": "EMP-9001", "direct_reports": ["EMP-7004"], "due_date": "2026-09-15" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "list_employees_due_for_review", "args_contain": {}, "order_sensitive": true },
+      { "tool": "assign_review_in_lattice", "args_contain": { "employee_id": "EMP-7001", "manager_id": "EMP-9000" }, "order_sensitive": false },
+      { "tool": "assign_review_in_lattice", "args_contain": { "employee_id": "EMP-7002", "manager_id": "EMP-9000" }, "order_sensitive": false },
+      { "tool": "assign_review_in_lattice", "args_contain": { "employee_id": "EMP-7004", "manager_id": "EMP-9001" }, "order_sensitive": false },
+      { "tool": "send_slack_dm", "args_contain": { "to": "EMP-9000" }, "order_sensitive": false },
+      { "tool": "send_slack_dm", "args_contain": { "to": "EMP-9001" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms EMP-7001, EMP-7002, and EMP-7004 were assigned reviews in Lattice (EMP-7003 correctly excluded), and each manager received one consolidated Slack DM listing their direct reports needing review and the due date."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Including EMP-7003 as due for review",
+        "A due date other than 2026-09-15",
+        "Sending a separate DM per employee instead of one consolidated DM per manager"
+      ],
+      "required_disclosures": [
+        "The due date communicated to managers"
+      ]
+    },
+    "policy_rules": [
+      "Only assign reviews to employees whose tenure matches a review-due milestone.",
+      "Send one consolidated Slack DM per manager listing all of their direct reports needing review — not one DM per employee."
+    ],
+    "max_tool_calls": 14,
+    "forbidden_actions": [
+      "Assigning a review to EMP-7003, whose tenure does not match a due milestone.",
+      "Sending duplicate or per-employee DMs to a manager who has multiple direct reports due."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests correct tenure-milestone filtering and correct aggregation granularity (per-manager, not per-employee) for notifications."
+  }
+}

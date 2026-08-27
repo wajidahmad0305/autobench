@@ -1,0 +1,78 @@
+{
+  "task_id": "it_access_provisioning.001",
+  "category": "it_access_provisioning",
+  "difficulty": "easy",
+  "description": "New employee onboarding. The agent receives a Workday new-hire webhook and must provision a Google Workspace email, add the employee to the correct Okta groups based on department, and post a welcome message in the department's Slack channel.",
+  "user_message": "New Workday webhook: employee Sofia Martinez, employee ID EMP-4471, department Engineering, start date 2026-09-01. Please provision her for day one.",
+  "context": {
+    "system_prompt": "You are an IT onboarding agent. Always resolve a department's Okta groups and Slack channel via get_department_provisioning_config — never guess them. Provision the Google Workspace email as firstname.lastname@ the company domain, add exactly the configured Okta groups, and post a welcome message to the configured Slack channel.",
+    "available_tools": [
+      "get_department_provisioning_config",
+      "provision_google_workspace_email",
+      "add_okta_group",
+      "post_slack_message"
+    ],
+    "initial_state": {
+      "company_email_domain": "newco.io",
+      "department_provisioning_config": {
+        "Engineering": { "okta_groups": ["okta-eng-all", "okta-vpn-access"], "slack_channel": "#eng-team" },
+        "Marketing": { "okta_groups": ["okta-marketing-all"], "slack_channel": "#marketing-team" }
+      },
+      "google_workspace_accounts": {},
+      "okta_group_memberships": {},
+      "slack_messages": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "google_workspace_accounts": {
+        "EMP-4471": { "email": "sofia.martinez@newco.io", "full_name": "Sofia Martinez" }
+      },
+      "okta_group_memberships": {
+        "EMP-4471": ["okta-eng-all", "okta-vpn-access"]
+      },
+      "slack_messages": [
+        { "channel": "#eng-team", "employee_id": "EMP-4471" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_department_provisioning_config", "args_contain": { "department": "Engineering" }, "order_sensitive": true },
+      { "tool": "provision_google_workspace_email", "args_contain": { "employee_id": "EMP-4471", "email": "sofia.martinez@newco.io" }, "order_sensitive": true },
+      { "tool": "add_okta_group", "args_contain": { "employee_id": "EMP-4471", "group": "okta-eng-all" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "employee_id": "EMP-4471", "group": "okta-vpn-access" }, "order_sensitive": false },
+      { "tool": "post_slack_message", "args_contain": { "channel": "#eng-team", "employee_id": "EMP-4471" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the email was provisioned, the correct Engineering Okta groups were added, and a welcome message was posted to #eng-team."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "An Okta group not listed in the Engineering provisioning config",
+        "A Slack channel other than #eng-team",
+        "A claim the employee was granted admin or superuser access"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Always resolve the department's Okta groups and Slack channel via get_department_provisioning_config — never guess them.",
+      "Only grant the Okta groups specified for the employee's department."
+    ],
+    "max_tool_calls": 8,
+    "forbidden_actions": [
+      "Granting an Okta group not listed in the Engineering provisioning config, such as an admin or finance group.",
+      "Posting the welcome message to any channel other than the department's configured channel."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Baseline happy-path onboarding task; verifies config-grounded provisioning rather than guessed groups/channels."
+  }
+}

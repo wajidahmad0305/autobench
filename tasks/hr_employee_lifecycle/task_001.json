@@ -1,0 +1,88 @@
+{
+  "task_id": "hr_employee_lifecycle.001",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "easy",
+  "description": "A new-hire form is submitted in BambooHR. The agent must create the employee record in Workday with the correct department and manager, generate a start-date checklist assigned to the manager, and add the new hire to the 'Welcomes' Slack channel for the week of their start date.",
+  "user_message": "New BambooHR new-hire form NHF-6612 just came in for Marcus Webb, employee ID EMP-6612. Please get him set up for his start date.",
+  "context": {
+    "system_prompt": "You are an HR onboarding agent. Read the new-hire form, create the Workday employee record with the correct department and manager, assign a start-date checklist to the manager (never to the new hire), and add the new hire to the correct week's Welcomes Slack channel — always resolve that channel via get_welcomes_channel_for_date, never guess it.",
+    "available_tools": [
+      "get_bamboohr_new_hire_form",
+      "create_workday_employee_record",
+      "generate_start_date_checklist",
+      "get_welcomes_channel_for_date",
+      "add_to_slack_channel"
+    ],
+    "initial_state": {
+      "bamboohr_new_hire_forms": {
+        "NHF-6612": {
+          "employee_id": "EMP-6612",
+          "full_name": "Marcus Webb",
+          "department": "Customer Success",
+          "manager_id": "EMP-2200",
+          "start_date": "2026-09-08"
+        }
+      },
+      "welcomes_channel_schedule": {
+        "2026-09-08": "#welcomes-sept-8"
+      },
+      "workday_employees": {},
+      "start_date_checklists": [],
+      "slack_channel_members": {
+        "#welcomes-sept-8": []
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_employees": {
+        "EMP-6612": { "full_name": "Marcus Webb", "department": "Customer Success", "manager_id": "EMP-2200" }
+      },
+      "start_date_checklists": [
+        { "employee_id": "EMP-6612", "assigned_to": "EMP-2200" }
+      ],
+      "slack_channel_members": {
+        "#welcomes-sept-8": ["EMP-6612"]
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_bamboohr_new_hire_form", "args_contain": { "form_id": "NHF-6612" }, "order_sensitive": true },
+      { "tool": "create_workday_employee_record", "args_contain": { "employee_id": "EMP-6612", "department": "Customer Success", "manager_id": "EMP-2200" }, "order_sensitive": true },
+      { "tool": "generate_start_date_checklist", "args_contain": { "employee_id": "EMP-6612", "assigned_to": "EMP-2200" }, "order_sensitive": false },
+      { "tool": "get_welcomes_channel_for_date", "args_contain": { "date": "2026-09-08" }, "order_sensitive": false },
+      { "tool": "add_to_slack_channel", "args_contain": { "channel": "#welcomes-sept-8", "employee_id": "EMP-6612" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the Workday record was created with the correct department and manager, the start-date checklist was assigned to the manager, and the new hire was added to the correct week's Welcomes channel."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A department or manager not present in the new-hire form",
+        "A Welcomes channel other than the one for the employee's actual start-date week",
+        "A claim the checklist was assigned to anyone other than the manager on record"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Always resolve the correct Welcomes channel via get_welcomes_channel_for_date — never guess it.",
+      "Assign the start-date checklist to the employee's manager, not to the employee."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Assigning the start-date checklist to the new hire instead of their manager.",
+      "Adding the new hire to a Welcomes channel for the wrong week."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Baseline happy-path onboarding task; verifies checklist assignment target and week-correct channel resolution."
+  }
+}
