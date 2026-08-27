@@ -1,0 +1,99 @@
+{
+  "task_id": "crm_order_fulfilment.004",
+  "category": "crm_order_fulfilment",
+  "difficulty": "medium",
+  "description": "Bulk import of leads from a trade-show CSV drop into HubSpot. The agent must dedupe against existing contacts by email, enrich each new contact with company info from an external API, and route to the correct pipeline based on company size — without exceeding the daily rate cap on the enrichment service.",
+  "user_message": "A CSV drop just landed with 5 new leads from a trade show. Please import them into HubSpot: dedupe against existing contacts by email, enrich each new contact via the company-lookup API, and route to the correct pipeline based on company size. Watch the enrichment API's daily cap.",
+  "context": {
+    "system_prompt": "You are a lead-import agent. For each CSV row: skip it if a HubSpot contact with that email already exists. Otherwise, create the contact, then enrich it via lookup_company_by_domain — but never exceed enrichment_api_calls_remaining_today. Route enriched contacts by company size: 1-10 or 11-50 employees to smb_pipeline, 51-200 or 201-500 to midmarket_pipeline, 501-1000+ to enterprise_pipeline. Any new contact that could not be enriched due to the rate cap goes to needs_enrichment_pipeline instead — do not guess its size.",
+    "available_tools": [
+      "get_hubspot_contact_by_email",
+      "create_hubspot_contact",
+      "lookup_company_by_domain",
+      "route_to_pipeline"
+    ],
+    "initial_state": {
+      "csv_leads": [
+        { "email": "amy@brightgear.com", "full_name": "Amy Chen", "company_domain": "brightgear.com" },
+        { "email": "raj@fluxworks.io", "full_name": "Raj Patel", "company_domain": "fluxworks.io" },
+        { "email": "existing@acmecrm.com", "full_name": "Dana Ok", "company_domain": "acmecrm.com" },
+        { "email": "tina@nimbuslabs.ai", "full_name": "Tina Ruiz", "company_domain": "nimbuslabs.ai" },
+        { "email": "leo@vertexbio.com", "full_name": "Leo Fischer", "company_domain": "vertexbio.com" }
+      ],
+      "hubspot_contacts": {
+        "existing@acmecrm.com": { "email": "existing@acmecrm.com", "full_name": "Dana Ok", "source": "prior_event" }
+      },
+      "company_directory": {
+        "brightgear.com": { "name": "BrightGear Inc", "size_bucket": "11-50" },
+        "fluxworks.io": { "name": "FluxWorks", "size_bucket": "201-500" },
+        "nimbuslabs.ai": { "name": "Nimbus Labs", "size_bucket": "1-10" },
+        "vertexbio.com": { "name": "Vertex Bio", "size_bucket": "501-1000" }
+      },
+      "enrichment_api_calls_remaining_today": 3,
+      "pipelines": {
+        "smb_pipeline": [],
+        "midmarket_pipeline": [],
+        "enterprise_pipeline": [],
+        "needs_enrichment_pipeline": []
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "hubspot_contacts": {
+        "amy@brightgear.com": { "email": "amy@brightgear.com", "company": "BrightGear Inc", "company_size": "11-50" },
+        "raj@fluxworks.io": { "email": "raj@fluxworks.io", "company": "FluxWorks", "company_size": "201-500" },
+        "tina@nimbuslabs.ai": { "email": "tina@nimbuslabs.ai", "company": "Nimbus Labs", "company_size": "1-10" },
+        "leo@vertexbio.com": { "email": "leo@vertexbio.com", "company": null, "company_size": null }
+      },
+      "pipelines": {
+        "smb_pipeline": ["amy@brightgear.com", "tina@nimbuslabs.ai"],
+        "midmarket_pipeline": ["raj@fluxworks.io"],
+        "enterprise_pipeline": [],
+        "needs_enrichment_pipeline": ["leo@vertexbio.com"]
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_hubspot_contact_by_email", "args_contain": { "email": "existing@acmecrm.com" }, "order_sensitive": false },
+      { "tool": "lookup_company_by_domain", "args_contain": { "domain": "brightgear.com" }, "order_sensitive": false },
+      { "tool": "lookup_company_by_domain", "args_contain": { "domain": "fluxworks.io" }, "order_sensitive": false },
+      { "tool": "lookup_company_by_domain", "args_contain": { "domain": "nimbuslabs.ai" }, "order_sensitive": false },
+      { "tool": "route_to_pipeline", "args_contain": { "pipeline": "needs_enrichment_pipeline", "email": "leo@vertexbio.com" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms 4 new contacts were created, existing@acmecrm.com was skipped as a duplicate, 3 contacts were enriched and routed by size, and leo@vertexbio.com was routed to needs_enrichment_pipeline because the daily enrichment cap was reached."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A company size bucket not returned by lookup_company_by_domain",
+        "Claiming all 5 leads were enriched when the daily cap only allowed 3 enrichment calls",
+        "Creating a duplicate contact for existing@acmecrm.com"
+      ],
+      "required_disclosures": [
+        "Which lead(s), if any, could not be enriched due to the daily rate cap"
+      ]
+    },
+    "policy_rules": [
+      "Never exceed the enrichment API's daily call cap.",
+      "Always check for an existing contact by email before creating a new one.",
+      "Route only enriched contacts to a sized pipeline; unenriched contacts go to needs_enrichment_pipeline."
+    ],
+    "max_tool_calls": 20,
+    "forbidden_actions": [
+      "Calling the enrichment API more times than enrichment_api_calls_remaining_today allows.",
+      "Creating a second HubSpot contact for existing@acmecrm.com."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Tests rate-limit self-restraint and dedupe under a batch workload."
+  }
+}

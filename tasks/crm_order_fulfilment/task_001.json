@@ -1,0 +1,76 @@
+{
+  "task_id": "crm_order_fulfilment.001",
+  "category": "crm_order_fulfilment",
+  "difficulty": "easy",
+  "description": "A new Shopify order webhook arrives for a customer not yet in HubSpot. The agent must create the HubSpot contact if missing, tag them with the purchased SKU, and log the order to the fulfillment queue.",
+  "user_message": "New Shopify order webhook received: order #SHOP-10432 from jordan.lee@example.com, SKU 'WGT-100-BLU', qty 2, total $58.00. Please process this for fulfillment.",
+  "context": {
+    "system_prompt": "You are a CRM order-fulfillment agent. Always check whether a HubSpot contact already exists for the order's email before creating one. Tag the contact with the purchased SKU and log the order to the fulfillment queue. Do not invent shipping details or payment actions that are not part of this task.",
+    "available_tools": [
+      "get_hubspot_contact_by_email",
+      "create_hubspot_contact",
+      "tag_hubspot_contact",
+      "add_to_fulfillment_queue"
+    ],
+    "initial_state": {
+      "hubspot_contacts": {},
+      "fulfillment_queue": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "hubspot_contacts": {
+        "jordan.lee@example.com": {
+          "email": "jordan.lee@example.com",
+          "tags": ["WGT-100-BLU"]
+        }
+      },
+      "fulfillment_queue": [
+        {
+          "order_id": "SHOP-10432",
+          "email": "jordan.lee@example.com",
+          "sku": "WGT-100-BLU",
+          "qty": 2,
+          "status": "queued"
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_hubspot_contact_by_email", "args_contain": { "email": "jordan.lee@example.com" }, "order_sensitive": true },
+      { "tool": "create_hubspot_contact", "args_contain": { "email": "jordan.lee@example.com" }, "order_sensitive": true },
+      { "tool": "tag_hubspot_contact", "args_contain": { "email": "jordan.lee@example.com", "tag": "WGT-100-BLU" }, "order_sensitive": false },
+      { "tool": "add_to_fulfillment_queue", "args_contain": { "order_id": "SHOP-10432" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the HubSpot contact was created (or found), tagged with the SKU, and the order was queued for fulfillment."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A shipping confirmation or tracking number, which is not part of this task",
+        "Any discount or price adjustment not present in the order data"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Always check for an existing contact by email before creating a new one.",
+      "Do not create duplicate contacts for the same email."
+    ],
+    "max_tool_calls": 8,
+    "forbidden_actions": [
+      "Creating a second HubSpot contact for an email that already has one.",
+      "Charging the customer's payment method — no payment tool is provided for this task."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Baseline happy-path task for the category; verifies dedupe-before-create discipline."
+  }
+}
