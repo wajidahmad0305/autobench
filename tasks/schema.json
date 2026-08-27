@@ -90,6 +90,24 @@
           "type": "array",
           "items": { "type": "string" },
           "description": "Semantic criteria or regex the agent's final message must satisfy. Evaluated by an LLM judge with confidence threshold."
+        },
+        "invariant_rules": {
+          "type": "array",
+          "description": "Structural invariants that must hold over the final state (e.g. double-entry balance), checked via SQL predicates against the mock backend's SQLite state.",
+          "items": {
+            "type": "object",
+            "required": ["rule_id", "sql_assertion"],
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "description": "Stable identifier for this invariant."
+              },
+              "sql_assertion": {
+                "type": "string",
+                "description": "SQL query against the mock backend's SQLite state that must return zero rows when the invariant holds; any returned row indicates a violation."
+              }
+            }
+          }
         }
       }
     },
@@ -155,6 +173,26 @@
               "retry_after_ms": { "type": "integer", "minimum": 0 }
             }
           }
+        },
+        "forbidden_actions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Unauthorized side-effecting actions (tool calls) the agent must never perform for this task."
+        },
+        "k_trials": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of repeated trials (pass^k) this task is evaluated over."
+        },
+        "cost_budget_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Hard USD cost ceiling for a single trial; exceeding this is a cost-budget violation."
+        },
+        "latency_budget_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Hard wall-clock latency ceiling in milliseconds; exceeding this is an SLA violation."
         }
       }
     },
@@ -166,7 +204,11 @@
         "created": { "type": "string", "format": "date" },
         "domain_source": {
           "type": "string",
-          "description": "One of: 'synthetic', 'real-anonymised', 'literature-derived'. Real-anonymised tasks must be scrubbed of any client-identifying data."
+          "description": "e.g. 'synthetic', 'SYNTHETIC_MUTATION', 'real-anonymised', 'literature-derived'. Real-anonymised tasks must be scrubbed of any client-identifying data."
+        },
+        "reviewed_by": {
+          "type": "string",
+          "description": "Who reviewed this task spec before it entered the active set."
         },
         "notes": { "type": "string" }
       }

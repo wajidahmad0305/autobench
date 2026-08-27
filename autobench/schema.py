@@ -33,6 +33,7 @@ class Provenance(BaseModel):
     author: str
     created: date
     domain_source: str
+    reviewed_by: str | None = None
     notes: str | None = None
 
 
@@ -54,12 +55,24 @@ class RequiredToolCall(BaseModel):
     order_sensitive: bool = False
 
 
+class InvariantRule(BaseModel):
+    """Mirrors an item of ``ground_truth.invariant_rules``: a structural invariant
+    over the final state, expressed as a SQL predicate that returns zero rows
+    when the invariant holds (any returned row indicates a violation)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rule_id: str
+    sql_assertion: str
+
+
 class GroundTruth(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     expected_final_state: dict[str, Any]
     required_tool_calls: list[RequiredToolCall] = Field(default_factory=list)
     acceptable_responses: list[str] = Field(default_factory=list)
+    invariant_rules: list[InvariantRule] = Field(default_factory=list)
 
 
 class HallucinationCheck(BaseModel):
@@ -89,6 +102,10 @@ class Reliability(BaseModel):
     expected_cost_range_usd: tuple[float, float] | None = None
     expected_latency_seconds: tuple[float, float] | None = None
     fault_injection_rules: list[FaultInjectionRule] = Field(default_factory=list)
+    forbidden_actions: list[str] = Field(default_factory=list)
+    k_trials: int | None = Field(default=None, ge=1)
+    cost_budget_usd: float | None = Field(default=None, ge=0)
+    latency_budget_ms: int | None = Field(default=None, ge=0)
 
 
 class TaskSpec(BaseModel):

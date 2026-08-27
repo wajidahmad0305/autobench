@@ -1,0 +1,83 @@
+{
+  "task_id": "financial_reconciliation.003",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "A Stripe payout notification arrives. The agent must verify the payout amount equals the sum of successful charges in the current settlement window, post the payout to the general ledger as a credit against the Stripe clearing account, and confirm the double-entry posting balances.",
+  "user_message": "Stripe payout PO-7742 just landed for settlement window SW-2026-08-26. Please verify it against the settled charges and post it to the GL.",
+  "context": {
+    "system_prompt": "You are a payout-reconciliation agent. Verify the payout amount equals the sum of only the successfully settled charges in its settlement window (exclude failed charges). Post the payout as a debit to cash and a credit to the Stripe clearing account. Confirm the posting balances — total debits must equal total credits for this transaction — before reporting success.",
+    "available_tools": [
+      "get_stripe_payout",
+      "list_settlement_charges",
+      "post_gl_entry",
+      "get_gl_balance"
+    ],
+    "initial_state": {
+      "stripe_payouts": {
+        "PO-7742": { "amount": 1840.00, "currency": "USD", "settlement_window_id": "SW-2026-08-26" }
+      },
+      "settlement_charges": {
+        "SW-2026-08-26": [
+          { "charge_id": "ch_1", "amount": 900.00, "status": "succeeded" },
+          { "charge_id": "ch_2", "amount": 940.00, "status": "succeeded" },
+          { "charge_id": "ch_3", "amount": 120.00, "status": "failed" }
+        ]
+      },
+      "gl_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "gl_entries": [
+        { "account": "cash", "debit": 1840.00, "credit": 0.00, "ref": "PO-7742" },
+        { "account": "stripe_clearing", "debit": 0.00, "credit": 1840.00, "ref": "PO-7742" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_stripe_payout", "args_contain": { "payout_id": "PO-7742" }, "order_sensitive": true },
+      { "tool": "list_settlement_charges", "args_contain": { "settlement_window_id": "SW-2026-08-26" }, "order_sensitive": true },
+      { "tool": "post_gl_entry", "args_contain": { "account": "cash", "ref": "PO-7742" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "stripe_clearing", "ref": "PO-7742" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the payout amount matches the sum of the two successful charges ($1,840.00, excluding the failed charge), states the GL entries posted, and confirms debits equal credits."
+    ],
+    "invariant_rules": [
+      {
+        "rule_id": "gl_double_entry_balance.PO-7742",
+        "sql_assertion": "SELECT ref FROM gl_entries WHERE ref = 'PO-7742' GROUP BY ref HAVING ROUND(SUM(debit) - SUM(credit), 2) != 0;"
+      }
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A payout amount that doesn't match the sum of successful charges",
+        "Including the failed charge (ch_3) in the settlement sum",
+        "A GL posting that does not balance"
+      ],
+      "required_disclosures": [
+        "Confirmation that debits equal credits for this posting"
+      ]
+    },
+    "policy_rules": [
+      "Only sum charges with status 'succeeded' when verifying the payout amount.",
+      "Do not post the payout to the GL if the settlement sum does not match the payout amount."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Posting an unbalanced GL entry (debit != credit) for this payout.",
+      "Including a failed charge in the settlement verification."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-27",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Introduces invariant_rules to check double-entry balance independent of exact field layout."
+  }
+}
