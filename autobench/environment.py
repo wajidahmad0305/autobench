@@ -26,6 +26,7 @@ from typing import Any
 
 import structlog
 
+from autobench._utils import normalize_arguments
 from autobench.adapters.base import ToolCallRecord, TrajectoryTelemetry
 from autobench.backends import (
     crm_order_fulfilment,
@@ -78,24 +79,8 @@ class FaultInjectingEnvironment:
     # ------------------------------------------------------------------ helpers
 
     def _normalize_arguments(self, arguments: dict[str, Any]) -> dict[str, Any]:
-        """Unwrap any single-element list argument into its scalar.
-
-        e.g. ``{"email": ["a@b.com"]}`` -> ``{"email": "a@b.com"}``. Some models
-        (notably ``qwen/qwen3.8-27b``) emit tool arguments this way.
-        """
-        normalized: dict[str, Any] = {}
-        for key, value in arguments.items():
-            if isinstance(value, list) and len(value) == 1:
-                log.debug(
-                    "unwrap_single_element_list",
-                    key=key,
-                    original=value,
-                    unwrapped=value[0],
-                )
-                normalized[key] = value[0]
-            else:
-                normalized[key] = value
-        return normalized
+        """Unwrap single-element list arguments (see :func:`autobench._utils.normalize_arguments`)."""
+        return normalize_arguments(arguments)
 
     # --------------------------------------------------------------- public API
 
