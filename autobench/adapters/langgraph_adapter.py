@@ -1,4 +1,4 @@
-"""Concrete :class:`BaseAgentAdapter` backed by LangGraph's ReAct agent.
+"""Concrete :class:`BaseAgentAdapter` backed by LangChain's ``create_agent``.
 
 A single :class:`LangGraphAdapter` drives *any* OpenAI-compatible chat
 endpoint. Gemini 2.5 Flash (via Google's OpenAI-compat layer) and Llama 3.3
@@ -12,7 +12,8 @@ require the LLM stack to be installed.
 from __future__ import annotations
 
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import structlog
 from langchain_core.tools import StructuredTool
@@ -24,7 +25,7 @@ log = structlog.get_logger(__name__)
 
 
 class LangGraphAdapter(BaseAgentAdapter):
-    """Run a task through ``create_react_agent`` against an OpenAI-compatible LLM."""
+    """Run a task through ``langchain.agents.create_agent`` against an OpenAI-compatible LLM."""
 
     def __init__(
         self,
@@ -88,9 +89,11 @@ class LangGraphAdapter(BaseAgentAdapter):
             start = time.perf_counter()
             is_error = False
             output: Any
+            # A failing tool must not abort the run: catch anything, hand the
+            # error text back to the model, and let the trajectory continue.
             try:
                 output = tool_executor(tool_name, kwargs)
-            except Exception as exc:  # surface to the model, keep the trajectory alive
+            except Exception as exc:  # noqa: BLE001
                 is_error = True
                 output = f"ERROR: {exc}"
                 log.debug("tool_call_exception", tool=tool_name, error=str(exc))
@@ -196,9 +199,11 @@ class LangGraphAdapter(BaseAgentAdapter):
         tool_executor: Callable[[str, dict[str, Any]], Any],
         telemetry: TrajectoryTelemetry,
     ) -> str:
+        from langchain.agents import create_agent
+        from langchain_core.messages import HumanMessage
+        from langchain_core.runnables import RunnableConfig
         from langchain_openai import ChatOpenAI
         from langgraph.errors import GraphRecursionError
-        from langgraph.prebuilt import create_react_agent
 
         log.info(
             "adapter_run_start",
@@ -222,17 +227,21 @@ class LangGraphAdapter(BaseAgentAdapter):
             log.error("llm_init_failed", model=self.model_name, error=str(exc))
             raise
 
-        agent = create_react_agent(llm, lc_tools)
+        agent = create_agent(llm, lc_tools)
 
         last_state: dict[str, Any] | None = None
         hit_limit = False
+        agent_input = {"messages": [HumanMessage(content=task_prompt)]}
+        config = RunnableConfig(recursion_limit=self._recursion_limit())
         start = time.perf_counter()
         try:
-            for chunk in agent.stream(
-                {"messages": [("user", task_prompt)]},
-                config={"recursion_limit": self._recursion_limit()},
-                stream_mode="values",
-            ):
+            # langchain types `stream`'s input as the internal InputAgentState
+            # TypedDict; the {"messages": [...]} form is the documented public
+            # contract and works at runtime.
+            stream = agent.stream(  # type: ignore[call-overload]
+                agent_input, config=config, stream_mode="values"
+            )
+            for chunk in stream:
                 last_state = chunk
         except GraphRecursionError:
             hit_limit = True

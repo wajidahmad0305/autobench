@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, Callable
-
 import pytest
 
 from autobench.adapters.base import BaseAgentAdapter, ToolCallRecord, TrajectoryTelemetry

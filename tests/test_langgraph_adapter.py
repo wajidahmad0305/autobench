@@ -9,11 +9,11 @@ from langchain_core.messages import AIMessage
 from autobench.adapters.base import TrajectoryTelemetry
 from autobench.adapters.langgraph_adapter import LangGraphAdapter
 
-DUMMY_KW = dict(
-    model_name="gemini-2.5-flash",
-    api_key="dummy-key",
-    base_url="https://example.invalid/v1",
-)
+DUMMY_KW = {
+    "model_name": "gemini-2.5-flash",
+    "api_key": "dummy-key",
+    "base_url": "https://example.invalid/v1",
+}
 
 
 def _tool_executor(name: str, args: dict[str, Any]) -> Any:
@@ -69,7 +69,7 @@ def test_tool_spec_conversion() -> None:
 class _FakeLLM(GenericFakeChatModel):
     """Fake chat model that returns a canned final answer and never calls tools."""
 
-    def bind_tools(self, tools: Any, **kwargs: Any) -> "_FakeLLM":
+    def bind_tools(self, tools: Any, **kwargs: Any) -> _FakeLLM:
         return self
 
 
