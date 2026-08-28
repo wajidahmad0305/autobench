@@ -54,7 +54,7 @@ autobench/
 
 ## Coding conventions
 
-- **Python 3.11+** with strict typing (`from __future__ import annotations`).
+- **Python 3.10+ with strict typing** (uses `from __future__ import annotations` so PEP 604 `X | None` syntax works via deferred evaluation). Every new .py file MUST begin with `from __future__ import annotations` as its first non-comment line.
 - **Pydantic v2** for schema validation and dataclasses. Task specs load via `TaskSpec.model_validate(json.loads(...))`.
 - **`ruff` + `mypy --strict`** — assume both run on save.
 - **No hidden state.** Every function that mutates state takes it as an explicit parameter and returns it. Global mutable state is forbidden.
