@@ -1,0 +1,30 @@
+{
+  "master_seed": 20260827,
+  "configurations": [
+    {
+      "config_id": "C1",
+      "model_name": "qwen/qwen3.8-27b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "api_key_env": "GROQ_API_KEY",
+      "temperature": 0.0,
+      "framework": "LangGraph"
+    },
+    {
+      "config_id": "C2",
+      "model_name": "openai/gpt-oss-120b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "api_key_env": "GROQ_API_KEY",
+      "temperature": 0.0,
+      "framework": "LangGraph"
+    }
+  ],
+  "task_pool": "tasks/",
+  "task_categories": [
+    "crm_order_fulfilment",
+    "financial_reconciliation",
+    "it_access_provisioning",
+    "hr_employee_lifecycle"
+  ],
+  "trials_per_task": 3,
+  "output_dir": "experiments/thesis_pilot/traces/"
+}

@@ -11,9 +11,9 @@ This work is an MS thesis (Riga Nordic University) with a **hard submission dead
 ## Current scope (pilot)
 
 - **20 tasks**, 5 per category × 4 categories: `crm_order_fulfilment`, `financial_reconciliation`, `it_access_provisioning`, `hr_employee_lifecycle`. (Supply chain category is deferred to future work.)
-- **2 configurations**: Gemini 2.5 Flash + LangGraph, Llama 3.3 70B (via Groq) + LangGraph.
+- **2 configurations**, both via Groq + LangGraph: `qwen/qwen3.8-27b` (frontier-tier) and `openai/gpt-oss-120b` (open-weight). (Originally scoped as Gemini 2.5 Flash + Llama 3.3 70B; both were retired from their free tiers before the pilot ran — see git history.)
 - **K = 3 trials** per (task × configuration) pair. Total: 120 trajectories.
-- **Zero API cost** — free tiers of Google AI Studio and Groq only.
+- **Zero API cost** — Groq free tier only. Requires `GROQ_API_KEY`; no `GOOGLE_API_KEY` needed.
 
 ## Repository layout
 
@@ -63,22 +63,23 @@ autobench/
 - **API keys via `.env`** — read with `python-dotenv`, never hardcoded.
 - **Logging via `structlog`** at INFO level for run progress, DEBUG for tool-call detail.
 
-## The two adapters
+## The two configurations
 
-Both use LangGraph for orchestration; only the underlying LLM client differs.
+Both use LangGraph for orchestration and the same Groq OpenAI-compatible endpoint;
+only `model` differs.
 
 ```python
-# Gemini adapter uses Google's OpenAI-compatibility layer:
+# C1 — frontier-tier:
 llm = ChatOpenAI(
-    model="gemini-2.5-flash",
-    api_key=os.environ["GOOGLE_API_KEY"],
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    model="qwen/qwen3.8-27b",
+    api_key=os.environ["GROQ_API_KEY"],
+    base_url="https://api.groq.com/openai/v1",
     temperature=0.0,
 )
 
-# Groq adapter uses the native Groq endpoint (OpenAI-compatible):
+# C2 — open-weight:
 llm = ChatOpenAI(
-    model="llama-3.3-70b-versatile",
+    model="openai/gpt-oss-120b",
     api_key=os.environ["GROQ_API_KEY"],
     base_url="https://api.groq.com/openai/v1",
     temperature=0.0,
@@ -90,8 +91,7 @@ Because both are OpenAI-compatible, a **single** `LangGraphAdapter` class parame
 ## Rate-limit awareness
 
 Free-tier rate limits will bind before financial cost does:
-- **Groq**: 30 RPM, 1,000 RPD, 100K tokens/day for Llama 3.3 70B.
-- **Google AI Studio**: ~1,500 RPD for Gemini 2.5 Flash.
+- **Groq free tier**: ~30 RPM and a shared daily token cap across both models. Both C1 and C2 draw on the same `GROQ_API_KEY` quota, so the runner must pace all 120 trajectories against one budget.
 
 The runner must implement:
 - **Exponential backoff** on HTTP 429 responses from providers (with jitter).
@@ -101,7 +101,7 @@ The runner must implement:
 ## Development priorities (in this order)
 
 1. `schema.py` + `loader.py` + `scripts/validate_tasks.py` — sanity-check task files load.
-2. `adapters/base.py` + `adapters/langgraph.py` — get one trajectory running end-to-end against Gemini on one task.
+2. `adapters/base.py` + `adapters/langgraph.py` — get one trajectory running end-to-end against Groq on one task.
 3. `environment.py` — mock backends for the four categories.
 4. `evaluator.py` — compute TSI, SEC, SLA on a finished trajectory.
 5. `runner.py` + `scripts/run_pilot.py` — orchestrate 120 trajectories.

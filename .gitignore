@@ -67,3 +67,9 @@ cache/
 
 # OS
 Thumbs.db
+
+smoke_output.txt
+smoke_both.txt
+list_models.py
+test_qwen.py
+
