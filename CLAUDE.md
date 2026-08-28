@@ -8,6 +8,12 @@ AutoBench evaluates LLM-based agents across six reliability dimensions that exis
 
 This work is an MS thesis (Riga Nordic University) with a **hard submission deadline in 7 days**. Speed and correctness are the priorities; polish is secondary.
 
+## Progress log
+
+- Day 1 complete: 20 task specifications validated (5 per category × 4 categories), schema formalized to match Ch 4 §4.1.
+- Day 2 complete: full harness — BaseAgentAdapter interface, LangGraphAdapter for OpenAI-compatible endpoints (both Groq configs verified via smoke test), FaultInjectingEnvironment with 5 fault types, deterministic mock backends for all 4 categories, evaluator computing all 6 reliability metrics. 30 unit tests all passing, mypy --strict clean, ruff clean.
+- Next: Day 3 Session 7 — benchmark runner (loops tasks × configs × trials, handles rate limits with exponential backoff and resume-from-checkpoint). Then kick off the 120-trajectory pilot run.
+
 ## Current scope (pilot)
 
 - **20 tasks**, 5 per category × 4 categories: `crm_order_fulfilment`, `financial_reconciliation`, `it_access_provisioning`, `hr_employee_lifecycle`. (Supply chain category is deferred to future work.)
