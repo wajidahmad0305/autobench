@@ -27,6 +27,12 @@ from typing import Any
 import structlog
 
 from autobench.adapters.base import ToolCallRecord, TrajectoryTelemetry
+from autobench.backends import (
+    crm_order_fulfilment,
+    financial_reconciliation,
+    hr_employee_lifecycle,
+    it_access_provisioning,
+)
 from autobench.schema import FaultInjectionRule, TaskSpec
 
 log = structlog.get_logger(__name__)
@@ -34,6 +40,14 @@ log = structlog.get_logger(__name__)
 # A TIMEOUT fault sleeps briefly before raising, so the trajectory sees a
 # non-zero latency the way a real hung call would.
 _TIMEOUT_SIMULATED_DELAY_S = 0.01
+
+# Category -> backend module (each exposes initialize() and dispatch()).
+_BACKENDS: dict[str, Any] = {
+    "crm_order_fulfilment": crm_order_fulfilment,
+    "financial_reconciliation": financial_reconciliation,
+    "it_access_provisioning": it_access_provisioning,
+    "hr_employee_lifecycle": hr_employee_lifecycle,
+}
 
 
 class FaultInjectingEnvironment:
@@ -56,6 +70,10 @@ class FaultInjectingEnvironment:
         self._rules_by_tool: dict[str, FaultInjectionRule] = {}
         for rule in task_spec.reliability.fault_injection_rules:
             self._rules_by_tool.setdefault(rule.tool_target, rule)
+
+        # Seed the in-memory DB for this task's category via its mock backend.
+        self._backend = _BACKENDS[task_spec.category]
+        self._backend.initialize(db_conn, task_spec)
 
     # ------------------------------------------------------------------ helpers
 
@@ -201,9 +219,9 @@ class FaultInjectingEnvironment:
     # --------------------------------------------------------------- dispatch
 
     def _dispatch_to_db(self, tool_name: str, arguments: dict[str, Any]) -> Any:
-        """Route to the per-category mock backend.
+        """Route the tool call to this task's per-category mock backend.
 
-        STUB for Session 4 — the real SQLite-backed backends for the four
-        categories land in Session 5. Until then every tool succeeds trivially.
+        Raises ``ValueError`` (from the backend) if the tool is unknown to the
+        category.
         """
-        return {"status": "ok", "stub": True, "tool": tool_name}
+        return self._backend.dispatch(self.db_conn, tool_name, arguments)
