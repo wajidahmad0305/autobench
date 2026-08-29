@@ -88,6 +88,23 @@ def _is_rate_limit(exc: BaseException) -> bool:
     return bool(getattr(response, "status_code", None) == 429)
 
 
+def _is_daily_quota(exc: BaseException) -> bool:
+    """True for a Groq *tokens-per-day* 429 (not a transient per-minute one).
+
+    A per-minute 429 clears in seconds; a TPD 429 needs the 00:00 UTC reset, so
+    the runner should halt rather than grind every remaining trajectory into a
+    back-off ERROR.
+    """
+    if not _is_rate_limit(exc):
+        return False
+    text = str(exc).lower()
+    return "per day" in text or "(tpd)" in text or "tokens per day" in text
+
+
+class _DailyQuotaExhausted(BaseException):
+    """Signals main() to stop the run cleanly and exit for a later resume."""
+
+
 def _retry_delay(exc: BaseException, attempt: int) -> float:
     response = getattr(exc, "response", None)
     headers = getattr(response, "headers", None)
@@ -296,6 +313,9 @@ def _run_trajectory_with_retries(
 
         if "exc" in box:
             exc = box["exc"]
+            if _is_daily_quota(exc):
+                log.error("daily_quota_exhausted", **common)
+                raise _DailyQuotaExhausted(str(exc))
             if _is_rate_limit(exc) and attempt < _MAX_RETRIES:
                 delay = _retry_delay(exc, attempt)
                 log.warning("rate_limited", attempt=attempt + 1, delay_s=delay, **common)
@@ -411,6 +431,14 @@ def run_pilot(
         print(f"\nStopped at trajectory {n}/{total}. Re-run to resume from checkpoint.")
         _print_summary(total, counts)
         return counts
+    except _DailyQuotaExhausted:
+        print(
+            f"\nDAILY TOKEN QUOTA EXHAUSTED at trajectory {n}/{total}. "
+            "Stopping cleanly; resume after the next 00:00 UTC reset."
+        )
+        counts["QUOTA_STOP"] = 1
+        _print_summary(total, counts)
+        return counts
 
     _print_summary(total, counts)
     return counts
@@ -430,8 +458,9 @@ def main() -> int:
     config: dict[str, Any] = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     traces_dir = REPO_ROOT / config["output_dir"]
     tasks_root = REPO_ROOT / config["task_pool"]
-    run_pilot(config, traces_dir, tasks_root, limit=args.limit)
-    return 0
+    counts = run_pilot(config, traces_dir, tasks_root, limit=args.limit)
+    # Exit 2 signals wait_and_resume that a daily-quota reset is needed.
+    return 2 if counts.get("QUOTA_STOP") else 0
 
 
 if __name__ == "__main__":
