@@ -33,7 +33,7 @@ class LangGraphAdapter(BaseAgentAdapter):
         api_key: str,
         base_url: str,
         temperature: float = 0.0,
-        max_iterations: int = 20,
+        max_iterations: int = 12,
     ) -> None:
         super().__init__(model_name=model_name, temperature=temperature)
         self.api_key = api_key
@@ -66,14 +66,10 @@ class LangGraphAdapter(BaseAgentAdapter):
         properties: dict[str, Any] = parameters.get("properties", {}) or {}
         required = set(parameters.get("required", []) or [])
         fields: dict[str, Any] = {}
-        for field_name, field_spec in properties.items():
-            field_desc = ""
-            if isinstance(field_spec, dict):
-                field_desc = field_spec.get("description", "") or ""
+        for field_name in properties:
             default = ... if field_name in required else None
             # Loose typing: the fault-injection layer validates real semantics.
             fields[field_name] = (Any, default)
-            _ = field_desc  # description is informational only; kept for clarity
         model_name = f"{name.strip().replace(' ', '_') or 'tool'}_Args"
         return create_model(model_name, **fields)
 
@@ -243,6 +239,9 @@ class LangGraphAdapter(BaseAgentAdapter):
             )
             for chunk in stream:
                 last_state = chunk
+                # Update token usage live so a runner can enforce a token cap
+                # mid-trajectory.
+                self._record_token_usage(last_state, telemetry)
         except GraphRecursionError:
             hit_limit = True
             log.warning(

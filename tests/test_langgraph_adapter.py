@@ -25,7 +25,7 @@ def test_adapter_instantiates() -> None:
 
     assert adapter.model_name == "gemini-2.5-flash"
     assert adapter.temperature == 0.0
-    assert adapter.max_iterations == 20
+    assert adapter.max_iterations == 12
     assert repr(adapter) == "LangGraphAdapter(model_name='gemini-2.5-flash')"
 
 

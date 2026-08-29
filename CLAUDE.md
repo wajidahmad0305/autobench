@@ -17,7 +17,7 @@ This work is an MS thesis (Riga Nordic University) with a **hard submission dead
 ## Current scope (pilot)
 
 - **20 tasks**, 5 per category × 4 categories: `crm_order_fulfilment`, `financial_reconciliation`, `it_access_provisioning`, `hr_employee_lifecycle`. (Supply chain category is deferred to future work.)
-- **2 configurations**, both via Groq + LangGraph: `qwen/qwen3.8-27b` (frontier-tier) and `openai/gpt-oss-120b` (open-weight). (Originally scoped as Gemini 2.5 Flash + Llama 3.3 70B; both were retired from their free tiers before the pilot ran — see git history.)
+- **2 configurations**, both via Groq + LangGraph: C1 `openai/gpt-oss-20b` and C2 `openai/gpt-oss-120b` — a within-family 20B-vs-120B capability comparison. (Originally scoped as Gemini 2.5 Flash + Llama 3.3 70B, then C1 = `qwen/qwen3.8-27b`; the Gemini/Llama free tiers were retired, and qwen was dropped after it failed to follow tool schemas — truncated ID prefixes, looped to max_iterations. No non-qwen frontier model — Kimi, DeepSeek, Llama-70B+ — is available on the Groq free tier; `groq/compound` rejects function calling. See git history.)
 - **K = 3 trials** per (task × configuration) pair. Total: 120 trajectories.
 - **Zero API cost** — Groq free tier only. Requires `GROQ_API_KEY`; no `GOOGLE_API_KEY` needed.
 
@@ -75,15 +75,15 @@ Both use LangGraph for orchestration and the same Groq OpenAI-compatible endpoin
 only `model` differs.
 
 ```python
-# C1 — frontier-tier:
+# C1 — smaller:
 llm = ChatOpenAI(
-    model="qwen/qwen3.8-27b",
+    model="openai/gpt-oss-20b",
     api_key=os.environ["GROQ_API_KEY"],
     base_url="https://api.groq.com/openai/v1",
     temperature=0.0,
 )
 
-# C2 — open-weight:
+# C2 — larger:
 llm = ChatOpenAI(
     model="openai/gpt-oss-120b",
     api_key=os.environ["GROQ_API_KEY"],

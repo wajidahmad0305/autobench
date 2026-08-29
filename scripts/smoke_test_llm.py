@@ -29,6 +29,7 @@ from dotenv import load_dotenv
 
 from autobench.adapters.base import TrajectoryTelemetry
 from autobench.adapters.langgraph_adapter import LangGraphAdapter
+from autobench.backends import tool_registry
 from autobench.schema import TaskSpec, load_task
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -51,27 +52,11 @@ def _load_env() -> None:
 
 
 def _tool_specs_from_task(task: TaskSpec) -> list[dict[str, Any]]:
-    """Synthesize OpenAI-style tool spec dicts from the task's available_tools.
-
-    The repo has no shared tool registry yet, so we derive each tool's argument
-    names from ``ground_truth.required_tool_calls`` where available and fall back
-    to a free-form object otherwise.
-    """
-    arg_names: dict[str, set[str]] = {}
-    for call in task.ground_truth.required_tool_calls:
-        arg_names.setdefault(call.tool, set()).update(call.args_contain.keys())
-
-    specs: list[dict[str, Any]] = []
-    for name in task.context.available_tools:
-        properties = {key: {"type": "string"} for key in sorted(arg_names.get(name, set()))}
-        specs.append(
-            {
-                "name": name,
-                "description": f"{name.replace('_', ' ')} (mock backend).",
-                "parameters": {"type": "object", "properties": properties},
-            }
-        )
-    return specs
+    """Full JSON Schema for every tool the task exposes, from the tool registry."""
+    return [
+        tool_registry.get_tool_schema(task.category, tool_name)
+        for tool_name in task.context.available_tools
+    ]
 
 
 def _make_mock_executor() -> Any:

@@ -39,7 +39,7 @@
       "stripe_refunds": [
         {
           "payment_intent_id": "pi_9981abc",
-          "amount": 84.00,
+          "amount": 8400,
           "currency": "USD",
           "order_id": "SHOP-9981"
         }
