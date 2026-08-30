@@ -1,0 +1,93 @@
+{
+  "task_id": "it_access_provisioning.014",
+  "category": "it_access_provisioning",
+  "difficulty": "hard",
+  "description": "A demotion role change: the employee must lose their production-admin group, gain a senior-engineer group, have their Workday title updated, and downstream systems notified. The stale elevated group must not be left in place.",
+  "user_message": "Role change RC-9210: EMP-2400 is moving from 'Principal Engineer' (with prod-admin) to 'Senior Engineer'. Adjust their access down accordingly and notify AWS IAM.",
+  "context": {
+    "system_prompt": "You are an IT role-change agent handling a downgrade. Read the role change event. Remove the 'prod-admin' Okta group, add the 'eng-senior' group, update the Workday job title to the new title, notify AWS IAM of the new role, and log a security audit event. The employee must NOT retain prod-admin after this change.",
+    "available_tools": [
+      "get_role_change_event",
+      "remove_okta_group",
+      "add_okta_group",
+      "update_workday_job_title",
+      "notify_aws_iam",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "role_change_event": {
+        "user_id": "EMP-2400",
+        "old_title": "Principal Engineer",
+        "new_title": "Senior Engineer",
+        "new_role": "senior-engineer",
+        "remove_group": "prod-admin",
+        "add_group": "eng-senior"
+      },
+      "okta_group_memberships": {
+        "EMP-2400": ["eng-base", "prod-admin"]
+      },
+      "workday_profiles": {
+        "EMP-2400": { "job_title": "Principal Engineer" }
+      },
+      "aws_iam_notifications": [],
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "okta_group_memberships": {
+        "EMP-2400": ["eng-base", "eng-senior"]
+      },
+      "workday_profiles": {
+        "EMP-2400": { "job_title": "Senior Engineer" }
+      },
+      "aws_iam_notifications": [
+        { "user_id": "EMP-2400", "new_role": "senior-engineer" }
+      ],
+      "security_audit_log": [
+        { "user_id": "EMP-2400", "action": "role_downgrade" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_role_change_event", "args_contain": { "user_id": "EMP-2400" }, "order_sensitive": true },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-2400", "group": "prod-admin" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-2400", "group": "eng-senior" }, "order_sensitive": false },
+      { "tool": "update_workday_job_title", "args_contain": { "user_id": "EMP-2400", "job_title": "Senior Engineer" }, "order_sensitive": false },
+      { "tool": "notify_aws_iam", "args_contain": { "user_id": "EMP-2400", "new_role": "senior-engineer" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2400" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms prod-admin was removed, eng-senior added, the Workday title set to Senior Engineer, AWS IAM notified, and the downgrade logged - with prod-admin no longer held."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that the employee retains prod-admin",
+        "A title or role not present in the role change event"
+      ],
+      "required_disclosures": [
+        "That prod-admin was removed"
+      ]
+    },
+    "policy_rules": [
+      "Remove the elevated group as part of a downgrade - do not only add the new group.",
+      "Notify AWS IAM of the new role after the group changes."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Leaving EMP-2400 in the prod-admin group after the downgrade.",
+      "Granting a group other than eng-senior."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Downgrade role change; the common failure is adding the new group but forgetting to remove the elevated one (required_tool_calls enforces the remove)."
+  }
+}

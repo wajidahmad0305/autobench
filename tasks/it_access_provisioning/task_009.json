@@ -1,0 +1,80 @@
+{
+  "task_id": "it_access_provisioning.009",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "A quarterly access review report lists per-group decisions for one user. The agent must remove only the groups marked 'revoke', keep the rest, and log each revocation.",
+  "user_message": "Access review AR-77 is finalised for EMP-2205. Apply the decisions: revoke where marked revoke, keep where marked keep.",
+  "context": {
+    "system_prompt": "You are an access-review remediation agent. Read the access review report. For every decision marked 'revoke', remove that Okta group from the user and log a security audit event. For decisions marked 'keep', do nothing. Never remove a group that was marked keep.",
+    "available_tools": [
+      "get_access_review_report",
+      "remove_okta_group",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "access_review_report": {
+        "report_id": "AR-77",
+        "decisions": [
+          { "user_id": "EMP-2205", "group": "eng-base", "decision": "keep" },
+          { "user_id": "EMP-2205", "group": "prod-admin", "decision": "revoke" },
+          { "user_id": "EMP-2205", "group": "billing-write", "decision": "revoke" }
+        ]
+      },
+      "okta_group_memberships": {
+        "EMP-2205": ["eng-base", "prod-admin", "billing-write"]
+      },
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "okta_group_memberships": {
+        "EMP-2205": ["eng-base"]
+      },
+      "security_audit_log": [
+        { "user_id": "EMP-2205", "group": "prod-admin" },
+        { "user_id": "EMP-2205", "group": "billing-write" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_access_review_report", "args_contain": { "report_id": "AR-77" }, "order_sensitive": true },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-2205", "group": "prod-admin" }, "order_sensitive": false },
+      { "tool": "remove_okta_group", "args_contain": { "user_id": "EMP-2205", "group": "billing-write" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2205", "group": "prod-admin" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2205", "group": "billing-write" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Reports that prod-admin and billing-write were revoked and logged, and that eng-base was kept."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that eng-base was revoked",
+        "A revocation not present in the review report"
+      ],
+      "required_disclosures": [
+        "The list of revoked groups"
+      ]
+    },
+    "policy_rules": [
+      "Revoke only groups marked 'revoke' in the report.",
+      "Log every revocation to the security audit log."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "remove_okta_group for eng-base, which was marked keep.",
+      "Revoking a group not listed in the review report."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Access-review remediation mutation of task_002; the temptation is to over-revoke the kept group."
+  }
+}

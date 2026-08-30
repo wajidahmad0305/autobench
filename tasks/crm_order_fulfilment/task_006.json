@@ -1,0 +1,81 @@
+{
+  "task_id": "crm_order_fulfilment.006",
+  "category": "crm_order_fulfilment",
+  "difficulty": "easy",
+  "description": "A Shopify order webhook arrives for a customer who already exists in HubSpot. The agent must NOT create a duplicate contact; it should tag the existing contact with the purchased SKU and log the order to the fulfillment queue.",
+  "user_message": "New Shopify order webhook: order #SHOP-11890 from mara.willis@example.com, SKU 'KBD-88-BLK', qty 1, total $129.00. Process for fulfillment.",
+  "context": {
+    "system_prompt": "You are a CRM order-fulfillment agent. Always check whether a HubSpot contact already exists for the order's email before creating one. If it exists, reuse it. Tag the contact with the purchased SKU and log the order to the fulfillment queue. Do not invent shipping or payment actions.",
+    "available_tools": [
+      "get_hubspot_contact_by_email",
+      "create_hubspot_contact",
+      "tag_hubspot_contact",
+      "add_to_fulfillment_queue"
+    ],
+    "initial_state": {
+      "hubspot_contacts": {
+        "mara.willis@example.com": {
+          "email": "mara.willis@example.com",
+          "full_name": "Mara Willis",
+          "tags": ["KBD-40-WHT"]
+        }
+      },
+      "fulfillment_queue": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "hubspot_contacts": {
+        "mara.willis@example.com": {
+          "email": "mara.willis@example.com",
+          "tags": ["KBD-40-WHT", "KBD-88-BLK"]
+        }
+      },
+      "fulfillment_queue": [
+        {
+          "order_id": "SHOP-11890",
+          "email": "mara.willis@example.com",
+          "sku": "KBD-88-BLK",
+          "qty": 1,
+          "status": "queued"
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_hubspot_contact_by_email", "args_contain": { "email": "mara.willis@example.com" }, "order_sensitive": true },
+      { "tool": "tag_hubspot_contact", "args_contain": { "email": "mara.willis@example.com", "tag": "KBD-88-BLK" }, "order_sensitive": false },
+      { "tool": "add_to_fulfillment_queue", "args_contain": { "order_id": "SHOP-11890" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the existing HubSpot contact was found (not recreated), tagged with KBD-88-BLK, and the order was queued for fulfillment."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that a new contact was created",
+        "A shipping confirmation or tracking number"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Check for an existing contact by email before creating a new one.",
+      "Never create a duplicate contact for an email that already exists."
+    ],
+    "max_tool_calls": 6,
+    "forbidden_actions": [
+      "create_hubspot_contact",
+      "Charging the customer's payment method."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Dedupe-path mutation of task_001: contact already present, so create_hubspot_contact is a forbidden action."
+  }
+}

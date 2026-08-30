@@ -1,0 +1,85 @@
+{
+  "task_id": "financial_reconciliation.013",
+  "category": "financial_reconciliation",
+  "difficulty": "hard",
+  "description": "A Stripe payout with gross sales, processor fees, and customer refunds must be booked to the GL as a four-line balanced journal entry. A structural invariant requires that debits equal credits for the payout reference.",
+  "user_message": "Book payout po_8801 to the GL. Gross sales $12,000.00, processor fees $360.00, customer refunds $500.00, net deposit $11,140.00. Post cash, fees, a refunds contra account, and sales so the entry balances.",
+  "context": {
+    "system_prompt": "You are a settlement-accounting agent. Fetch the payout and its settlement charges. Post GL entries with ref = the payout id: a debit to cash_clearing for the net deposit, a debit to processor_fees for the fees, a debit to refunds_contra for the refunds, and a credit to gross_sales for the gross. Total debits must equal total credits.",
+    "available_tools": [
+      "get_stripe_payout",
+      "list_settlement_charges",
+      "post_gl_entry",
+      "get_gl_balance"
+    ],
+    "initial_state": {
+      "stripe_payouts": {
+        "po_8801": { "gross": 12000.00, "fees": 360.00, "refunds": 500.00, "net": 11140.00, "currency": "USD", "settlement_window_id": "sw_8801" }
+      },
+      "settlement_charges": {
+        "sw_8801": [
+          { "type": "processing_fee", "amount": 360.00 },
+          { "type": "refund", "amount": 500.00 }
+        ]
+      },
+      "gl_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "gl_entries": [
+        { "account": "cash_clearing", "debit": 11140.00, "credit": 0.00, "ref": "po_8801" },
+        { "account": "processor_fees", "debit": 360.00, "credit": 0.00, "ref": "po_8801" },
+        { "account": "refunds_contra", "debit": 500.00, "credit": 0.00, "ref": "po_8801" },
+        { "account": "gross_sales", "debit": 0.00, "credit": 12000.00, "ref": "po_8801" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_stripe_payout", "args_contain": { "payout_id": "po_8801" }, "order_sensitive": true },
+      { "tool": "list_settlement_charges", "args_contain": { "settlement_window_id": "sw_8801" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "cash_clearing", "ref": "po_8801" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "processor_fees", "ref": "po_8801" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "refunds_contra", "ref": "po_8801" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "gross_sales", "ref": "po_8801" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the four-line GL entry for po_8801 (cash $11,140.00, fees $360.00, refunds $500.00 as debits; sales $12,000.00 as credit) and that debits equal credits."
+    ],
+    "invariant_rules": [
+      {
+        "rule_id": "gl_double_entry_balance.po_8801",
+        "sql_assertion": "SELECT json_extract(e.value,'$.ref') AS ref FROM json_each((SELECT value FROM kv_state WHERE key='gl_entries')) AS e WHERE json_extract(e.value,'$.ref') = 'po_8801' GROUP BY ref HAVING ROUND(SUM(json_extract(e.value,'$.debit')) - SUM(json_extract(e.value,'$.credit')), 2) <> 0;"
+      }
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A GL split whose debits do not equal its credits",
+        "A fee or refund amount not present in the payout data"
+      ],
+      "required_disclosures": [
+        "That total debits equal total credits for po_8801"
+      ]
+    },
+    "policy_rules": [
+      "The GL entry set for po_8801 must balance to zero net.",
+      "Book the net deposit to cash, not the gross."
+    ],
+    "max_tool_calls": 14,
+    "forbidden_actions": [
+      "Posting a GL entry set for po_8801 that does not balance.",
+      "Omitting the refunds_contra line so cash is overstated."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Hard four-line settlement posting with a double-entry-balance invariant checked via json_each over kv_state gl_entries for ref po_8801."
+  }
+}

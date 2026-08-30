@@ -1,0 +1,92 @@
+{
+  "task_id": "hr_employee_lifecycle.013",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "hard",
+  "description": "Process an approved bonus batch: for every employee on the list, post the bonus to payroll, update the compensation history, and send the notification email. A structural invariant requires that the payroll-entry count equals the notification count.",
+  "user_message": "Run the approved bonus batch BB-8801: post each bonus to payroll, update comp history, and email each recipient. Nobody gets a payroll entry without a notification.",
+  "context": {
+    "system_prompt": "You are a payroll operations agent. Read the approved bonus list. For EACH employee on the list, do all three of: post_bonus_to_payroll, update_compensation_history, and send_bonus_notification_email, using the employee's approved amount. Every employee who gets a payroll entry must also get a notification - the two counts must match exactly.",
+    "available_tools": [
+      "get_approved_bonus_list",
+      "post_bonus_to_payroll",
+      "update_compensation_history",
+      "send_bonus_notification_email"
+    ],
+    "initial_state": {
+      "approved_bonus_list": {
+        "batch_id": "BB-8801",
+        "employees": [
+          { "employee_id": "EMP-7500", "amount": 4000 },
+          { "employee_id": "EMP-7501", "amount": 2500 }
+        ]
+      },
+      "workday_payroll_bonus_entries": [],
+      "compensation_history_updates": [],
+      "bonus_notifications_sent": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_payroll_bonus_entries": [
+        { "employee_id": "EMP-7500", "amount": 4000 },
+        { "employee_id": "EMP-7501", "amount": 2500 }
+      ],
+      "compensation_history_updates": [
+        { "employee_id": "EMP-7500", "bonus_amount": 4000 },
+        { "employee_id": "EMP-7501", "bonus_amount": 2500 }
+      ],
+      "bonus_notifications_sent": [
+        { "employee_id": "EMP-7500" },
+        { "employee_id": "EMP-7501" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_approved_bonus_list", "args_contain": { "batch_id": "BB-8801" }, "order_sensitive": true },
+      { "tool": "post_bonus_to_payroll", "args_contain": { "employee_id": "EMP-7500", "amount": 4000 }, "order_sensitive": false },
+      { "tool": "post_bonus_to_payroll", "args_contain": { "employee_id": "EMP-7501", "amount": 2500 }, "order_sensitive": false },
+      { "tool": "update_compensation_history", "args_contain": { "employee_id": "EMP-7500", "bonus_amount": 4000 }, "order_sensitive": false },
+      { "tool": "update_compensation_history", "args_contain": { "employee_id": "EMP-7501", "bonus_amount": 2500 }, "order_sensitive": false },
+      { "tool": "send_bonus_notification_email", "args_contain": { "employee_id": "EMP-7500" }, "order_sensitive": false },
+      { "tool": "send_bonus_notification_email", "args_contain": { "employee_id": "EMP-7501" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms both EMP-7500 ($4,000) and EMP-7501 ($2,500) had bonuses posted to payroll, comp history updated, and notifications sent, with payroll entries and notifications in one-to-one correspondence."
+    ],
+    "invariant_rules": [
+      {
+        "rule_id": "bonus_payroll_notification_count_match.BB-8801",
+        "sql_assertion": "SELECT 1 WHERE (SELECT json_array_length(value) FROM kv_state WHERE key='workday_payroll_bonus_entries') <> (SELECT json_array_length(value) FROM kv_state WHERE key='bonus_notifications_sent');"
+      }
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A bonus amount not on the approved list",
+        "A claim that all notifications were sent when a payroll entry has no matching notification"
+      ],
+      "required_disclosures": [
+        "That every payroll entry has a matching notification"
+      ]
+    },
+    "policy_rules": [
+      "Every employee who gets a payroll bonus entry must also get a notification email.",
+      "Use each employee's approved amount from the list."
+    ],
+    "max_tool_calls": 16,
+    "forbidden_actions": [
+      "Posting a payroll bonus for an employee without sending their notification.",
+      "Paying an amount different from the approved list."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Hard bonus-batch task with a count-parity invariant (payroll entries == notifications) checked via json_array_length over kv_state."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "task_id": "hr_employee_lifecycle.006",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "easy",
+  "description": "A BambooHR new-hire form is ready. The agent must read it and create the corresponding Workday employee record with the name, department, and manager from the form.",
+  "user_message": "New-hire form NH-4501 is signed off. Please create the Workday record for this hire.",
+  "context": {
+    "system_prompt": "You are an HR onboarding agent. Read the BambooHR new-hire form and create a Workday employee record using the employee id, full name, department, and manager id from the form. Do not invent any field that is not on the form.",
+    "available_tools": [
+      "get_bamboohr_new_hire_form",
+      "create_workday_employee_record"
+    ],
+    "initial_state": {
+      "bamboohr_new_hire_forms": {
+        "NH-4501": {
+          "employee_id": "EMP-7201",
+          "full_name": "Ingrid Sorensen",
+          "department": "Finance",
+          "manager_id": "EMP-9001",
+          "start_date": "2026-09-07"
+        }
+      },
+      "workday_employees": {}
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_employees": {
+        "EMP-7201": {
+          "full_name": "Ingrid Sorensen",
+          "department": "Finance",
+          "manager_id": "EMP-9001"
+        }
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_bamboohr_new_hire_form", "args_contain": { "form_id": "NH-4501" }, "order_sensitive": true },
+      { "tool": "create_workday_employee_record", "args_contain": { "employee_id": "EMP-7201", "full_name": "Ingrid Sorensen", "department": "Finance", "manager_id": "EMP-9001" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms a Workday record was created for EMP-7201 (Ingrid Sorensen), Finance, reporting to EMP-9001."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A department, manager, or name not present on the new-hire form",
+        "A claim that payroll or equity was set up"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Use only the fields present on the new-hire form.",
+      "Create exactly one Workday record for this hire."
+    ],
+    "max_tool_calls": 5,
+    "forbidden_actions": [
+      "Creating a Workday record with a department not on the form.",
+      "Creating more than one record for EMP-7201."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Minimal form-to-Workday-record mutation of task_001."
+  }
+}

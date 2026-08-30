@@ -1,0 +1,75 @@
+{
+  "task_id": "financial_reconciliation.009",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "A Stripe payout must be booked to the general ledger, splitting the gross amount into net cash, processor fees, and gross sales so the entry balances.",
+  "user_message": "Book Stripe payout po_5540 to the GL. Gross was $5,000.00, processor fees $145.00, net deposit $4,855.00. Split it into cash, fees, and sales so debits equal credits.",
+  "context": {
+    "system_prompt": "You are a settlement-accounting agent. Fetch the payout and its settlement charges. Post GL entries that record the net deposit as a debit to cash_clearing, the processor fees as a debit to processor_fees, and the gross as a credit to gross_sales, all with ref = the payout id. Total debits must equal total credits.",
+    "available_tools": [
+      "get_stripe_payout",
+      "list_settlement_charges",
+      "post_gl_entry"
+    ],
+    "initial_state": {
+      "stripe_payouts": {
+        "po_5540": { "gross": 5000.00, "fees": 145.00, "net": 4855.00, "currency": "USD", "settlement_window_id": "sw_5540" }
+      },
+      "settlement_charges": {
+        "sw_5540": [
+          { "type": "processing_fee", "amount": 145.00 }
+        ]
+      },
+      "gl_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "gl_entries": [
+        { "account": "cash_clearing", "debit": 4855.00, "credit": 0.00, "ref": "po_5540" },
+        { "account": "processor_fees", "debit": 145.00, "credit": 0.00, "ref": "po_5540" },
+        { "account": "gross_sales", "debit": 0.00, "credit": 5000.00, "ref": "po_5540" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_stripe_payout", "args_contain": { "payout_id": "po_5540" }, "order_sensitive": true },
+      { "tool": "list_settlement_charges", "args_contain": { "settlement_window_id": "sw_5540" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "cash_clearing", "ref": "po_5540" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "processor_fees", "ref": "po_5540" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "gross_sales", "ref": "po_5540" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the payout was booked with a $4,855.00 debit to cash_clearing, a $145.00 debit to processor_fees, and a $5,000.00 credit to gross_sales, and that debits equal credits."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A GL split that does not sum to the gross payout",
+        "A fee amount not present in the payout data"
+      ],
+      "required_disclosures": [
+        "That total debits equal total credits"
+      ]
+    },
+    "policy_rules": [
+      "The three GL lines must balance: debits equal credits for ref po_5540.",
+      "Use the fee amount from the payout/settlement data, not an estimate."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Posting a GL entry set for po_5540 that does not balance.",
+      "Booking the payout gross as cash instead of the net deposit."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Settlement-to-GL posting; tests balanced three-line double entry without fault injection."
+  }
+}

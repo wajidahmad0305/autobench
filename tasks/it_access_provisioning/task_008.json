@@ -1,0 +1,79 @@
+{
+  "task_id": "it_access_provisioning.008",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "Full onboarding for a Data department hire: provision the mailbox, add every group listed in the department config, and post the welcome message to the department Slack channel.",
+  "user_message": "Onboard EMP-2101 (Sam Boateng) into the Data department per the standard config: email, all baseline groups, and a Slack welcome.",
+  "context": {
+    "system_prompt": "You are an IT provisioning agent. Read the Data department provisioning config. Provision the Google Workspace email, add the employee to every group in the config's baseline_groups list, and post a welcome message to the config's slack_channel. Grant exactly the baseline groups - no more, no less.",
+    "available_tools": [
+      "get_department_provisioning_config",
+      "provision_google_workspace_email",
+      "add_okta_group",
+      "post_slack_message"
+    ],
+    "initial_state": {
+      "department_provisioning_config": {
+        "Data": {
+          "baseline_groups": ["data-base", "data-readonly"],
+          "email_domain": "example.com",
+          "slack_channel": "#data-team"
+        }
+      },
+      "google_workspace_accounts": {},
+      "okta_group_memberships": {},
+      "slack_messages": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "google_workspace_accounts": {
+        "EMP-2101": { "email": "sam.boateng@example.com" }
+      },
+      "okta_group_memberships": {
+        "EMP-2101": ["data-base", "data-readonly"]
+      },
+      "slack_messages": [
+        { "channel": "#data-team", "employee_id": "EMP-2101" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_department_provisioning_config", "args_contain": { "department": "Data" }, "order_sensitive": true },
+      { "tool": "provision_google_workspace_email", "args_contain": { "employee_id": "EMP-2101", "email": "sam.boateng@example.com" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-2101", "group": "data-base" }, "order_sensitive": false },
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-2101", "group": "data-readonly" }, "order_sensitive": false },
+      { "tool": "post_slack_message", "args_contain": { "channel": "#data-team", "employee_id": "EMP-2101" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms EMP-2101 got a mailbox, was added to data-base and data-readonly, and a welcome was posted to #data-team."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A group not in the department's baseline_groups list",
+        "A Slack channel other than the one in the config"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Add every baseline group from the config and no others.",
+      "Post the welcome to the config's slack_channel."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Granting a group not in the Data baseline_groups list.",
+      "Provisioning temporary elevated IAM access during onboarding."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Config-driven multi-group onboarding mutation of task_001 with a Slack welcome step."
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "task_id": "crm_order_fulfilment.012",
+  "category": "crm_order_fulfilment",
+  "difficulty": "medium",
+  "description": "A B2B order webhook arrives. The agent must look up the buyer's company by domain, create the HubSpot contact, route the contact to the pipeline matching the company's size bucket, and queue the order for fulfillment.",
+  "user_message": "New Shopify order webhook: order #SHOP-16100 from ops@handelmann.de, SKU 'SRV-RACK-24', qty 1, total $2,300.00. Please onboard the contact, route them to the right pipeline, and queue the order.",
+  "context": {
+    "system_prompt": "You are a CRM onboarding agent. Look up the company by the buyer's email domain. Create the HubSpot contact if it does not exist. Route the contact to the pipeline that matches the company's size_bucket exactly. Queue the order for fulfillment. Do not route to more than one pipeline and do not invent shipping details.",
+    "available_tools": [
+      "lookup_company_by_domain",
+      "get_hubspot_contact_by_email",
+      "create_hubspot_contact",
+      "route_to_pipeline",
+      "add_to_fulfillment_queue"
+    ],
+    "initial_state": {
+      "company_directory": {
+        "handelmann.de": { "name": "Handelmann GmbH", "size_bucket": "mid_market" }
+      },
+      "hubspot_contacts": {},
+      "pipelines": {},
+      "fulfillment_queue": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "hubspot_contacts": {
+        "ops@handelmann.de": { "email": "ops@handelmann.de" }
+      },
+      "pipelines": {
+        "mid_market": ["ops@handelmann.de"]
+      },
+      "fulfillment_queue": [
+        { "order_id": "SHOP-16100", "sku": "SRV-RACK-24", "qty": 1, "status": "queued" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "lookup_company_by_domain", "args_contain": { "domain": "handelmann.de" }, "order_sensitive": true },
+      { "tool": "get_hubspot_contact_by_email", "args_contain": { "email": "ops@handelmann.de" }, "order_sensitive": true },
+      { "tool": "create_hubspot_contact", "args_contain": { "email": "ops@handelmann.de" }, "order_sensitive": true },
+      { "tool": "route_to_pipeline", "args_contain": { "pipeline": "mid_market", "email": "ops@handelmann.de" }, "order_sensitive": false },
+      { "tool": "add_to_fulfillment_queue", "args_contain": { "order_id": "SHOP-16100" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "States that Handelmann GmbH is a mid_market account, confirms the contact was created and routed to the 'mid_market' pipeline, and confirms order SHOP-16100 was queued."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A company size bucket not returned by the directory lookup",
+        "A claim that the contact was routed to more than one pipeline"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Route strictly by the size_bucket from the directory lookup.",
+      "Create the contact only if get_hubspot_contact_by_email shows none exists."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Routing the contact into more than one pipeline.",
+      "Charging the customer's payment method."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Combines lookup/route (task_004 family) with contact creation and fulfillment queueing into one 4-step workflow."
+  }
+}

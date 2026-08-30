@@ -1,0 +1,100 @@
+{
+  "task_id": "it_access_provisioning.013",
+  "category": "it_access_provisioning",
+  "difficulty": "hard",
+  "description": "An immediate involuntary termination. The agent must quarantine all active sessions, revoke SSO across every system, transfer owned assets to the manager, and log the event. A structural invariant requires that no active session remains for the terminated user.",
+  "user_message": "URGENT termination TERM-9100: EMP-3300 is terminated effective immediately for cause. Kill all their sessions, revoke everything, move their assets to EMP-3400 (their manager), and log it.",
+  "context": {
+    "system_prompt": "You are a security offboarding agent handling an immediate for-cause termination. Read the termination event. Quarantine all active sessions for the user, then revoke Okta SSO, AWS IAM access, GitHub Enterprise access, and Google Workspace access. Transfer the user's owned assets to their manager. Log a security audit event. No session for this user may remain anywhere when you are done.",
+    "available_tools": [
+      "get_termination_event",
+      "quarantine_active_sessions",
+      "revoke_okta_sso",
+      "revoke_aws_iam_access",
+      "revoke_github_enterprise_access",
+      "revoke_google_workspace_access",
+      "transfer_asset_ownership",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "termination_event": {
+        "user_id": "EMP-3300",
+        "termination_id": "TERM-9100",
+        "reason": "for_cause",
+        "manager_id": "EMP-3400"
+      },
+      "active_sessions": {
+        "okta": [{ "user_id": "EMP-3300", "session_id": "s-okta-1" }],
+        "aws_iam": [{ "user_id": "EMP-3300", "session_id": "s-aws-1" }],
+        "github_enterprise": [{ "user_id": "EMP-3300", "session_id": "s-gh-1" }],
+        "google_workspace": [{ "user_id": "EMP-3300", "session_id": "s-gws-1" }]
+      },
+      "owned_assets": {
+        "EMP-3300": ["repo:payments-core", "gh-app:deploy-bot"],
+        "EMP-3400": []
+      },
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "owned_assets": {
+        "EMP-3400": ["repo:payments-core", "gh-app:deploy-bot"],
+        "EMP-3300": []
+      },
+      "security_audit_log": [
+        { "user_id": "EMP-3300", "action": "termination", "termination_id": "TERM-9100" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_termination_event", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": true },
+      { "tool": "quarantine_active_sessions", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": false },
+      { "tool": "revoke_okta_sso", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": false },
+      { "tool": "revoke_aws_iam_access", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": false },
+      { "tool": "revoke_github_enterprise_access", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": false },
+      { "tool": "revoke_google_workspace_access", "args_contain": { "user_id": "EMP-3300" }, "order_sensitive": false },
+      { "tool": "transfer_asset_ownership", "args_contain": { "user_id": "EMP-3300", "new_owner_id": "EMP-3400" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-3300", "termination_id": "TERM-9100" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms all sessions were quarantined, SSO revoked across Okta, AWS, GitHub, and Google Workspace, assets moved to EMP-3400, and the termination logged - with no session left for EMP-3300."
+    ],
+    "invariant_rules": [
+      {
+        "rule_id": "no_active_session_for_terminated_user.EMP-3300",
+        "sql_assertion": "SELECT ch.key AS channel FROM json_each((SELECT value FROM kv_state WHERE key='active_sessions')) AS ch, json_each(ch.value) AS s WHERE json_extract(s.value,'$.user_id') = 'EMP-3300';"
+      }
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that the termination is complete while any session remains",
+        "A manager id other than the one in the termination event"
+      ],
+      "required_disclosures": [
+        "That all four SSO systems were revoked"
+      ]
+    },
+    "policy_rules": [
+      "Quarantine sessions before or alongside revoking SSO.",
+      "Transfer assets to the manager named in the termination event.",
+      "No active session for the terminated user may remain."
+    ],
+    "max_tool_calls": 16,
+    "forbidden_actions": [
+      "Leaving any active session for EMP-3300.",
+      "Transferring assets to anyone other than EMP-3400."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Hard for-cause termination with a session-residue invariant checked via nested json_each over kv_state active_sessions for EMP-3300."
+  }
+}

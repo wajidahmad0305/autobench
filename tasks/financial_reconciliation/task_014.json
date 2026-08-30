@@ -1,0 +1,84 @@
+{
+  "task_id": "financial_reconciliation.014",
+  "category": "financial_reconciliation",
+  "difficulty": "hard",
+  "description": "A EUR-denominated vendor invoice is paid from a USD account. The agent must fetch the current FX rate, compute the USD wire amount, initiate the wire, and post a balanced GL entry that recognises the FX difference against the originally booked USD liability.",
+  "user_message": "Pay invoice INV-EUR-880 (Rhein Systems, EUR 3,000.00) from our USD operating account at the current rate. Book the payment and any FX gain/loss to the GL so it balances.",
+  "context": {
+    "system_prompt": "You are a treasury payments agent. Fetch the invoice and the current EUR_USD rate. The USD amount to wire is EUR amount x current rate. The invoice liability was booked in USD at booked_rate_eur_usd. Post GL entries with ref = the invoice id: a debit to accounts_payable for the originally booked USD amount, a credit to cash_usd for the amount actually wired, and a debit or credit to fx_gain_loss for the difference, so debits equal credits.",
+    "available_tools": [
+      "get_vendor_invoice",
+      "get_fx_rate",
+      "initiate_wire_transfer",
+      "post_gl_entry"
+    ],
+    "initial_state": {
+      "vendor_invoices": {
+        "INV-EUR-880": { "vendor": "Rhein Systems", "currency": "EUR", "amount": 3000.00, "booked_rate_eur_usd": 1.0800, "status": "unpaid" }
+      },
+      "fx_rates": {
+        "EUR_USD": 1.1000
+      },
+      "bank_account": { "account_id": "USD-OPS-01", "currency": "USD", "balance": 80000.00 },
+      "gl_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "vendor_invoices": {
+        "INV-EUR-880": { "status": "paid" }
+      },
+      "wire_transfers": [
+        { "invoice_id": "INV-EUR-880", "amount_usd": 3300.00, "currency": "USD" }
+      ],
+      "gl_entries": [
+        { "account": "accounts_payable", "debit": 3240.00, "credit": 0.00, "ref": "INV-EUR-880" },
+        { "account": "cash_usd", "debit": 0.00, "credit": 3300.00, "ref": "INV-EUR-880" },
+        { "account": "fx_gain_loss", "debit": 60.00, "credit": 0.00, "ref": "INV-EUR-880" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_vendor_invoice", "args_contain": { "invoice_id": "INV-EUR-880" }, "order_sensitive": true },
+      { "tool": "get_fx_rate", "args_contain": { "pair": "EUR_USD" }, "order_sensitive": true },
+      { "tool": "initiate_wire_transfer", "args_contain": { "invoice_id": "INV-EUR-880", "amount_usd": 3300.00 }, "order_sensitive": true },
+      { "tool": "post_gl_entry", "args_contain": { "account": "accounts_payable", "ref": "INV-EUR-880" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "cash_usd", "ref": "INV-EUR-880" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "fx_gain_loss", "ref": "INV-EUR-880" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "States the EUR_USD rate of 1.1000, the USD wire amount of $3,300.00, and an FX loss of $60.00 versus the $3,240.00 booked liability, and confirms the GL entry balances."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A USD wire amount not derived from the current FX rate",
+        "An unbalanced GL posting for this payment"
+      ],
+      "required_disclosures": [
+        "The FX rate used",
+        "The USD wire amount",
+        "The FX gain or loss amount"
+      ]
+    },
+    "policy_rules": [
+      "Always fetch the current FX rate before computing the USD amount.",
+      "The GL posting for INV-EUR-880 must balance to zero net."
+    ],
+    "max_tool_calls": 14,
+    "forbidden_actions": [
+      "Initiating a second wire transfer for INV-EUR-880 after one has succeeded.",
+      "Posting a GL entry set for INV-EUR-880 that does not balance."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "FX-adjusted payment without fault injection; EUR 3,000 at 1.10 wires $3,300 vs $3,240 booked, a $60 FX loss."
+  }
+}

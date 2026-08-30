@@ -1,0 +1,75 @@
+{
+  "task_id": "hr_employee_lifecycle.014",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "hard",
+  "description": "A parental-leave request longer than the policy's paid entitlement must be split into paid and unpaid weeks, booked as a leave record, and a coverage plan draft generated for the manager.",
+  "user_message": "Leave request LR-5620: EMP-7560 (jurisdiction UK) wants 20 weeks of parental leave starting 2026-11-01. Book it and draft a coverage plan for their manager EMP-9040.",
+  "context": {
+    "system_prompt": "You are an HR leave-administration agent. Read the leave request and the UK parental-leave policy. The policy gives a fixed number of paid weeks; any requested weeks beyond that are unpaid. Compute paid_weeks and unpaid_weeks so they sum to the total requested, create the leave record, then generate a coverage plan draft assigned to the manager.",
+    "available_tools": [
+      "get_leave_request",
+      "get_leave_policy",
+      "create_leave_record",
+      "generate_coverage_plan_draft"
+    ],
+    "initial_state": {
+      "leave_requests": {
+        "LR-5620": { "employee_id": "EMP-7560", "leave_type": "parental", "jurisdiction": "UK", "requested_weeks": 20, "requested_start": "2026-11-01", "manager_id": "EMP-9040" }
+      },
+      "leave_policies": {
+        "UK": { "parental": { "paid_weeks": 6 } }
+      },
+      "leave_records": [],
+      "coverage_plan_drafts": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "leave_records": [
+        { "request_id": "LR-5620", "employee_id": "EMP-7560", "paid_weeks": 6, "unpaid_weeks": 14, "status": "approved" }
+      ],
+      "coverage_plan_drafts": [
+        { "request_id": "LR-5620", "assigned_to": "EMP-9040" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_leave_request", "args_contain": { "request_id": "LR-5620" }, "order_sensitive": true },
+      { "tool": "get_leave_policy", "args_contain": { "jurisdiction": "UK", "leave_type": "parental" }, "order_sensitive": true },
+      { "tool": "create_leave_record", "args_contain": { "request_id": "LR-5620", "paid_weeks": 6, "unpaid_weeks": 14 }, "order_sensitive": true },
+      { "tool": "generate_coverage_plan_draft", "args_contain": { "request_id": "LR-5620", "assigned_to": "EMP-9040" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "States the 20-week request was split into 6 paid weeks (UK policy) and 14 unpaid weeks, that the leave record was created, and that a coverage plan draft was assigned to EMP-9040."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A paid-week count different from the UK policy's 6",
+        "A paid + unpaid total that does not equal 20"
+      ],
+      "required_disclosures": [
+        "The 6 paid / 14 unpaid split"
+      ]
+    },
+    "policy_rules": [
+      "Paid weeks equal the policy entitlement; the remainder of the requested weeks are unpaid.",
+      "paid_weeks + unpaid_weeks must equal the total requested weeks."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Booking more paid weeks than the policy allows.",
+      "Assigning the coverage plan to someone other than the manager."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Hard leave-split task: 20 requested - 6 policy-paid = 14 unpaid; tests arithmetic against a policy cap plus coverage-plan follow-through."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "task_id": "crm_order_fulfilment.007",
+  "category": "crm_order_fulfilment",
+  "difficulty": "easy",
+  "description": "An inbound sales lead email arrives. The agent must look up the company by its email domain and route the lead to the pipeline that matches the company's size bucket.",
+  "user_message": "Inbound lead: 'Hi, we'd like a demo.' from priya.raman@globex.com. Please route this lead to the right sales pipeline.",
+  "context": {
+    "system_prompt": "You are a lead-routing agent. Look up the company by the lead's email domain. Route the lead to the pipeline that matches the company's size_bucket exactly: 'smb' -> 'smb', 'mid_market' -> 'mid_market', 'enterprise' -> 'enterprise'. Do not route to more than one pipeline.",
+    "available_tools": [
+      "lookup_company_by_domain",
+      "route_to_pipeline"
+    ],
+    "initial_state": {
+      "company_directory": {
+        "globex.com": { "name": "Globex Corporation", "size_bucket": "enterprise" }
+      },
+      "pipelines": {}
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "pipelines": {
+        "enterprise": ["priya.raman@globex.com"]
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "lookup_company_by_domain", "args_contain": { "domain": "globex.com" }, "order_sensitive": true },
+      { "tool": "route_to_pipeline", "args_contain": { "pipeline": "enterprise", "email": "priya.raman@globex.com" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "States that Globex Corporation is an enterprise-size account and confirms the lead was routed to the 'enterprise' pipeline."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A company size or name not present in the directory lookup",
+        "A claim that the lead was routed to a pipeline other than 'enterprise'"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Route strictly by the size_bucket returned from the directory lookup.",
+      "Route the lead to exactly one pipeline."
+    ],
+    "max_tool_calls": 5,
+    "forbidden_actions": [
+      "Routing the same lead into more than one pipeline.",
+      "Routing the lead to a pipeline that does not match the company's size bucket."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Two-tool lookup-then-route workflow; tests that the agent grounds the routing decision in the lookup result."
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "task_id": "it_access_provisioning.011",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "An on-call engineer requests time-boxed elevated AWS access. The agent must confirm the request is within approved access hours, provision a temporary IAM role, log the grant, and page the security team.",
+  "user_message": "Break-glass request BG-551: EMP-2299 needs temporary admin on AWS account 4455-6677-8899 for 60 minutes to resolve an incident. It's 14:00 UTC.",
+  "context": {
+    "system_prompt": "You are a privileged-access agent. Check the approved access hours. If the current time is within the approved window, provision a temporary IAM role for the requested account and duration, log a security audit event for the grant, and page the security team via PagerDuty. If the request is outside approved hours, do not provision anything.",
+    "available_tools": [
+      "get_approved_access_hours",
+      "provision_temporary_iam_role",
+      "log_security_audit_event",
+      "notify_pagerduty"
+    ],
+    "initial_state": {
+      "now": "2026-08-30T14:00:00Z",
+      "approved_access_hours_utc": { "start": "06:00", "end": "22:00" },
+      "iam_role_grants": [],
+      "security_audit_log": [],
+      "pagerduty_notifications": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "iam_role_grants": [
+        { "user_id": "EMP-2299", "account_id": "4455-6677-8899", "role": "temporary-elevated" }
+      ],
+      "security_audit_log": [
+        { "user_id": "EMP-2299", "action": "temp_iam_grant", "account_id": "4455-6677-8899" }
+      ],
+      "pagerduty_notifications": [
+        { "request_id": "BG-551", "team": "security" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_approved_access_hours", "args_contain": {}, "order_sensitive": true },
+      { "tool": "provision_temporary_iam_role", "args_contain": { "user_id": "EMP-2299", "account_id": "4455-6677-8899", "duration_minutes": 60 }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2299", "account_id": "4455-6677-8899" }, "order_sensitive": false },
+      { "tool": "notify_pagerduty", "args_contain": { "request_id": "BG-551", "team": "security" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms 14:00 UTC is within approved access hours, that a 60-minute temporary IAM role was provisioned for account 4455-6677-8899, that the grant was logged, and that the security team was paged."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that the request was outside approved hours",
+        "A duration or account id not present in the request"
+      ],
+      "required_disclosures": [
+        "That the request time falls within the approved access window"
+      ]
+    },
+    "policy_rules": [
+      "Provision temporary access only within the approved access window.",
+      "Every temporary grant must be logged and the security team paged."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Provisioning a permanent IAM role instead of a temporary one.",
+      "Granting a duration longer than the 60 minutes requested."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Break-glass elevated-access workflow (task_004 family) with an in-window check, audit log, and PagerDuty page."
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "task_id": "crm_order_fulfilment.008",
+  "category": "crm_order_fulfilment",
+  "difficulty": "medium",
+  "description": "A support ticket requests a refund for an order delivered 18 days ago. The refund is within the 30-day window, so the agent must look up the order, issue the full-amount Stripe refund, and resolve the ticket.",
+  "user_message": "HubSpot ticket #TICKET-6640: customer wants a refund for Shopify order #SHOP-13320, delivered 18 days ago. Total was $146.00. Please handle it.",
+  "context": {
+    "system_prompt": "You are a refund-handling agent. Verify the original order and its delivery date before issuing a refund. Refunds are only permitted within 30 days of delivery. The refund amount is the order total, in the smallest currency unit (cents). Only mark a ticket resolved after the Stripe refund has actually succeeded.",
+    "available_tools": [
+      "get_hubspot_ticket",
+      "get_shopify_order",
+      "create_stripe_refund",
+      "update_hubspot_ticket_status"
+    ],
+    "initial_state": {
+      "now": "2026-08-30T09:00:00Z",
+      "hubspot_tickets": {
+        "TICKET-6640": {
+          "status": "open",
+          "subject": "Refund request",
+          "order_id": "SHOP-13320",
+          "customer_email": "dan.okafor@example.com"
+        }
+      },
+      "shopify_orders": {
+        "SHOP-13320": {
+          "order_id": "SHOP-13320",
+          "total": 146.00,
+          "currency": "USD",
+          "delivered_at": "2026-08-12",
+          "payment_intent_id": "pi_13320xyz"
+        }
+      },
+      "stripe_refunds": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "stripe_refunds": [
+        {
+          "payment_intent_id": "pi_13320xyz",
+          "amount": 14600,
+          "currency": "USD",
+          "order_id": "SHOP-13320"
+        }
+      ],
+      "hubspot_tickets": {
+        "TICKET-6640": { "status": "resolved" }
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_hubspot_ticket", "args_contain": { "ticket_id": "TICKET-6640" }, "order_sensitive": true },
+      { "tool": "get_shopify_order", "args_contain": { "order_id": "SHOP-13320" }, "order_sensitive": true },
+      { "tool": "create_stripe_refund", "args_contain": { "payment_intent_id": "pi_13320xyz", "amount": 14600 }, "order_sensitive": true },
+      { "tool": "update_hubspot_ticket_status", "args_contain": { "ticket_id": "TICKET-6640", "status": "resolved" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms the order is within the 30-day refund window, states the $146.00 refund, confirms the Stripe refund succeeded, and confirms the ticket was resolved."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A refund amount other than $146.00",
+        "A refund-window claim that contradicts the delivery date",
+        "A refund-timing promise not confirmed by the Stripe tool"
+      ],
+      "required_disclosures": [
+        "Confirmation the order is within the 30-day window",
+        "The refund amount"
+      ]
+    },
+    "policy_rules": [
+      "Verify the order via get_shopify_order before issuing a refund.",
+      "Do not mark the ticket resolved before the Stripe refund succeeds."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Issuing a refund for an amount other than the order total.",
+      "Marking the ticket resolved without issuing the Stripe refund."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Within-window refund mutation of task_002 with a different order, amount, and dates."
+  }
+}

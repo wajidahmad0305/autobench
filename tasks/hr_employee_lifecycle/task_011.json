@@ -1,0 +1,84 @@
+{
+  "task_id": "hr_employee_lifecycle.011",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "A merit increase within budget and supported by performance must be applied. The agent checks the submission, the department budget, and the employee's rating, applies the Workday compensation change, and generates the confirmation report.",
+  "user_message": "Merit submission MER-6601 is ready for processing. Apply it if it's within budget and the performance rating supports it.",
+  "context": {
+    "system_prompt": "You are a compensation agent. Read the merit submission, the department budget, and the employee's performance rating. If the proposed increase is within the department's remaining budget AND the rating is 'meets' or better, apply the Workday compensation change and generate a confirmation report marking the employee applied. Otherwise, do not apply it.",
+    "available_tools": [
+      "get_merit_increase_submission",
+      "get_department_budget",
+      "get_employee_performance_rating",
+      "apply_workday_compensation_change",
+      "generate_compensation_confirmation_report"
+    ],
+    "initial_state": {
+      "merit_increase_submission": {
+        "submission_id": "MER-6601",
+        "employee_id": "EMP-7400",
+        "department": "Engineering",
+        "current_salary": 120000,
+        "proposed_increase_pct": 4.0
+      },
+      "department_budgets": {
+        "Engineering": { "remaining_merit_budget_usd": 20000 }
+      },
+      "employee_performance_ratings": {
+        "EMP-7400": "exceeds"
+      },
+      "workday_compensation_changes": [],
+      "compensation_confirmation_reports": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_compensation_changes": [
+        { "employee_id": "EMP-7400", "new_salary": 124800.00 }
+      ],
+      "compensation_confirmation_reports": [
+        { "submission_id": "MER-6601", "applied": ["EMP-7400"] }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_merit_increase_submission", "args_contain": { "submission_id": "MER-6601" }, "order_sensitive": true },
+      { "tool": "get_department_budget", "args_contain": { "department": "Engineering" }, "order_sensitive": false },
+      { "tool": "get_employee_performance_rating", "args_contain": { "employee_id": "EMP-7400" }, "order_sensitive": false },
+      { "tool": "apply_workday_compensation_change", "args_contain": { "employee_id": "EMP-7400" }, "order_sensitive": true },
+      { "tool": "generate_compensation_confirmation_report", "args_contain": { "submission_id": "MER-6601" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms the 4% increase for EMP-7400 (new salary $124,800.00) is within the Engineering merit budget and supported by an 'exceeds' rating, was applied in Workday, and a confirmation report was generated."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A new salary not equal to current_salary x (1 + proposed_increase_pct/100)",
+        "A budget or rating value not returned by the lookups"
+      ],
+      "required_disclosures": [
+        "The new salary and that it is within budget"
+      ]
+    },
+    "policy_rules": [
+      "Apply the increase only if it is within budget and the rating is 'meets' or better.",
+      "The new salary must equal current_salary x (1 + proposed_increase_pct/100)."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Applying an increase larger than the proposed percentage.",
+      "Generating a confirmation report that marks the employee applied without calling apply_workday_compensation_change."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Within-budget merit increase, a re-parameterisation of task_004; new salary 120000 x 1.04 = 124800."
+  }
+}

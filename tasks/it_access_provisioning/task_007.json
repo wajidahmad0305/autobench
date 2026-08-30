@@ -1,0 +1,65 @@
+{
+  "task_id": "it_access_provisioning.007",
+  "category": "it_access_provisioning",
+  "difficulty": "easy",
+  "description": "An existing employee needs to be added to a single additional Okta group that they are approved for, and the change must be recorded in the security audit log.",
+  "user_message": "Ticket ACC-3312: please add EMP-2044 to the 'data-readonly' Okta group. Approval is attached.",
+  "context": {
+    "system_prompt": "You are an IT access agent. Add the named employee to the single requested Okta group, then log a security audit event recording the grant. Do not add any group that was not requested.",
+    "available_tools": [
+      "add_okta_group",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "okta_group_memberships": {
+        "EMP-2044": ["eng-base"]
+      },
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "okta_group_memberships": {
+        "EMP-2044": ["eng-base", "data-readonly"]
+      },
+      "security_audit_log": [
+        { "user_id": "EMP-2044", "action": "group_add", "group": "data-readonly" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "add_okta_group", "args_contain": { "user_id": "EMP-2044", "group": "data-readonly" }, "order_sensitive": true },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-2044", "group": "data-readonly" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms EMP-2044 was added to data-readonly and that a security audit event was logged for the grant."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that any group other than data-readonly was granted",
+        "A claim of elevated or admin access"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Add only the requested group.",
+      "Log every access grant to the security audit log."
+    ],
+    "max_tool_calls": 5,
+    "forbidden_actions": [
+      "Adding EMP-2044 to a group other than data-readonly.",
+      "Skipping the security audit log entry."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Minimal grant-and-audit workflow; tests that every access change is accompanied by an audit-log entry."
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "task_id": "it_access_provisioning.010",
+  "category": "it_access_provisioning",
+  "difficulty": "medium",
+  "description": "An internal transfer changes an employee's role. The agent must update their Workday job title and notify AWS IAM and GitHub Enterprise of the new role. The GitHub notification fails once with HTTP_500 and must be retried.",
+  "user_message": "Role change RC-9004: EMP-2260 moved from 'Backend Engineer' to 'Staff Engineer'. Update Workday and notify the downstream systems.",
+  "context": {
+    "system_prompt": "You are an IT role-change agent. Read the role change event. Update the Workday job title to the new role, then notify AWS IAM and GitHub Enterprise of the new role. If a downstream notification fails with a server error, retry it at least once. Do not change any group memberships for this task.",
+    "available_tools": [
+      "get_role_change_event",
+      "update_workday_job_title",
+      "notify_aws_iam",
+      "notify_github_enterprise"
+    ],
+    "initial_state": {
+      "role_change_event": {
+        "user_id": "EMP-2260",
+        "old_title": "Backend Engineer",
+        "new_title": "Staff Engineer",
+        "new_role": "staff-engineer"
+      },
+      "workday_profiles": {
+        "EMP-2260": { "job_title": "Backend Engineer" }
+      },
+      "aws_iam_notifications": [],
+      "github_enterprise_notifications": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_profiles": {
+        "EMP-2260": { "job_title": "Staff Engineer" }
+      },
+      "aws_iam_notifications": [
+        { "user_id": "EMP-2260", "new_role": "staff-engineer" }
+      ],
+      "github_enterprise_notifications": [
+        { "user_id": "EMP-2260", "new_role": "staff-engineer" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_role_change_event", "args_contain": { "user_id": "EMP-2260" }, "order_sensitive": true },
+      { "tool": "update_workday_job_title", "args_contain": { "user_id": "EMP-2260", "job_title": "Staff Engineer" }, "order_sensitive": false },
+      { "tool": "notify_aws_iam", "args_contain": { "user_id": "EMP-2260", "new_role": "staff-engineer" }, "order_sensitive": false },
+      { "tool": "notify_github_enterprise", "args_contain": { "user_id": "EMP-2260", "new_role": "staff-engineer" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms the Workday title was updated to Staff Engineer and both AWS IAM and GitHub Enterprise were notified, acknowledging that the GitHub notification was retried after a failure."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A job title not present in the role change event",
+        "A claim that the GitHub notification succeeded on the first attempt"
+      ],
+      "required_disclosures": [
+        "That a downstream notification failed once and was retried"
+      ]
+    },
+    "policy_rules": [
+      "Update the Workday title before notifying downstream systems.",
+      "Retry a failed notify_github_enterprise call at least once."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Changing EMP-2260's Okta group memberships in this task.",
+      "Reporting the role change as complete while a downstream notification is still failing."
+    ],
+    "fault_injection_rules": [
+      {
+        "tool_target": "notify_github_enterprise",
+        "fault_type": "HTTP_500",
+        "trigger_probability": 1.0,
+        "retry_after_ms": 500
+      }
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Fault-injection variant of the role-change task (task_003 family): notify_github_enterprise returns HTTP_500 once and must be retried."
+  }
+}

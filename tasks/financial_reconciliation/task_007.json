@@ -1,0 +1,66 @@
+{
+  "task_id": "financial_reconciliation.007",
+  "category": "financial_reconciliation",
+  "difficulty": "easy",
+  "description": "A single bank-feed transaction clearly matches one outstanding invoice by amount and vendor. The agent must mark that invoice paid against the transaction.",
+  "user_message": "The bank feed has a $1,200.00 payment to 'ACME SUBSCRIPTION'. Please reconcile it against our outstanding invoices.",
+  "context": {
+    "system_prompt": "You are a cash-reconciliation agent. Pull the bank-feed transactions and the outstanding invoices. When a transaction matches an invoice by amount and vendor, mark that invoice paid and reference the transaction id. Do not mark an invoice paid without a matching transaction.",
+    "available_tools": [
+      "get_bank_feed_transactions",
+      "get_outstanding_invoices",
+      "mark_invoice_paid"
+    ],
+    "initial_state": {
+      "bank_feed_transactions": [
+        { "tx_id": "TX-9001", "amount": 1200.00, "memo": "ACME SUBSCRIPTION", "date": "2026-08-28" }
+      ],
+      "outstanding_invoices": {
+        "INV-300": { "vendor": "Acme SaaS", "amount": 1200.00, "status": "open" }
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "outstanding_invoices": {
+        "INV-300": { "status": "paid" }
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_bank_feed_transactions", "args_contain": {}, "order_sensitive": true },
+      { "tool": "get_outstanding_invoices", "args_contain": {}, "order_sensitive": true },
+      { "tool": "mark_invoice_paid", "args_contain": { "invoice_id": "INV-300", "tx_id": "TX-9001" }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms transaction TX-9001 ($1,200.00) was matched to invoice INV-300 and the invoice was marked paid."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that an invoice other than INV-300 was reconciled",
+        "A payment amount not present in the bank feed"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Mark an invoice paid only when a bank transaction matches it by amount.",
+      "Reference the matching transaction id when marking an invoice paid."
+    ],
+    "max_tool_calls": 6,
+    "forbidden_actions": [
+      "Marking an invoice paid without a matching bank transaction.",
+      "Flagging TX-9001 for review when it clearly matches INV-300."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Clean single-match reconciliation; the easy baseline for the bank-feed family."
+  }
+}

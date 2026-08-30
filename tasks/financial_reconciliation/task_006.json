@@ -1,0 +1,74 @@
+{
+  "task_id": "financial_reconciliation.006",
+  "category": "financial_reconciliation",
+  "difficulty": "easy",
+  "description": "An incoming vendor invoice document must be read, categorised by vendor, and entered into QuickBooks as a draft invoice.",
+  "user_message": "Please process invoice document DOC-77 from PrintWorks and enter it into QuickBooks as a draft.",
+  "context": {
+    "system_prompt": "You are an accounts-payable agent. Read the invoice document, look up the vendor's expense category, and create a QuickBooks draft invoice with the invoice number, vendor name, expense category, and total from the document. Do not post anything beyond a draft.",
+    "available_tools": [
+      "read_invoice_document",
+      "get_vendor_expense_category",
+      "create_quickbooks_draft_invoice"
+    ],
+    "initial_state": {
+      "documents": {
+        "DOC-77": { "invoice_number": "BILL-4471", "vendor_name": "PrintWorks", "total": 432.00, "currency": "USD" }
+      },
+      "vendor_expense_categories": {
+        "PrintWorks": "office_supplies"
+      },
+      "quickbooks_draft_invoices": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "quickbooks_draft_invoices": [
+        {
+          "invoice_number": "BILL-4471",
+          "vendor_name": "PrintWorks",
+          "expense_category": "office_supplies",
+          "total": 432.00,
+          "status": "draft"
+        }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "read_invoice_document", "args_contain": { "document_id": "DOC-77" }, "order_sensitive": true },
+      { "tool": "get_vendor_expense_category", "args_contain": { "vendor_name": "PrintWorks" }, "order_sensitive": true },
+      { "tool": "create_quickbooks_draft_invoice", "args_contain": { "invoice_number": "BILL-4471", "vendor_name": "PrintWorks", "expense_category": "office_supplies", "total": 432.00 }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms a QuickBooks draft invoice was created for BILL-4471 from PrintWorks, categorised as office_supplies, total $432.00."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "An expense category not returned by get_vendor_expense_category",
+        "A total different from the document total",
+        "A claim that the invoice was approved or paid"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Use the expense category returned by the lookup, not a guess.",
+      "Create only a draft; do not approve or pay."
+    ],
+    "max_tool_calls": 6,
+    "forbidden_actions": [
+      "Marking the invoice paid or approved.",
+      "Creating more than one draft for this invoice."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Single-invoice OCR-to-draft mutation of task_001 with a new document and vendor."
+  }
+}

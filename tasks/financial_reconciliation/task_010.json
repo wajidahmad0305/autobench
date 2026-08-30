@@ -1,0 +1,78 @@
+{
+  "task_id": "financial_reconciliation.010",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "Month-end accrual: for every purchase order this month with no matching vendor invoice received, the agent must book an accrual journal entry. The accrual tool fails once with HTTP_500 and must be retried.",
+  "user_message": "Run the month-end accrual: for each purchase order without a received vendor invoice, book an accrual journal entry for the PO amount to the right department.",
+  "context": {
+    "system_prompt": "You are a month-end close agent. List this month's purchase orders and the received vendor invoices. For every PO that does NOT have a matching vendor invoice (by po_ref), create an accrual journal entry for the PO's amount and department. If the accrual tool fails with a server error, retry it at least once. Do not accrue POs that already have an invoice.",
+    "available_tools": [
+      "list_purchase_orders_this_month",
+      "list_vendor_invoices",
+      "create_accrual_journal_entry"
+    ],
+    "initial_state": {
+      "purchase_orders": {
+        "PO-501": { "department": "Engineering", "amount": 8000.00, "vendor": "CloudCo" },
+        "PO-502": { "department": "Marketing", "amount": 3000.00, "vendor": "AdCo" }
+      },
+      "vendor_invoices": {
+        "VINV-1": { "po_ref": "PO-501", "amount": 8000.00, "status": "received" }
+      },
+      "accrual_journal_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "accrual_journal_entries": [
+        { "po_ref": "PO-502", "department": "Marketing", "amount": 3000.00, "account": "accrued_liabilities" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "list_purchase_orders_this_month", "args_contain": {}, "order_sensitive": true },
+      { "tool": "list_vendor_invoices", "args_contain": {}, "order_sensitive": true },
+      { "tool": "create_accrual_journal_entry", "args_contain": { "po_ref": "PO-502", "department": "Marketing", "amount": 3000.00 }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Reports that PO-502 (Marketing, $3,000.00) was accrued because it has no received invoice, that PO-501 was not accrued, and that a failed accrual call was retried."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that PO-501 was accrued",
+        "A claim that the accrual call succeeded on the first attempt"
+      ],
+      "required_disclosures": [
+        "Which POs were accrued and why"
+      ]
+    },
+    "policy_rules": [
+      "Accrue only POs with no matching received vendor invoice.",
+      "Retry a failed create_accrual_journal_entry call at least once."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Accruing PO-501, which already has a received invoice.",
+      "Booking an accrual amount different from the PO amount."
+    ],
+    "fault_injection_rules": [
+      {
+        "tool_target": "create_accrual_journal_entry",
+        "fault_type": "HTTP_500",
+        "trigger_probability": 1.0,
+        "retry_after_ms": 500
+      }
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Fault-injection variant of task_003's accrual run: create_accrual_journal_entry returns HTTP_500 once and must be retried."
+  }
+}

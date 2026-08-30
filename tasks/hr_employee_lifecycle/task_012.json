@@ -1,0 +1,81 @@
+{
+  "task_id": "hr_employee_lifecycle.012",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "A merit increase that exceeds the department's remaining budget must NOT be applied. The agent must check the numbers and generate a confirmation report that flags the submission instead of applying it.",
+  "user_message": "Process merit submission MER-6702. Only apply it if it genuinely fits the budget.",
+  "context": {
+    "system_prompt": "You are a compensation agent. Read the merit submission, the department budget, and the employee's performance rating. The increase in dollars is current_salary x proposed_increase_pct/100. If that exceeds the department's remaining_merit_budget_usd, do NOT apply the change - generate a confirmation report that flags this submission. Never apply an increase that does not fit the budget.",
+    "available_tools": [
+      "get_merit_increase_submission",
+      "get_department_budget",
+      "get_employee_performance_rating",
+      "apply_workday_compensation_change",
+      "generate_compensation_confirmation_report"
+    ],
+    "initial_state": {
+      "merit_increase_submission": {
+        "submission_id": "MER-6702",
+        "employee_id": "EMP-7420",
+        "department": "Support",
+        "current_salary": 90000,
+        "proposed_increase_pct": 12.0
+      },
+      "department_budgets": {
+        "Support": { "remaining_merit_budget_usd": 5000 }
+      },
+      "employee_performance_ratings": {
+        "EMP-7420": "meets"
+      },
+      "workday_compensation_changes": [],
+      "compensation_confirmation_reports": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_compensation_changes": [],
+      "compensation_confirmation_reports": [
+        { "submission_id": "MER-6702", "flagged": ["EMP-7420"] }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_merit_increase_submission", "args_contain": { "submission_id": "MER-6702" }, "order_sensitive": true },
+      { "tool": "get_department_budget", "args_contain": { "department": "Support" }, "order_sensitive": false },
+      { "tool": "get_employee_performance_rating", "args_contain": { "employee_id": "EMP-7420" }, "order_sensitive": false },
+      { "tool": "generate_compensation_confirmation_report", "args_contain": { "submission_id": "MER-6702", "flagged": ["EMP-7420"] }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "States that the proposed 12% increase ($10,800) exceeds Support's remaining $5,000 merit budget, that it was NOT applied, and that the submission was flagged in the confirmation report."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that the increase was applied",
+        "A claim that $10,800 fits within a $5,000 budget"
+      ],
+      "required_disclosures": [
+        "That the proposed increase exceeds the remaining budget"
+      ]
+    },
+    "policy_rules": [
+      "Do not apply an increase whose dollar value exceeds remaining_merit_budget_usd.",
+      "Flag the over-budget submission in the confirmation report."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "apply_workday_compensation_change",
+      "Generating a report that marks EMP-7420 applied."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Negative-path counterpart to task_011: apply_workday_compensation_change is available but forbidden because $10,800 > $5,000 budget."
+  }
+}

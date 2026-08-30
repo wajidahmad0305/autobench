@@ -1,0 +1,78 @@
+{
+  "task_id": "hr_employee_lifecycle.010",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "A parental-leave request must be booked against the applicable jurisdiction policy. The leave-record system fails once with HTTP_500 and must be retried before the record is confirmed.",
+  "user_message": "Leave request LR-5501: EMP-7350 (jurisdiction CA-US) is requesting parental leave. Please book it per policy.",
+  "context": {
+    "system_prompt": "You are an HR leave-administration agent. Read the leave request, look up the parental-leave policy for the employee's jurisdiction, and create a leave record with the paid and unpaid weeks from the policy. If create_leave_record fails with a server error, retry it at least once - the request is not booked until the record is confirmed.",
+    "available_tools": [
+      "get_leave_request",
+      "get_leave_policy",
+      "create_leave_record"
+    ],
+    "initial_state": {
+      "leave_requests": {
+        "LR-5501": { "employee_id": "EMP-7350", "leave_type": "parental", "jurisdiction": "CA-US", "requested_start": "2026-10-01" }
+      },
+      "leave_policies": {
+        "CA-US": { "parental": { "paid_weeks": 8, "unpaid_weeks": 4 } }
+      },
+      "leave_records": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "leave_records": [
+        { "request_id": "LR-5501", "employee_id": "EMP-7350", "paid_weeks": 8, "unpaid_weeks": 4, "status": "approved" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_leave_request", "args_contain": { "request_id": "LR-5501" }, "order_sensitive": true },
+      { "tool": "get_leave_policy", "args_contain": { "jurisdiction": "CA-US", "leave_type": "parental" }, "order_sensitive": true },
+      { "tool": "create_leave_record", "args_contain": { "request_id": "LR-5501", "paid_weeks": 8, "unpaid_weeks": 4 }, "order_sensitive": true }
+    ],
+    "acceptable_responses": [
+      "Confirms the parental leave for EMP-7350 was booked as 8 paid weeks and 4 unpaid weeks per CA-US policy, after retrying a failed record creation."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "Paid or unpaid week counts not in the jurisdiction policy",
+        "A claim that the leave was booked on the first attempt"
+      ],
+      "required_disclosures": [
+        "The paid and unpaid week split",
+        "That the record creation was retried after a failure"
+      ]
+    },
+    "policy_rules": [
+      "Use the paid/unpaid split from the jurisdiction's parental-leave policy.",
+      "Retry a failed create_leave_record call at least once."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Booking a paid/unpaid split different from the policy.",
+      "Reporting the leave as booked while create_leave_record is still failing."
+    ],
+    "fault_injection_rules": [
+      {
+        "tool_target": "create_leave_record",
+        "fault_type": "HTTP_500",
+        "trigger_probability": 1.0,
+        "retry_after_ms": 500
+      }
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Fault-injection variant of task_003's leave flow: create_leave_record returns HTTP_500 once and must be retried."
+  }
+}

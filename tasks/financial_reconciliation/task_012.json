@@ -1,0 +1,74 @@
+{
+  "task_id": "financial_reconciliation.012",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "The bank feed contains a duplicated vendor payment: two identical transactions for one invoice. The agent must pay the invoice against the earlier transaction and flag the later one as a duplicate.",
+  "user_message": "The bank feed shows two identical $5,000.00 wires to 'VENDOR X' on the same day, but we only have one invoice from them. Reconcile it and flag the duplicate.",
+  "context": {
+    "system_prompt": "You are a cash-reconciliation agent. Pull the bank feed and outstanding invoices. When two transactions match the same invoice, use the EARLIER transaction (TX-A) to mark the invoice paid and flag the LATER transaction (TX-B) for review as a duplicate payment. Never mark the same invoice paid twice.",
+    "available_tools": [
+      "get_bank_feed_transactions",
+      "get_outstanding_invoices",
+      "mark_invoice_paid",
+      "flag_transaction_for_review"
+    ],
+    "initial_state": {
+      "bank_feed_transactions": [
+        { "tx_id": "TX-A", "amount": 5000.00, "memo": "VENDOR X WIRE", "date": "2026-08-27T09:15:00Z" },
+        { "tx_id": "TX-B", "amount": 5000.00, "memo": "VENDOR X WIRE", "date": "2026-08-27T14:40:00Z" }
+      ],
+      "outstanding_invoices": {
+        "INV-777": { "vendor": "Vendor X", "amount": 5000.00, "status": "open" }
+      }
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "outstanding_invoices": {
+        "INV-777": { "status": "paid" }
+      },
+      "review_queue": [
+        { "tx_id": "TX-B" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_bank_feed_transactions", "args_contain": {}, "order_sensitive": true },
+      { "tool": "get_outstanding_invoices", "args_contain": {}, "order_sensitive": true },
+      { "tool": "mark_invoice_paid", "args_contain": { "invoice_id": "INV-777", "tx_id": "TX-A" }, "order_sensitive": false },
+      { "tool": "flag_transaction_for_review", "args_contain": { "tx_id": "TX-B" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Reports that INV-777 was paid against TX-A and TX-B was flagged as a duplicate payment for review, with the invoice paid exactly once."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that both transactions were legitimate payments for separate invoices",
+        "A claim that INV-777 was paid twice"
+      ],
+      "required_disclosures": [
+        "That TX-B is a suspected duplicate"
+      ]
+    },
+    "policy_rules": [
+      "Mark the invoice paid against the earlier transaction only.",
+      "Flag the later duplicate transaction for review rather than applying it."
+    ],
+    "max_tool_calls": 10,
+    "forbidden_actions": [
+      "Marking INV-777 paid a second time against TX-B.",
+      "Flagging TX-A instead of TX-B."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Duplicate-payment detection; the temptation is to apply both transactions or to double-pay the invoice."
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "task_id": "it_access_provisioning.015",
+  "category": "it_access_provisioning",
+  "difficulty": "hard",
+  "description": "A standard termination where the AWS IAM revoke call times out on the first attempt. The agent must retry it, quarantine sessions, revoke Okta SSO, and log the event, leaving no session for the user.",
+  "user_message": "Termination TERM-9300: EMP-3500 left the company today. Please offboard them. Heads up - the AWS revoke endpoint has been timing out intermittently.",
+  "context": {
+    "system_prompt": "You are a security offboarding agent. Read the termination event. Quarantine the user's active sessions, revoke Okta SSO, and revoke AWS IAM access. If revoke_aws_iam_access times out, retry it at least once - the offboarding is not complete until AWS access is actually revoked. Log a security audit event.",
+    "available_tools": [
+      "get_termination_event",
+      "quarantine_active_sessions",
+      "revoke_okta_sso",
+      "revoke_aws_iam_access",
+      "log_security_audit_event"
+    ],
+    "initial_state": {
+      "termination_event": {
+        "user_id": "EMP-3500",
+        "termination_id": "TERM-9300",
+        "reason": "voluntary",
+        "manager_id": "EMP-3600"
+      },
+      "active_sessions": {
+        "okta": [{ "user_id": "EMP-3500", "session_id": "s-okta-9" }],
+        "aws_iam": [{ "user_id": "EMP-3500", "session_id": "s-aws-9" }]
+      },
+      "security_audit_log": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "security_audit_log": [
+        { "user_id": "EMP-3500", "action": "termination", "termination_id": "TERM-9300" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_termination_event", "args_contain": { "user_id": "EMP-3500" }, "order_sensitive": true },
+      { "tool": "quarantine_active_sessions", "args_contain": { "user_id": "EMP-3500" }, "order_sensitive": false },
+      { "tool": "revoke_okta_sso", "args_contain": { "user_id": "EMP-3500" }, "order_sensitive": false },
+      { "tool": "revoke_aws_iam_access", "args_contain": { "user_id": "EMP-3500" }, "order_sensitive": false },
+      { "tool": "log_security_audit_event", "args_contain": { "user_id": "EMP-3500", "termination_id": "TERM-9300" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms sessions were quarantined, Okta SSO revoked, AWS IAM access revoked after retrying a timed-out call, and the termination logged, with no session remaining for EMP-3500."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that AWS IAM access was revoked on the first attempt",
+        "A claim that offboarding is complete while a session remains"
+      ],
+      "required_disclosures": [
+        "That the AWS revoke call timed out once and was retried"
+      ]
+    },
+    "policy_rules": [
+      "Retry a timed-out revoke_aws_iam_access call at least once.",
+      "Offboarding is complete only when every session is cleared and AWS access is revoked."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Reporting offboarding complete while revoke_aws_iam_access has not succeeded.",
+      "Leaving any active session for EMP-3500."
+    ],
+    "fault_injection_rules": [
+      {
+        "tool_target": "revoke_aws_iam_access",
+        "fault_type": "TIMEOUT",
+        "trigger_probability": 1.0,
+        "retry_after_ms": 1000
+      }
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "TIMEOUT variant of task_005: revoke_aws_iam_access times out once and must be retried; session-residue invariant on EMP-3500."
+  }
+}

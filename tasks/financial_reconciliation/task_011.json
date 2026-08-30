@@ -1,0 +1,73 @@
+{
+  "task_id": "financial_reconciliation.011",
+  "category": "financial_reconciliation",
+  "difficulty": "medium",
+  "description": "Two vendor invoice documents must each be read, categorised by their own vendor, and entered into QuickBooks as separate draft invoices with the correct expense categories.",
+  "user_message": "Process invoice documents DOC-201 (CloudHost) and DOC-202 (LegalCo) and enter each into QuickBooks as a draft with the right expense category.",
+  "context": {
+    "system_prompt": "You are an accounts-payable agent. For each invoice document: read it, look up that vendor's expense category, and create a QuickBooks draft invoice with the document's invoice number, vendor, expense category, and total. Do not reuse one vendor's category for another vendor.",
+    "available_tools": [
+      "read_invoice_document",
+      "get_vendor_expense_category",
+      "create_quickbooks_draft_invoice"
+    ],
+    "initial_state": {
+      "documents": {
+        "DOC-201": { "invoice_number": "CH-9001", "vendor_name": "CloudHost", "total": 900.00, "currency": "USD" },
+        "DOC-202": { "invoice_number": "LG-4400", "vendor_name": "LegalCo", "total": 2500.00, "currency": "USD" }
+      },
+      "vendor_expense_categories": {
+        "CloudHost": "hosting",
+        "LegalCo": "professional_services"
+      },
+      "quickbooks_draft_invoices": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "quickbooks_draft_invoices": [
+        { "invoice_number": "CH-9001", "vendor_name": "CloudHost", "expense_category": "hosting", "total": 900.00, "status": "draft" },
+        { "invoice_number": "LG-4400", "vendor_name": "LegalCo", "expense_category": "professional_services", "total": 2500.00, "status": "draft" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "read_invoice_document", "args_contain": { "document_id": "DOC-201" }, "order_sensitive": false },
+      { "tool": "read_invoice_document", "args_contain": { "document_id": "DOC-202" }, "order_sensitive": false },
+      { "tool": "get_vendor_expense_category", "args_contain": { "vendor_name": "CloudHost" }, "order_sensitive": false },
+      { "tool": "get_vendor_expense_category", "args_contain": { "vendor_name": "LegalCo" }, "order_sensitive": false },
+      { "tool": "create_quickbooks_draft_invoice", "args_contain": { "invoice_number": "CH-9001", "expense_category": "hosting" }, "order_sensitive": false },
+      { "tool": "create_quickbooks_draft_invoice", "args_contain": { "invoice_number": "LG-4400", "expense_category": "professional_services" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms two QuickBooks drafts were created: CH-9001 for CloudHost as hosting ($900.00) and LG-4400 for LegalCo as professional_services ($2,500.00)."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A vendor/category pairing not returned by the lookups",
+        "A total different from the document total"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Look up each vendor's category separately.",
+      "Create exactly one draft per document."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Applying CloudHost's category to the LegalCo invoice or vice versa.",
+      "Marking either invoice paid or approved."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Two-invoice batch variant of task_006; tests per-vendor category isolation."
+  }
+}

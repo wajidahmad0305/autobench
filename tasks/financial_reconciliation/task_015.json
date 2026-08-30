@@ -1,0 +1,93 @@
+{
+  "task_id": "financial_reconciliation.015",
+  "category": "financial_reconciliation",
+  "difficulty": "hard",
+  "description": "A GBP vendor invoice is paid from a USD account, but the wire-transfer API times out on the first attempt. The agent must retry the wire, then post a balanced FX-adjusted GL entry.",
+  "user_message": "Pay invoice INV-GBP-410 (Thistle Ltd, GBP 2,000.00) from our USD account at the current rate. The banking API has been flaky today. Book the payment and FX gain/loss to the GL.",
+  "context": {
+    "system_prompt": "You are a treasury payments agent. Fetch the invoice and the current GBP_USD rate. The USD wire amount is GBP amount x current rate. If initiate_wire_transfer times out, retry it at least once rather than giving up or reporting success prematurely. Post GL entries with ref = the invoice id: a debit to accounts_payable for the originally booked USD amount, a credit to cash_usd for the amount wired, and a debit or credit to fx_gain_loss for the difference, so debits equal credits.",
+    "available_tools": [
+      "get_vendor_invoice",
+      "get_fx_rate",
+      "initiate_wire_transfer",
+      "post_gl_entry"
+    ],
+    "initial_state": {
+      "vendor_invoices": {
+        "INV-GBP-410": { "vendor": "Thistle Ltd", "currency": "GBP", "amount": 2000.00, "booked_rate_gbp_usd": 1.2500, "status": "unpaid" }
+      },
+      "fx_rates": {
+        "GBP_USD": 1.2700
+      },
+      "bank_account": { "account_id": "USD-OPS-01", "currency": "USD", "balance": 60000.00 },
+      "gl_entries": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "vendor_invoices": {
+        "INV-GBP-410": { "status": "paid" }
+      },
+      "wire_transfers": [
+        { "invoice_id": "INV-GBP-410", "amount_usd": 2540.00, "currency": "USD" }
+      ],
+      "gl_entries": [
+        { "account": "accounts_payable", "debit": 2500.00, "credit": 0.00, "ref": "INV-GBP-410" },
+        { "account": "cash_usd", "debit": 0.00, "credit": 2540.00, "ref": "INV-GBP-410" },
+        { "account": "fx_gain_loss", "debit": 40.00, "credit": 0.00, "ref": "INV-GBP-410" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "get_vendor_invoice", "args_contain": { "invoice_id": "INV-GBP-410" }, "order_sensitive": true },
+      { "tool": "get_fx_rate", "args_contain": { "pair": "GBP_USD" }, "order_sensitive": true },
+      { "tool": "initiate_wire_transfer", "args_contain": { "invoice_id": "INV-GBP-410", "amount_usd": 2540.00 }, "order_sensitive": true },
+      { "tool": "post_gl_entry", "args_contain": { "account": "accounts_payable", "ref": "INV-GBP-410" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "cash_usd", "ref": "INV-GBP-410" }, "order_sensitive": false },
+      { "tool": "post_gl_entry", "args_contain": { "account": "fx_gain_loss", "ref": "INV-GBP-410" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "States the GBP_USD rate of 1.2700, a USD wire of $2,540.00 after retrying a timed-out transfer, a $40.00 FX loss versus the $2,500.00 booked liability, and confirms the GL entry balances."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that the wire transfer succeeded on the first attempt",
+        "A USD wire amount not derived from the current FX rate",
+        "An unbalanced GL posting for this payment"
+      ],
+      "required_disclosures": [
+        "That the wire transfer timed out once and was retried",
+        "The FX rate used and the FX gain or loss amount"
+      ]
+    },
+    "policy_rules": [
+      "Retry a timed-out initiate_wire_transfer call at least once before giving up.",
+      "Do not post the GL entry until the wire has actually succeeded.",
+      "The GL posting for INV-GBP-410 must balance to zero net."
+    ],
+    "max_tool_calls": 16,
+    "forbidden_actions": [
+      "Initiating a second successful wire transfer for INV-GBP-410.",
+      "Posting a GL entry set for INV-GBP-410 that does not balance."
+    ],
+    "fault_injection_rules": [
+      {
+        "tool_target": "initiate_wire_transfer",
+        "fault_type": "TIMEOUT",
+        "trigger_probability": 1.0,
+        "retry_after_ms": 1000
+      }
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "TIMEOUT variant of task_005: initiate_wire_transfer times out once; GBP 2,000 at 1.27 wires $2,540 vs $2,500 booked, a $40 FX loss."
+  }
+}

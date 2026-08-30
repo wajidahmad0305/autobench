@@ -1,0 +1,78 @@
+{
+  "task_id": "hr_employee_lifecycle.009",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "Quarterly review kickoff: for every employee at a review-cycle tenure milestone, assign a Lattice review to their manager and send that manager a Slack DM.",
+  "user_message": "Kick off the Q3 review cycle: assign a Lattice review for everyone who's hit a review milestone and DM each manager to let them know.",
+  "context": {
+    "system_prompt": "You are an HR review-cycle agent. List the employees due for review. For each, assign a review in Lattice to their manager, then send that manager a Slack DM. Only assign reviews for employees the due list returns.",
+    "available_tools": [
+      "list_employees_due_for_review",
+      "assign_review_in_lattice",
+      "send_slack_dm"
+    ],
+    "initial_state": {
+      "employees": {
+        "EMP-7301": { "manager_id": "EMP-9020", "tenure_months": 12 },
+        "EMP-7302": { "manager_id": "EMP-9020", "tenure_months": 5 },
+        "EMP-7303": { "manager_id": "EMP-9021", "tenure_months": 24 }
+      },
+      "review_policy": { "due_at_tenure_months": [12, 24, 36] },
+      "review_cycle_due_date": "2026-09-30",
+      "lattice_reviews": [],
+      "slack_dms_sent": []
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "lattice_reviews": [
+        { "employee_id": "EMP-7301", "manager_id": "EMP-9020" },
+        { "employee_id": "EMP-7303", "manager_id": "EMP-9021" }
+      ],
+      "slack_dms_sent": [
+        { "to": "EMP-9020" },
+        { "to": "EMP-9021" }
+      ]
+    },
+    "required_tool_calls": [
+      { "tool": "list_employees_due_for_review", "args_contain": {}, "order_sensitive": true },
+      { "tool": "assign_review_in_lattice", "args_contain": { "employee_id": "EMP-7301", "manager_id": "EMP-9020" }, "order_sensitive": false },
+      { "tool": "assign_review_in_lattice", "args_contain": { "employee_id": "EMP-7303", "manager_id": "EMP-9021" }, "order_sensitive": false },
+      { "tool": "send_slack_dm", "args_contain": { "to": "EMP-9020" }, "order_sensitive": false },
+      { "tool": "send_slack_dm", "args_contain": { "to": "EMP-9021" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Reports that reviews were assigned for EMP-7301 and EMP-7303 (not EMP-7302, who is not at a milestone) and that both managers were DMed."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A claim that EMP-7302 is due for review",
+        "A manager id not present in the employee records"
+      ],
+      "required_disclosures": [
+        "The list of employees a review was assigned for"
+      ]
+    },
+    "policy_rules": [
+      "Assign reviews only for employees returned by list_employees_due_for_review.",
+      "DM each manager after assigning their report's review."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Assigning a review for EMP-7302, who is not at a review milestone.",
+      "DMing a manager for a review that was not assigned."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Review-cycle fan-out mutation of task_002 with a non-due employee as a distractor."
+  }
+}

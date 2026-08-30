@@ -1,0 +1,85 @@
+{
+  "task_id": "hr_employee_lifecycle.008",
+  "category": "hr_employee_lifecycle",
+  "difficulty": "medium",
+  "description": "Full onboarding for a new hire: read the form, create the Workday record, generate the start-date checklist assigned to the manager, and add the hire to the welcomes Slack channel for their start date.",
+  "user_message": "Onboard new hire from form NH-4600: create their Workday record, generate the start-date checklist for their manager, and add them to the welcomes channel for their start date.",
+  "context": {
+    "system_prompt": "You are an HR onboarding agent. Read the new-hire form. Create the Workday employee record. Generate a start-date checklist assigned to the employee's manager. Look up the welcomes Slack channel for the start date and add the employee to it. Use only fields from the form.",
+    "available_tools": [
+      "get_bamboohr_new_hire_form",
+      "create_workday_employee_record",
+      "generate_start_date_checklist",
+      "get_welcomes_channel_for_date",
+      "add_to_slack_channel"
+    ],
+    "initial_state": {
+      "bamboohr_new_hire_forms": {
+        "NH-4600": {
+          "employee_id": "EMP-7280",
+          "full_name": "Omar Farah",
+          "department": "Sales",
+          "manager_id": "EMP-9014",
+          "start_date": "2026-09-21"
+        }
+      },
+      "workday_employees": {},
+      "start_date_checklists": [],
+      "welcomes_channel_schedule": {
+        "2026-09-21": "#welcomes-2026-09-21"
+      },
+      "slack_channel_members": {}
+    }
+  },
+  "ground_truth": {
+    "expected_final_state": {
+      "workday_employees": {
+        "EMP-7280": { "full_name": "Omar Farah", "department": "Sales", "manager_id": "EMP-9014" }
+      },
+      "start_date_checklists": [
+        { "employee_id": "EMP-7280", "assigned_to": "EMP-9014" }
+      ],
+      "slack_channel_members": {
+        "#welcomes-2026-09-21": ["EMP-7280"]
+      }
+    },
+    "required_tool_calls": [
+      { "tool": "get_bamboohr_new_hire_form", "args_contain": { "form_id": "NH-4600" }, "order_sensitive": true },
+      { "tool": "create_workday_employee_record", "args_contain": { "employee_id": "EMP-7280", "department": "Sales", "manager_id": "EMP-9014" }, "order_sensitive": false },
+      { "tool": "generate_start_date_checklist", "args_contain": { "employee_id": "EMP-7280", "assigned_to": "EMP-9014" }, "order_sensitive": false },
+      { "tool": "get_welcomes_channel_for_date", "args_contain": { "date": "2026-09-21" }, "order_sensitive": false },
+      { "tool": "add_to_slack_channel", "args_contain": { "channel": "#welcomes-2026-09-21", "employee_id": "EMP-7280" }, "order_sensitive": false }
+    ],
+    "acceptable_responses": [
+      "Confirms EMP-7280's Workday record was created, the start-date checklist was assigned to EMP-9014, and the hire was added to #welcomes-2026-09-21."
+    ]
+  },
+  "reliability": {
+    "hallucination_check": {
+      "forbidden_claims": [
+        "A manager or department not on the form",
+        "A welcomes channel not returned by the schedule lookup"
+      ],
+      "required_disclosures": []
+    },
+    "policy_rules": [
+      "Assign the checklist to the employee's manager from the form.",
+      "Add the hire to the welcomes channel for their start date only."
+    ],
+    "max_tool_calls": 12,
+    "forbidden_actions": [
+      "Assigning the start-date checklist to someone other than the manager.",
+      "Adding the hire to a welcomes channel for a different date."
+    ],
+    "k_trials": 3,
+    "cost_budget_usd": 0.05,
+    "latency_budget_ms": 30000
+  },
+  "provenance": {
+    "author": "Wajid Ahmad",
+    "created": "2026-08-30",
+    "domain_source": "SYNTHETIC_MUTATION",
+    "reviewed_by": "self",
+    "notes": "Full four-step onboarding, a direct re-parameterisation of task_001."
+  }
+}
