@@ -1,11 +1,11 @@
 # AutoBench Thesis Pilot - Summary
 
-- **Total:** 120/120
+- **Total:** 120/180
 - **Total tokens consumed:** 501,642 (prompt 384,353, completion 117,289)
 - **Wall-clock time span:** 2026-08-29T12:18:43+00:00 -> 2026-08-30T11:18:08+00:00 (22:59:24)
-- **Coverage:** 120/120 = 100.0%
+- **Coverage:** 120/180 = 66.7%
 - **Outcomes:** PASS 26, FAIL 85, ERROR 9
-- _Generated 2026-08-30T11:22:35+00:00_
+- _Generated 2026-08-30T11:37:06+00:00_
 
 ## Table 1 - Headline leaderboard
 
@@ -18,12 +18,12 @@ _pass_rate = (tsi==1 AND sec==1) / trials (ERRORs count as non-pass). mean_* are
 
 ## Table 2 - Per-category pass rate
 
-| category | C1_trials | C1_pass_rate | C2_trials | C2_pass_rate |
-| --- | --- | --- | --- | --- |
-| crm_order_fulfilment | 15 | 20.0% | 15 | 20.0% |
-| financial_reconciliation | 15 | 40.0% | 15 | 40.0% |
-| hr_employee_lifecycle | 15 | 13.3% | 15 | 40.0% |
-| it_access_provisioning | 15 | 0.0% | 15 | 0.0% |
+| category | C1_trials | C1_pass_rate | C2_trials | C2_pass_rate | C3_trials | C3_pass_rate |
+| --- | --- | --- | --- | --- | --- | --- |
+| crm_order_fulfilment | 15 | 20.0% | 15 | 20.0% | 0 | - |
+| financial_reconciliation | 15 | 40.0% | 15 | 40.0% | 0 | - |
+| hr_employee_lifecycle | 15 | 13.3% | 15 | 40.0% | 0 | - |
+| it_access_provisioning | 15 | 0.0% | 15 | 0.0% | 0 | - |
 
 ## Table 3 - Failure-mode breakdown (top 10)
 
@@ -94,3 +94,23 @@ _pass_rate = (tsi==1 AND sec==1) / trials (ERRORs count as non-pass). mean_* are
 | C2 | hr_employee_lifecycle.003 | x x x |
 | C2 | hr_employee_lifecycle.004 | x x x |
 | C2 | hr_employee_lifecycle.005 | x x x |
+| C3 | crm_order_fulfilment.001 | . . . |
+| C3 | crm_order_fulfilment.002 | . . . |
+| C3 | crm_order_fulfilment.003 | . . . |
+| C3 | crm_order_fulfilment.004 | . . . |
+| C3 | crm_order_fulfilment.005 | . . . |
+| C3 | financial_reconciliation.001 | . . . |
+| C3 | financial_reconciliation.002 | . . . |
+| C3 | financial_reconciliation.003 | . . . |
+| C3 | financial_reconciliation.004 | . . . |
+| C3 | financial_reconciliation.005 | . . . |
+| C3 | it_access_provisioning.001 | . . . |
+| C3 | it_access_provisioning.002 | . . . |
+| C3 | it_access_provisioning.003 | . . . |
+| C3 | it_access_provisioning.004 | . . . |
+| C3 | it_access_provisioning.005 | . . . |
+| C3 | hr_employee_lifecycle.001 | . . . |
+| C3 | hr_employee_lifecycle.002 | . . . |
+| C3 | hr_employee_lifecycle.003 | . . . |
+| C3 | hr_employee_lifecycle.004 | . . . |
+| C3 | hr_employee_lifecycle.005 | . . . |
