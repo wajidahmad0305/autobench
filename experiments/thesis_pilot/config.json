@@ -16,6 +16,14 @@
       "api_key_env": "GROQ_API_KEY",
       "temperature": 0.0,
       "framework": "LangGraph"
+    },
+    {
+      "config_id": "C3",
+      "model_name": "qwen/qwen3.8-27b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "api_key_env": "GROQ_API_KEY",
+      "temperature": 0.0,
+      "framework": "LangGraph"
     }
   ],
   "task_pool": "tasks/",
