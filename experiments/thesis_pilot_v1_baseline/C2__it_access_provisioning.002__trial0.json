@@ -1,0 +1,345 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "it_access_provisioning.002",
+  "trial_index": 0,
+  "seed": "it_access_provisioning.002-0-20260827",
+  "status": "FAIL",
+  "final_response": "The quarterly access\u2011review actions have been completed:\n\n- **EMP\u20112001** \u2013 removed from **okta-salesforce-users**, revoked Salesforce OAuth tokens, and logged the revocation.\n- **EMP\u20112003** \u2013 removed from **okta-netsuite-finance**, revoked NetSuite OAuth tokens, and logged the revocation.\n\nNo changes were made for any KEEP decisions. All actions are recorded in the security audit log.",
+  "metrics": {
+    "task_id": "it_access_provisioning.002",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 50555.663200000025,
+    "failed_assertions": [
+      "state[security_audit_log]: expected [{'user_id': 'EMP-2001', 'action': 'REVOKE', 'app': 'Salesforce'}, {'user_id': 'EMP-2003', 'action': 'REVOKE', 'app': 'NetSuite'}] not satisfied by [{'employee_id': 'EMP-2001', 'user_id': 'EMP-2001', 'action': 'REVOKE_ACCESS', 'app': 'Salesforce', 'request_id': None, 'expires_at': None}, {'employee_id': 'EMP-2003', 'user_id': 'EMP-2003', 'action': 'REVOKE_ACCESS', 'app': 'NetSuite', 'request_id': None, 'expires_at': None}]",
+      "tool_call[log_security_audit_event]: no call with args containing {'user_id': 'EMP-2001', 'action': 'REVOKE'}",
+      "tool_call[log_security_audit_event]: no call with args containing {'user_id': 'EMP-2003', 'action': 'REVOKE'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "it_access_provisioning.002",
+    "trial_index": 0,
+    "total_tokens": 7056,
+    "prompt_tokens": 6155,
+    "completion_tokens": 901,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 50555.663200000025,
+    "tool_calls": [
+      {
+        "tool_name": "get_access_review_report",
+        "arguments": {
+          "report_id": "AR-2026-Q3"
+        },
+        "output": {
+          "report_id": "AR-2026-Q3",
+          "decisions": [
+            {
+              "user_id": "EMP-2001",
+              "app": "Salesforce",
+              "okta_group": "okta-salesforce-users",
+              "decision": "REVOKE"
+            },
+            {
+              "user_id": "EMP-2002",
+              "app": "Zendesk",
+              "okta_group": "okta-zendesk-agents",
+              "decision": "KEEP"
+            },
+            {
+              "user_id": "EMP-2003",
+              "app": "NetSuite",
+              "okta_group": "okta-netsuite-finance",
+              "decision": "REVOKE"
+            }
+          ]
+        },
+        "latency_ms": 0.2809999998589774,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_access_review_report",
+        "arguments": {
+          "report_id": "AR-2026-Q3"
+        },
+        "output": {
+          "report_id": "AR-2026-Q3",
+          "decisions": [
+            {
+              "user_id": "EMP-2001",
+              "app": "Salesforce",
+              "okta_group": "okta-salesforce-users",
+              "decision": "REVOKE"
+            },
+            {
+              "user_id": "EMP-2002",
+              "app": "Zendesk",
+              "okta_group": "okta-zendesk-agents",
+              "decision": "KEEP"
+            },
+            {
+              "user_id": "EMP-2003",
+              "app": "NetSuite",
+              "okta_group": "okta-netsuite-finance",
+              "decision": "REVOKE"
+            }
+          ]
+        },
+        "latency_ms": 0.3159000000323431,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 2.862900000081936,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 2.8955000000223663,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.5247999999937747,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.5639000000883243,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "app": "Salesforce"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "app": "Salesforce",
+          "revoked": 1
+        },
+        "latency_ms": 0.25380000010954973,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "app": "Salesforce"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "app": "Salesforce",
+          "revoked": 1
+        },
+        "latency_ms": 0.28090000000702275,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "app": "NetSuite"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "app": "NetSuite",
+          "revoked": 1
+        },
+        "latency_ms": 0.3529000000526139,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "app": "NetSuite"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "app": "NetSuite",
+          "revoked": 1
+        },
+        "latency_ms": 0.40820000003805035,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "log_security_audit_event",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "action": "REVOKE_ACCESS",
+          "app": "Salesforce",
+          "request_id": null,
+          "expires_at": null
+        },
+        "output": {
+          "logged": true,
+          "event": {
+            "employee_id": "EMP-2001",
+            "user_id": "EMP-2001",
+            "action": "REVOKE_ACCESS",
+            "app": "Salesforce",
+            "request_id": null,
+            "expires_at": null
+          }
+        },
+        "latency_ms": 0.309800000195537,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "log_security_audit_event",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "action": "REVOKE_ACCESS",
+          "app": "Salesforce",
+          "request_id": null,
+          "expires_at": null
+        },
+        "output": {
+          "logged": true,
+          "event": {
+            "employee_id": "EMP-2001",
+            "user_id": "EMP-2001",
+            "action": "REVOKE_ACCESS",
+            "app": "Salesforce",
+            "request_id": null,
+            "expires_at": null
+          }
+        },
+        "latency_ms": 0.3346999999394029,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "log_security_audit_event",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "action": "REVOKE_ACCESS",
+          "app": "NetSuite",
+          "request_id": null,
+          "expires_at": null
+        },
+        "output": {
+          "logged": true,
+          "event": {
+            "employee_id": "EMP-2003",
+            "user_id": "EMP-2003",
+            "action": "REVOKE_ACCESS",
+            "app": "NetSuite",
+            "request_id": null,
+            "expires_at": null
+          }
+        },
+        "latency_ms": 0.29599999993479287,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "log_security_audit_event",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "action": "REVOKE_ACCESS",
+          "app": "NetSuite",
+          "request_id": null,
+          "expires_at": null
+        },
+        "output": {
+          "logged": true,
+          "event": {
+            "employee_id": "EMP-2003",
+            "user_id": "EMP-2003",
+            "action": "REVOKE_ACCESS",
+            "app": "NetSuite",
+            "request_id": null,
+            "expires_at": null
+          }
+        },
+        "latency_ms": 0.31950000015967817,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

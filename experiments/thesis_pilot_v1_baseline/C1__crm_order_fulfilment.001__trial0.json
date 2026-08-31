@@ -1,0 +1,193 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "crm_order_fulfilment.001",
+  "trial_index": 0,
+  "seed": "crm_order_fulfilment.001-0-20260827",
+  "status": "PASS",
+  "final_response": "\u2705 Order **SHOP-10432** has been processed:\n\n- **HubSpot**: Contact created for jordan.lee@example.com and tagged with SKU **WGT-100-BLU**.  \n- **Fulfillment**: Order queued with 2 units of SKU **WGT-100-BLU**.\n\nLet me know if you need anything else!",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.001",
+    "trial_index": 0,
+    "tsi": 1.0,
+    "sec": 1.0,
+    "sla_compliance": 1.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 3902.8969000064535,
+    "failed_assertions": [],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.001",
+    "trial_index": 0,
+    "total_tokens": 3187,
+    "prompt_tokens": 2797,
+    "completion_tokens": 390,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 3902.8969000064535,
+    "tool_calls": [
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": "jordan.lee@example.com"
+        },
+        "output": {
+          "email": "jordan.lee@example.com",
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3171999996993691,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": "jordan.lee@example.com"
+        },
+        "output": {
+          "email": "jordan.lee@example.com",
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.342100000125356,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_hubspot_contact",
+        "arguments": {
+          "email": "jordan.lee@example.com",
+          "full_name": "Jordan Lee",
+          "company": null,
+          "company_size": null
+        },
+        "output": {
+          "id": "contact_00001",
+          "email": "jordan.lee@example.com",
+          "created": true,
+          "contact": {
+            "full_name": "Jordan Lee",
+            "company": null,
+            "company_size": null,
+            "email": "jordan.lee@example.com"
+          }
+        },
+        "latency_ms": 0.9184000082314014,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_hubspot_contact",
+        "arguments": {
+          "email": "jordan.lee@example.com",
+          "full_name": "Jordan Lee",
+          "company": null,
+          "company_size": null
+        },
+        "output": {
+          "id": "contact_00001",
+          "email": "jordan.lee@example.com",
+          "created": true,
+          "contact": {
+            "full_name": "Jordan Lee",
+            "company": null,
+            "company_size": null,
+            "email": "jordan.lee@example.com"
+          }
+        },
+        "latency_ms": 0.9809000039240345,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "tag_hubspot_contact",
+        "arguments": {
+          "email": "jordan.lee@example.com",
+          "tag": "WGT-100-BLU"
+        },
+        "output": {
+          "email": "jordan.lee@example.com",
+          "tag": "WGT-100-BLU",
+          "tags": [
+            "WGT-100-BLU"
+          ],
+          "tagged": true
+        },
+        "latency_ms": 0.7535999902756885,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "tag_hubspot_contact",
+        "arguments": {
+          "email": "jordan.lee@example.com",
+          "tag": "WGT-100-BLU"
+        },
+        "output": {
+          "email": "jordan.lee@example.com",
+          "tag": "WGT-100-BLU",
+          "tags": [
+            "WGT-100-BLU"
+          ],
+          "tagged": true
+        },
+        "latency_ms": 0.8126000029733405,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_to_fulfillment_queue",
+        "arguments": {
+          "order_id": "SHOP-10432",
+          "email": "jordan.lee@example.com",
+          "sku": "WGT-100-BLU",
+          "qty": 2
+        },
+        "output": {
+          "order_id": "SHOP-10432",
+          "queued": true,
+          "entry": {
+            "status": "queued",
+            "order_id": "SHOP-10432",
+            "email": "jordan.lee@example.com",
+            "sku": "WGT-100-BLU",
+            "qty": 2
+          }
+        },
+        "latency_ms": 0.3232999879401177,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_to_fulfillment_queue",
+        "arguments": {
+          "order_id": "SHOP-10432",
+          "email": "jordan.lee@example.com",
+          "sku": "WGT-100-BLU",
+          "qty": 2
+        },
+        "output": {
+          "order_id": "SHOP-10432",
+          "queued": true,
+          "entry": {
+            "status": "queued",
+            "order_id": "SHOP-10432",
+            "email": "jordan.lee@example.com",
+            "sku": "WGT-100-BLU",
+            "qty": 2
+          }
+        },
+        "latency_ms": 0.3468999930191785,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

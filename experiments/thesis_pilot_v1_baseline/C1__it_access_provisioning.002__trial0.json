@@ -1,0 +1,215 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "it_access_provisioning.002",
+  "trial_index": 0,
+  "seed": "it_access_provisioning.002-0-20260827",
+  "status": "FAIL",
+  "final_response": "",
+  "metrics": {
+    "task_id": "it_access_provisioning.002",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 30635.04660000035,
+    "failed_assertions": [
+      "state[oauth_tokens]: expected {'EMP-2001': [{'app': 'Salesforce', 'token_id': 'tok_1', 'status': 'revoked'}], 'EMP-2003': [{'app': 'NetSuite', 'token_id': 'tok_2', 'status': 'revoked'}]} not satisfied by {'EMP-2001': [{'app': 'Salesforce', 'token_id': 'tok_1', 'status': 'revoked'}], 'EMP-2003': [{'app': 'NetSuite', 'token_id': 'tok_2', 'status': 'active'}]}",
+      "state[security_audit_log]: expected [{'user_id': 'EMP-2001', 'action': 'REVOKE', 'app': 'Salesforce'}, {'user_id': 'EMP-2003', 'action': 'REVOKE', 'app': 'NetSuite'}] not satisfied by []",
+      "tool_call[log_security_audit_event]: no call with args containing {'user_id': 'EMP-2001', 'action': 'REVOKE'}",
+      "tool_call[revoke_oauth_tokens]: no call with args containing {'user_id': 'EMP-2003', 'app': 'NetSuite'}",
+      "tool_call[log_security_audit_event]: no call with args containing {'user_id': 'EMP-2003', 'action': 'REVOKE'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "it_access_provisioning.002",
+    "trial_index": 0,
+    "total_tokens": 6017,
+    "prompt_tokens": 3116,
+    "completion_tokens": 2901,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 30635.04660000035,
+    "tool_calls": [
+      {
+        "tool_name": "get_access_review_report",
+        "arguments": {
+          "report_id": "AR-2026-Q3"
+        },
+        "output": {
+          "report_id": "AR-2026-Q3",
+          "decisions": [
+            {
+              "user_id": "EMP-2001",
+              "app": "Salesforce",
+              "okta_group": "okta-salesforce-users",
+              "decision": "REVOKE"
+            },
+            {
+              "user_id": "EMP-2002",
+              "app": "Zendesk",
+              "okta_group": "okta-zendesk-agents",
+              "decision": "KEEP"
+            },
+            {
+              "user_id": "EMP-2003",
+              "app": "NetSuite",
+              "okta_group": "okta-netsuite-finance",
+              "decision": "REVOKE"
+            }
+          ]
+        },
+        "latency_ms": 0.40950000402517617,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_access_review_report",
+        "arguments": {
+          "report_id": "AR-2026-Q3"
+        },
+        "output": {
+          "report_id": "AR-2026-Q3",
+          "decisions": [
+            {
+              "user_id": "EMP-2001",
+              "app": "Salesforce",
+              "okta_group": "okta-salesforce-users",
+              "decision": "REVOKE"
+            },
+            {
+              "user_id": "EMP-2002",
+              "app": "Zendesk",
+              "okta_group": "okta-zendesk-agents",
+              "decision": "KEEP"
+            },
+            {
+              "user_id": "EMP-2003",
+              "app": "NetSuite",
+              "okta_group": "okta-netsuite-finance",
+              "decision": "REVOKE"
+            }
+          ]
+        },
+        "latency_ms": 0.4541000089375302,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.41540000529494137,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "group": "okta-salesforce-users",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.46629999997094274,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "app": "Salesforce"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "app": "Salesforce",
+          "revoked": 1
+        },
+        "latency_ms": 0.4099000070709735,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_oauth_tokens",
+        "arguments": {
+          "employee_id": "EMP-2001",
+          "user_id": "EMP-2001",
+          "app": "Salesforce"
+        },
+        "output": {
+          "user_id": "EMP-2001",
+          "app": "Salesforce",
+          "revoked": 1
+        },
+        "latency_ms": 0.4625000001396984,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.4267999902367592,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "remove_okta_group",
+        "arguments": {
+          "employee_id": "EMP-2003",
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance"
+        },
+        "output": {
+          "user_id": "EMP-2003",
+          "group": "okta-netsuite-finance",
+          "removed": true,
+          "groups": [
+            "okta-slack-all"
+          ]
+        },
+        "latency_ms": 0.47420000191777945,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

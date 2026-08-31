@@ -1,0 +1,211 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "hr_employee_lifecycle.003",
+  "trial_index": 1,
+  "seed": "hr_employee_lifecycle.003-1-20260827",
+  "status": "PASS",
+  "final_response": "**Leave Request Processed**\n\n| Item | Details |\n|------|---------|\n| **Request ID** | LR-4402 |\n| **Employee** | Priya Nair (EMP\u20118801) |\n| **Manager** | EMP\u20119500 |\n| **Leave Type** | Parental |\n| **Start Date** | 2026\u201110\u201101 |\n| **Requested Duration** | 16\u202fweeks |\n| **Jurisdiction** | CA\u2011US |\n| **Eligibility** | Tenure\u202f=\u202f19\u202fmonths (\u2265\u202f12\u202fmonths required) \u2013 **eligible** |\n| **Policy (CA\u2011US, Parental)** | Minimum tenure: 12\u202fmonths\u202f\u00b7\u202fPaid weeks: 12 |\n| **Paid Weeks** | 12\u202fweeks |\n| **Unpaid Weeks** | 4\u202fweeks (16\u202f\u2013\u202f12) |\n| **Leave Record ID** | lr_00001 |\n| **Leave Record Status** | Approved |\n| **Pay Codes** | Paid: **PARENTAL_PAID**\u202f\u00b7\u202fUnpaid: **PARENTAL_UNPAID** |\n| **Coverage Plan Draft** | Assigned to manager EMP\u20119500 (draft created) |\n\nAll required steps have been completed:\n\n1. Verified employee tenure (19\u202fmonths) and jurisdiction policy.  \n2. Calculated the paid/unpaid split (12\u202fpaid\u202f/\u202f4\u202funpaid weeks).  \n3. Created the approved leave record with the correct pay codes.  \n4. Generated a coverage\u2011plan draft assigned to the employee\u2019s manager.\n\nIf you need any further actions (e.g., notifying the employee or updating calendars), just let me know!",
+  "metrics": {
+    "task_id": "hr_employee_lifecycle.003",
+    "trial_index": 1,
+    "tsi": 1.0,
+    "sec": 1.0,
+    "sla_compliance": 1.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 3197.3494000003484,
+    "failed_assertions": [],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.003",
+    "trial_index": 1,
+    "total_tokens": 4688,
+    "prompt_tokens": 3729,
+    "completion_tokens": 959,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 3197.3494000003484,
+    "tool_calls": [
+      {
+        "tool_name": "get_leave_request",
+        "arguments": {
+          "request_id": "LR-4402"
+        },
+        "output": {
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "leave_type": "parental",
+          "start_date": "2026-10-01",
+          "expected_duration_weeks": 16
+        },
+        "latency_ms": 0.45570000020234147,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_leave_request",
+        "arguments": {
+          "request_id": "LR-4402"
+        },
+        "output": {
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "leave_type": "parental",
+          "start_date": "2026-10-01",
+          "expected_duration_weeks": 16
+        },
+        "latency_ms": 0.498899999911373,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_tenure",
+        "arguments": {
+          "employee_id": "EMP-8801"
+        },
+        "output": {
+          "employee_id": "EMP-8801",
+          "tenure_months": 19,
+          "full_name": "Priya Nair",
+          "manager_id": "EMP-9500",
+          "hire_date": "2025-01-15",
+          "jurisdiction": "CA-US"
+        },
+        "latency_ms": 0.314799999614479,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_tenure",
+        "arguments": {
+          "employee_id": "EMP-8801"
+        },
+        "output": {
+          "employee_id": "EMP-8801",
+          "tenure_months": 19,
+          "full_name": "Priya Nair",
+          "manager_id": "EMP-9500",
+          "hire_date": "2025-01-15",
+          "jurisdiction": "CA-US"
+        },
+        "latency_ms": 0.3468000004431815,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_leave_policy",
+        "arguments": {
+          "jurisdiction": "CA-US",
+          "leave_type": "parental"
+        },
+        "output": {
+          "jurisdiction": "CA-US",
+          "leave_type": "parental",
+          "min_tenure_months": 12,
+          "paid_weeks": 12
+        },
+        "latency_ms": 0.36219999947206816,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_leave_policy",
+        "arguments": {
+          "jurisdiction": "CA-US",
+          "leave_type": "parental"
+        },
+        "output": {
+          "jurisdiction": "CA-US",
+          "leave_type": "parental",
+          "min_tenure_months": 12,
+          "paid_weeks": 12
+        },
+        "latency_ms": 0.39430000015272526,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_leave_record",
+        "arguments": {
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "paid_weeks": 12,
+          "unpaid_weeks": 4
+        },
+        "output": {
+          "record_id": "lr_00001",
+          "status": "approved",
+          "paid_pay_code": "PARENTAL_PAID",
+          "unpaid_pay_code": "PARENTAL_UNPAID",
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "paid_weeks": 12,
+          "unpaid_weeks": 4
+        },
+        "latency_ms": 0.5729999993491219,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_leave_record",
+        "arguments": {
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "paid_weeks": 12,
+          "unpaid_weeks": 4
+        },
+        "output": {
+          "record_id": "lr_00001",
+          "status": "approved",
+          "paid_pay_code": "PARENTAL_PAID",
+          "unpaid_pay_code": "PARENTAL_UNPAID",
+          "request_id": "LR-4402",
+          "employee_id": "EMP-8801",
+          "paid_weeks": 12,
+          "unpaid_weeks": 4
+        },
+        "latency_ms": 0.6218999997145147,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_coverage_plan_draft",
+        "arguments": {
+          "request_id": "LR-4402",
+          "assigned_to": "EMP-9500"
+        },
+        "output": {
+          "request_id": "LR-4402",
+          "assigned_to": "EMP-9500",
+          "status": "draft",
+          "draft": "Auto-generated coverage plan draft (mock)."
+        },
+        "latency_ms": 0.5418999999164953,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_coverage_plan_draft",
+        "arguments": {
+          "request_id": "LR-4402",
+          "assigned_to": "EMP-9500"
+        },
+        "output": {
+          "request_id": "LR-4402",
+          "assigned_to": "EMP-9500",
+          "status": "draft",
+          "draft": "Auto-generated coverage plan draft (mock)."
+        },
+        "latency_ms": 0.591099999837752,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

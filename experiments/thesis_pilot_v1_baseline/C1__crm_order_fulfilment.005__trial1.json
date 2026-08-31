@@ -1,0 +1,174 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "crm_order_fulfilment.005",
+  "trial_index": 1,
+  "seed": "crm_order_fulfilment.005-1-20260827",
+  "status": "FAIL",
+  "final_response": "I\u2019m sorry, but the shipping\u2011confirmation email could not be sent after three attempts (HTTP\u202f500 errors).  \nBecause the email didn\u2019t succeed, I\u2019ve reverted the Shopify order back to its previous status (set to **processing**) and left the HubSpot ticket open.  \n\nNo ticket has been closed, and the order is no longer marked as shipped. If you\u2019d like me to try sending the email again or investigate the error further, just let me know.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.005",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 3,
+    "fault_recovered": false,
+    "total_cost_usd": 0.0,
+    "duration_ms": 33038.99100000854,
+    "failed_assertions": [
+      "state[shopify_orders]: expected {'SHOP-22110': {'status': 'shipped'}} not satisfied by {'SHOP-22110': {'status': 'processing'}}",
+      "state[sendgrid_emails_sent]: expected [{'order_id': 'SHOP-22110', 'template': 'shipping_confirmation'}] not satisfied by []",
+      "state[hubspot_tickets]: expected {'TICKET-7790': {'status': 'closed'}} not satisfied by {'TICKET-7790': {'status': 'open', 'order_id': 'SHOP-22110'}}",
+      "tool_call[update_hubspot_ticket_status]: no call with args containing {'ticket_id': 'TICKET-7790', 'status': 'closed'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.005",
+    "trial_index": 1,
+    "total_tokens": 4699,
+    "prompt_tokens": 2806,
+    "completion_tokens": 1893,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 33038.99100000854,
+    "tool_calls": [
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "shipped"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "shipped",
+          "updated": true
+        },
+        "latency_ms": 0.4803999909199774,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "shipped"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "shipped",
+          "updated": true
+        },
+        "latency_ms": 0.5210999952396378,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.20959999528713524,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.17240000306628644,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.24280000070575625,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "processing"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "processing",
+          "updated": true
+        },
+        "latency_ms": 0.33910000638570637,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "processing"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "processing",
+          "updated": true
+        },
+        "latency_ms": 0.37369999336078763,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "financial_reconciliation.002",
+  "trial_index": 2,
+  "seed": "financial_reconciliation.002-2-20260827",
+  "status": "FAIL",
+  "final_response": "**Bank Reconciliation Summary \u2013 2026\u201108\u201127**\n\n| Bank Transaction | Amount | Reference | Action |\n|-------------------|--------|-----------|--------|\n| TX\u2011501 | $1,250.00 | INV\u20118801 | **Paid** \u2013 Invoice INV\u20118801 marked as paid. |\n| TX\u2011502 | $640.00 | INV\u20118804 | **Paid** \u2013 Invoice INV\u20118804 marked as paid. |\n| TX\u2011503 | $999.00 | UNKNOWN\u2011REF | **Flagged** \u2013 No matching invoice found; sent to manual review. |\n\nAll matched invoices were confirmed on both amount and reference number, and no invoice was paid based on a single criterion. The unmatched transaction has been flagged for further investigation.",
+  "metrics": {
+    "task_id": "financial_reconciliation.002",
+    "trial_index": 2,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 22794.95169999427,
+    "failed_assertions": [
+      "state[review_queue]: expected [{'tx_id': 'TX-503', 'reason': 'no_matching_invoice'}] not satisfied by [{'reason': 'No matching invoice', 'tx_id': 'TX-503'}]"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.002",
+    "trial_index": 2,
+    "total_tokens": 4134,
+    "prompt_tokens": 3333,
+    "completion_tokens": 801,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 22794.95169999427,
+    "tool_calls": [
+      {
+        "tool_name": "get_bank_feed_transactions",
+        "arguments": {},
+        "output": {
+          "transactions": [
+            {
+              "tx_id": "TX-501",
+              "amount": 1250.0,
+              "reference": "INV-8801",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-502",
+              "amount": 640.0,
+              "reference": "INV-8804",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-503",
+              "amount": 999.0,
+              "reference": "UNKNOWN-REF",
+              "date": "2026-08-27"
+            }
+          ]
+        },
+        "latency_ms": 0.5449000018415973,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_bank_feed_transactions",
+        "arguments": {},
+        "output": {
+          "transactions": [
+            {
+              "tx_id": "TX-501",
+              "amount": 1250.0,
+              "reference": "INV-8801",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-502",
+              "amount": 640.0,
+              "reference": "INV-8804",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-503",
+              "amount": 999.0,
+              "reference": "UNKNOWN-REF",
+              "date": "2026-08-27"
+            }
+          ]
+        },
+        "latency_ms": 0.5853999900864437,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_outstanding_invoices",
+        "arguments": {},
+        "output": {
+          "invoices": {
+            "INV-8801": {
+              "amount": 1250.0,
+              "status": "outstanding"
+            },
+            "INV-8802": {
+              "amount": 300.0,
+              "status": "outstanding"
+            },
+            "INV-8804": {
+              "amount": 640.0,
+              "status": "outstanding"
+            }
+          }
+        },
+        "latency_ms": 0.20399999630171806,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_outstanding_invoices",
+        "arguments": {},
+        "output": {
+          "invoices": {
+            "INV-8801": {
+              "amount": 1250.0,
+              "status": "outstanding"
+            },
+            "INV-8802": {
+              "amount": 300.0,
+              "status": "outstanding"
+            },
+            "INV-8804": {
+              "amount": 640.0,
+              "status": "outstanding"
+            }
+          }
+        },
+        "latency_ms": 0.22680000984109938,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501"
+        },
+        "output": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501",
+          "status": "paid"
+        },
+        "latency_ms": 0.552199999219738,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501"
+        },
+        "output": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501",
+          "status": "paid"
+        },
+        "latency_ms": 0.5963000003248453,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502"
+        },
+        "output": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502",
+          "status": "paid"
+        },
+        "latency_ms": 0.2742000069702044,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502"
+        },
+        "output": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502",
+          "status": "paid"
+        },
+        "latency_ms": 0.301199994282797,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_transaction_for_review",
+        "arguments": {
+          "tx_id": "TX-503",
+          "reason": "No matching invoice"
+        },
+        "output": {
+          "tx_id": "TX-503",
+          "flagged": true
+        },
+        "latency_ms": 0.228599994443357,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_transaction_for_review",
+        "arguments": {
+          "tx_id": "TX-503",
+          "reason": "No matching invoice"
+        },
+        "output": {
+          "tx_id": "TX-503",
+          "flagged": true
+        },
+        "latency_ms": 0.2528999903006479,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

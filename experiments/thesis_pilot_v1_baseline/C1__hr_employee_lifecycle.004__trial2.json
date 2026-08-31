@@ -1,0 +1,164 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "hr_employee_lifecycle.004",
+  "trial_index": 2,
+  "status": "ERROR",
+  "error": "OpenAIInvalidRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 1880, in _generate\n    raw_response = self.client.with_raw_response.create(**payload)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_legacy_response.py\", line 369, in wrapped\n    return cast(LegacyAPIResponse[R], func(*args, **kwargs))\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_utils\\_utils.py\", line 298, in wrapper\n    return func(*args, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\resources\\chat\\completions\\completions.py\", line 1296, in create\n    return self._post(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_base_client.py\", line 1368, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_base_client.py\", line 1141, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\scripts\\run_pilot.py\", line 261, in _fill_box\n    box[\"record\"] = _attempt_trajectory(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\scripts\\run_pilot.py\", line 226, in _attempt_trajectory\n    final_response = adapter.run(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\autobench\\adapters\\langgraph_adapter.py\", line 240, in run\n    for chunk in stream:\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\main.py\", line 2967, in stream\n    for _ in runner.tick(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\_runner.py\", line 207, in tick\n    run_with_retry(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\_retry.py\", line 617, in run_with_retry\n    return task.proc.invoke(task.input, config)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\_internal\\_runnable.py\", line 707, in invoke\n    input = context.run(step.invoke, input, config, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\_internal\\_runnable.py\", line 447, in invoke\n    ret = self.func(*args, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain\\agents\\factory.py\", line 1483, in model_node\n    model_response = _execute_model_sync(request)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain\\agents\\factory.py\", line 1454, in _execute_model_sync\n    output = model_.invoke(messages)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\runnables\\base.py\", line 6014, in invoke\n    return self.bound.invoke(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 488, in invoke\n    self.generate_prompt(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 1877, in generate_prompt\n    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 1684, in generate\n    self._generate_with_cache(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 2022, in _generate_with_cache\n    result = self._generate(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 1883, in _generate\n    _handle_openai_bad_request(e)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 642, in _handle_openai_bad_request\n    raise OpenAIInvalidRequestError(\nlangchain_openai.chat_models.base.OpenAIInvalidRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}\n",
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.004",
+    "trial_index": 2,
+    "total_tokens": 2739,
+    "prompt_tokens": 2224,
+    "completion_tokens": 515,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 27229.827699999987,
+    "tool_calls": [
+      {
+        "tool_name": "get_merit_increase_submission",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG"
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "manager_id": "EMP-9000",
+          "department": "Engineering",
+          "proposed_increases": [
+            {
+              "employee_id": "EMP-8001",
+              "current_salary": 95000,
+              "proposed_increase_pct": 6
+            },
+            {
+              "employee_id": "EMP-8002",
+              "current_salary": 110000,
+              "proposed_increase_pct": 10
+            },
+            {
+              "employee_id": "EMP-8003",
+              "current_salary": 88000,
+              "proposed_increase_pct": 4
+            }
+          ]
+        },
+        "latency_ms": 0.47449999999571446,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_merit_increase_submission",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG"
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "manager_id": "EMP-9000",
+          "department": "Engineering",
+          "proposed_increases": [
+            {
+              "employee_id": "EMP-8001",
+              "current_salary": 95000,
+              "proposed_increase_pct": 6
+            },
+            {
+              "employee_id": "EMP-8002",
+              "current_salary": 110000,
+              "proposed_increase_pct": 10
+            },
+            {
+              "employee_id": "EMP-8003",
+              "current_salary": 88000,
+              "proposed_increase_pct": 4
+            }
+          ]
+        },
+        "latency_ms": 0.5026000000043496,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_budget",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "merit_budget_pct_cap": 8
+        },
+        "latency_ms": 0.25730000004386966,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_budget",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "merit_budget_pct_cap": 8
+        },
+        "latency_ms": 0.28079999992769444,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8001"
+        },
+        "output": {
+          "employee_id": "EMP-8001",
+          "rating": "exceeds"
+        },
+        "latency_ms": 0.43249999998806743,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8001"
+        },
+        "output": {
+          "employee_id": "EMP-8001",
+          "rating": "exceeds"
+        },
+        "latency_ms": 0.4689999999527572,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8002"
+        },
+        "output": {
+          "employee_id": "EMP-8002",
+          "rating": "meets"
+        },
+        "latency_ms": 0.5440999999564156,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8002"
+        },
+        "output": {
+          "employee_id": "EMP-8002",
+          "rating": "meets"
+        },
+        "latency_ms": 0.614499999983309,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

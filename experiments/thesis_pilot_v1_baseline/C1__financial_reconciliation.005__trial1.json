@@ -1,0 +1,378 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "financial_reconciliation.005",
+  "trial_index": 1,
+  "seed": "financial_reconciliation.005-1-20260827",
+  "status": "FAIL",
+  "final_response": "",
+  "metrics": {
+    "task_id": "financial_reconciliation.005",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 0.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 6,
+    "fault_recovered": false,
+    "total_cost_usd": 0.0,
+    "duration_ms": 73706.47299999837,
+    "failed_assertions": [
+      "state[vendor_invoices]: expected {'INV-EUR-501': {'status': 'paid'}} not satisfied by {'INV-EUR-501': {'vendor': 'BerlinTech GmbH', 'currency': 'EUR', 'amount': 2000.0, 'booked_rate_eur_usd': 1.1, 'status': 'unpaid'}}",
+      "state[wire_transfers]: expected [{'invoice_id': 'INV-EUR-501', 'amount_usd': 2170.0, 'currency': 'USD'}] not satisfied by None",
+      "state[gl_entries]: expected [{'account': 'accounts_payable', 'debit': 2200.0, 'credit': 0.0, 'ref': 'INV-EUR-501'}, {'account': 'cash_usd', 'debit': 0.0, 'credit': 2170.0, 'ref': 'INV-EUR-501'}, {'account': 'fx_gain_loss', 'debit': 0.0, 'credit': 30.0, 'ref': 'INV-EUR-501'}] not satisfied by []",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'accounts_payable', 'ref': 'INV-EUR-501'}",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'cash_usd', 'ref': 'INV-EUR-501'}",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'fx_gain_loss', 'ref': 'INV-EUR-501'}"
+    ],
+    "failed_invariants": [
+      "gl_double_entry_balance.INV-EUR-501 (sql error: no such table: gl_entries)"
+    ]
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.005",
+    "trial_index": 1,
+    "total_tokens": 12426,
+    "prompt_tokens": 9711,
+    "completion_tokens": 2715,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 73706.47299999837,
+    "tool_calls": [
+      {
+        "tool_name": "get_vendor_invoice",
+        "arguments": {
+          "invoice_id": "INV-EUR-501"
+        },
+        "output": {
+          "invoice_id": "INV-EUR-501",
+          "vendor": "BerlinTech GmbH",
+          "currency": "EUR",
+          "amount": 2000.0,
+          "booked_rate_eur_usd": 1.1,
+          "status": "unpaid"
+        },
+        "latency_ms": 0.3556000010576099,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_vendor_invoice",
+        "arguments": {
+          "invoice_id": "INV-EUR-501"
+        },
+        "output": {
+          "invoice_id": "INV-EUR-501",
+          "vendor": "BerlinTech GmbH",
+          "currency": "EUR",
+          "amount": 2000.0,
+          "booked_rate_eur_usd": 1.1,
+          "status": "unpaid"
+        },
+        "latency_ms": 0.39539999852422625,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.36800000816583633,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.4157999937888235,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.4160999960731715,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.46529999235644937,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.23239999427460134,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.2570999931776896,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.19659999816212803,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.24639999901410192,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR_USD"
+        },
+        "output": {
+          "pair": "EUR_USD",
+          "rate": 1.085
+        },
+        "latency_ms": 0.40099999750964344,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR_USD"
+        },
+        "output": {
+          "pair": "EUR_USD",
+          "rate": 1.085
+        },
+        "latency_ms": 0.451300002168864,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.3968999953940511,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.34149999555666,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.21699999342672527,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.24789999588392675,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": "USD"
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": "USD"
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.45870000030845404,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.24530000519007444,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

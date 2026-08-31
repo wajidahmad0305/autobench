@@ -1,0 +1,64 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "it_access_provisioning.004",
+  "trial_index": 1,
+  "seed": "it_access_provisioning.004-1-20260827",
+  "status": "FAIL",
+  "final_response": "Before I can provision the temporary IAM role, I need to confirm that the request is being made during the approved access window (08:00\u202f\u2013\u202f18:00\u202fUTC). Could you let me know the current UTC time, or confirm that we are within that window? Once I have that confirmation, I\u2019ll create the 60\u2011minute role, log the grant, and notify the security team via PagerDuty.",
+  "metrics": {
+    "task_id": "it_access_provisioning.004",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 9406.529899999896,
+    "failed_assertions": [
+      "state[iam_role_grants]: expected [{'user_id': 'EMP-5091', 'account_id': 'aws-prod-217', 'role': 'temporary-elevated', 'expires_at': '2026-08-27T15:30:00Z'}] not satisfied by []",
+      "state[security_audit_log]: expected [{'request_id': 'EAR-771', 'user_id': 'EMP-5091', 'action': 'GRANT_TEMP_ACCESS', 'expires_at': '2026-08-27T15:30:00Z'}] not satisfied by []",
+      "state[pagerduty_notifications]: expected [{'request_id': 'EAR-771', 'team': 'security'}] not satisfied by []",
+      "tool_call[provision_temporary_iam_role]: no call with args containing {'user_id': 'EMP-5091', 'account_id': 'aws-prod-217', 'duration_minutes': 60}",
+      "tool_call[log_security_audit_event]: no call with args containing {'request_id': 'EAR-771'}",
+      "tool_call[notify_pagerduty]: no call with args containing {'request_id': 'EAR-771'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "it_access_provisioning.004",
+    "trial_index": 1,
+    "total_tokens": 1466,
+    "prompt_tokens": 834,
+    "completion_tokens": 632,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 9406.529899999896,
+    "tool_calls": [
+      {
+        "tool_name": "get_approved_access_hours",
+        "arguments": {},
+        "output": {
+          "approved_access_hours_utc": "08:00-18:00"
+        },
+        "latency_ms": 0.31470000021727174,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_approved_access_hours",
+        "arguments": {},
+        "output": {
+          "approved_access_hours_utc": "08:00-18:00"
+        },
+        "latency_ms": 0.34019999998236017,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

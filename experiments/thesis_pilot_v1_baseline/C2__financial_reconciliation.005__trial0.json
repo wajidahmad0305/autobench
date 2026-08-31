@@ -1,0 +1,368 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "financial_reconciliation.005",
+  "trial_index": 0,
+  "seed": "financial_reconciliation.005-0-20260827",
+  "status": "FAIL",
+  "final_response": "",
+  "metrics": {
+    "task_id": "financial_reconciliation.005",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 0.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 1,
+    "fault_recovered": false,
+    "total_cost_usd": 0.0,
+    "duration_ms": 70930.03649999991,
+    "failed_assertions": [
+      "state[vendor_invoices]: expected {'INV-EUR-501': {'status': 'paid'}} not satisfied by {'INV-EUR-501': {'vendor': 'BerlinTech GmbH', 'currency': 'EUR', 'amount': 2000.0, 'booked_rate_eur_usd': 1.1, 'status': 'unpaid'}}",
+      "state[wire_transfers]: expected [{'invoice_id': 'INV-EUR-501', 'amount_usd': 2170.0, 'currency': 'USD'}] not satisfied by None",
+      "state[gl_entries]: expected [{'account': 'accounts_payable', 'debit': 2200.0, 'credit': 0.0, 'ref': 'INV-EUR-501'}, {'account': 'cash_usd', 'debit': 0.0, 'credit': 2170.0, 'ref': 'INV-EUR-501'}, {'account': 'fx_gain_loss', 'debit': 0.0, 'credit': 30.0, 'ref': 'INV-EUR-501'}] not satisfied by []",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'accounts_payable', 'ref': 'INV-EUR-501'}",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'cash_usd', 'ref': 'INV-EUR-501'}",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'fx_gain_loss', 'ref': 'INV-EUR-501'}"
+    ],
+    "failed_invariants": [
+      "gl_double_entry_balance.INV-EUR-501 (sql error: no such table: gl_entries)"
+    ]
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.005",
+    "trial_index": 0,
+    "total_tokens": 11088,
+    "prompt_tokens": 9322,
+    "completion_tokens": 1766,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 70930.03649999991,
+    "tool_calls": [
+      {
+        "tool_name": "get_vendor_invoice",
+        "arguments": {
+          "invoice_id": "INV-EUR-501"
+        },
+        "output": {
+          "invoice_id": "INV-EUR-501",
+          "vendor": "BerlinTech GmbH",
+          "currency": "EUR",
+          "amount": 2000.0,
+          "booked_rate_eur_usd": 1.1,
+          "status": "unpaid"
+        },
+        "latency_ms": 0.3234000000702508,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_vendor_invoice",
+        "arguments": {
+          "invoice_id": "INV-EUR-501"
+        },
+        "output": {
+          "invoice_id": "INV-EUR-501",
+          "vendor": "BerlinTech GmbH",
+          "currency": "EUR",
+          "amount": 2000.0,
+          "booked_rate_eur_usd": 1.1,
+          "status": "unpaid"
+        },
+        "latency_ms": 0.3733000000920583,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.4713999999239604,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.5281999999624531,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.2134999999725551,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.2400999999281339,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.2615000000787404,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.31049999984134047,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.4283000000668835,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.47100000006139453,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.2778999999009102,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.30990000004749163,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.46220000012908713,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.5028000000493194,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.28849999989688513,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR/USD"
+        },
+        "output": {
+          "pair": "EUR/USD",
+          "rate": null
+        },
+        "latency_ms": 0.3299999998489511,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "USD/EUR"
+        },
+        "output": {
+          "pair": "USD/EUR",
+          "rate": null
+        },
+        "latency_ms": 0.4183999999440857,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "USD/EUR"
+        },
+        "output": {
+          "pair": "USD/EUR",
+          "rate": null
+        },
+        "latency_ms": 0.47050000011950033,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.38910000012037926,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EURUSD"
+        },
+        "output": {
+          "pair": "EURUSD",
+          "rate": null
+        },
+        "latency_ms": 0.439300000152798,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR_USD"
+        },
+        "output": {
+          "pair": "EUR_USD",
+          "rate": 1.085
+        },
+        "latency_ms": 0.20429999995030812,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_fx_rate",
+        "arguments": {
+          "pair": "EUR_USD"
+        },
+        "output": {
+          "pair": "EUR_USD",
+          "rate": 1.085
+        },
+        "latency_ms": 0.22910000006959308,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_409"
+      },
+      {
+        "tool_name": "initiate_wire_transfer",
+        "arguments": {
+          "invoice_id": "INV-EUR-501",
+          "amount_usd": 2170,
+          "currency": null
+        },
+        "output": {
+          "error": "HTTP 409: Conflict \u2014 resource locked"
+        },
+        "latency_ms": 0.5294000000048982,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

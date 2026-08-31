@@ -1,0 +1,174 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "crm_order_fulfilment.005",
+  "trial_index": 1,
+  "seed": "crm_order_fulfilment.005-1-20260827",
+  "status": "FAIL",
+  "final_response": "I attempted the three required actions:\n\n1. **Shopify order\u202f#SHOP\u201122110** \u2013\u202fthe status was successfully updated to **shipped** on the first try.  \n2. **Shipping\u2011confirmation email** \u2013\u202fthe SendGrid call failed with an HTTP\u202f500 error on three attempts. I retried the call the required minimum number of times, and it still did not succeed.  \n3. **HubSpot ticket\u202f#TICKET\u20117790** \u2013\u202fbecause the email did not go out, I did **not** close the ticket (the all\u2011or\u2011nothing rule).\n\nTo keep the system consistent, I rolled back the Shopify order status to its prior state (set back to **processing**). The ticket remains open, and the customer has not yet received a shipping confirmation.\n\n**Next steps**  \n- Investigate the SendGrid service issue (e.g., check API keys, rate limits, or temporary outage).  \n- Once the email can be sent successfully, repeat the email step, then re\u2011apply the \u201cshipped\u201d status to the order and finally close the HubSpot ticket.  \n\nLet me know if you\u2019d like me to keep monitoring the email service or try any additional troubleshooting.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.005",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 3,
+    "fault_recovered": false,
+    "total_cost_usd": 0.0,
+    "duration_ms": 24865.104599999995,
+    "failed_assertions": [
+      "state[shopify_orders]: expected {'SHOP-22110': {'status': 'shipped'}} not satisfied by {'SHOP-22110': {'status': 'processing'}}",
+      "state[sendgrid_emails_sent]: expected [{'order_id': 'SHOP-22110', 'template': 'shipping_confirmation'}] not satisfied by []",
+      "state[hubspot_tickets]: expected {'TICKET-7790': {'status': 'closed'}} not satisfied by {'TICKET-7790': {'status': 'open', 'order_id': 'SHOP-22110'}}",
+      "tool_call[update_hubspot_ticket_status]: no call with args containing {'ticket_id': 'TICKET-7790', 'status': 'closed'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.005",
+    "trial_index": 1,
+    "total_tokens": 4197,
+    "prompt_tokens": 2806,
+    "completion_tokens": 1391,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 24865.104599999995,
+    "tool_calls": [
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "shipped"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "shipped",
+          "updated": true
+        },
+        "latency_ms": 0.5409000000327069,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "shipped"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "shipped",
+          "updated": true
+        },
+        "latency_ms": 0.5982000000130938,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.16369999980270222,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.17699999989417847,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "send_confirmation_email",
+        "arguments": {
+          "order_id": "SHOP-22110"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.33189999999194697,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "processing"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "processing",
+          "updated": true
+        },
+        "latency_ms": 0.3476000001683133,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_shopify_order_status",
+        "arguments": {
+          "order_id": "SHOP-22110",
+          "status": "processing"
+        },
+        "output": {
+          "order_id": "SHOP-22110",
+          "status": "processing",
+          "updated": true
+        },
+        "latency_ms": 0.3808999999819207,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

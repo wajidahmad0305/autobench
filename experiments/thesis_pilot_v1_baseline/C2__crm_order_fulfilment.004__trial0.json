@@ -1,0 +1,44 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "crm_order_fulfilment.004",
+  "trial_index": 0,
+  "seed": "crm_order_fulfilment.004-0-20260827",
+  "status": "FAIL",
+  "final_response": "Sure! Please paste the CSV data (or at least the rows with the relevant fields\u2014typically\u202femail, full name, and any other info you have) and let me know the current number of\u202fenrichment_api_calls_remaining_today\u202fyou have left. Once I have that, I\u2019ll dedupe, enrich (as long as we stay within the cap), and route each new contact to the appropriate HubSpot pipeline.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.004",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 775.7076000000325,
+    "failed_assertions": [
+      "state[hubspot_contacts]: expected {'amy@brightgear.com': {'email': 'amy@brightgear.com', 'company': 'BrightGear Inc', 'company_size': '11-50'}, 'raj@fluxworks.io': {'email': 'raj@fluxworks.io', 'company': 'FluxWorks', 'company_size': '201-500'}, 'tina@nimbuslabs.ai': {'email': 'tina@nimbuslabs.ai', 'company': 'Nimbus Labs', 'company_size': '1-10'}, 'leo@vertexbio.com': {'email': 'leo@vertexbio.com', 'company': None, 'company_size': None}} not satisfied by {'existing@acmecrm.com': {'email': 'existing@acmecrm.com', 'full_name': 'Dana Ok', 'source': 'prior_event'}}",
+      "state[pipelines]: expected {'smb_pipeline': ['amy@brightgear.com', 'tina@nimbuslabs.ai'], 'midmarket_pipeline': ['raj@fluxworks.io'], 'enterprise_pipeline': [], 'needs_enrichment_pipeline': ['leo@vertexbio.com']} not satisfied by {'smb_pipeline': [], 'midmarket_pipeline': [], 'enterprise_pipeline': [], 'needs_enrichment_pipeline': []}",
+      "tool_call[get_hubspot_contact_by_email]: no call with args containing {'email': 'existing@acmecrm.com'}",
+      "tool_call[lookup_company_by_domain]: no call with args containing {'domain': 'brightgear.com'}",
+      "tool_call[lookup_company_by_domain]: no call with args containing {'domain': 'fluxworks.io'}",
+      "tool_call[lookup_company_by_domain]: no call with args containing {'domain': 'nimbuslabs.ai'}",
+      "tool_call[route_to_pipeline]: no call with args containing {'pipeline': 'needs_enrichment_pipeline', 'email': 'leo@vertexbio.com'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.004",
+    "trial_index": 0,
+    "total_tokens": 617,
+    "prompt_tokens": 452,
+    "completion_tokens": 165,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 775.7076000000325,
+    "tool_calls": [],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

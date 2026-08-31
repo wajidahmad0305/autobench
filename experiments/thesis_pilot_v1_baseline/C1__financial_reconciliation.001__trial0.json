@@ -1,0 +1,171 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "financial_reconciliation.001",
+  "trial_index": 0,
+  "seed": "financial_reconciliation.001-0-20260827",
+  "status": "PASS",
+  "final_response": "\u2705 Draft QuickBooks invoice created.\n\n- **Invoice Number:** INV\u2011VEND\u20113341  \n- **Vendor:** Metro Office Supplies  \n- **Expense Category:** 6021 \u2014 Office supplies  \n- **Total:** $500.00  \n- **Status:** Draft  \n\nLet me know if you need anything else!",
+  "metrics": {
+    "task_id": "financial_reconciliation.001",
+    "trial_index": 0,
+    "tsi": 1.0,
+    "sec": 1.0,
+    "sla_compliance": 1.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 21368.805000005523,
+    "failed_assertions": [],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.001",
+    "trial_index": 0,
+    "total_tokens": 2470,
+    "prompt_tokens": 1981,
+    "completion_tokens": 489,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 21368.805000005523,
+    "tool_calls": [
+      {
+        "tool_name": "read_invoice_document",
+        "arguments": {
+          "document_id": "INV-VEND-3341"
+        },
+        "output": {
+          "document_id": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "invoice_number": "INV-VEND-3341",
+          "issue_date": "2026-08-22",
+          "currency": "USD",
+          "line_items": [
+            {
+              "description": "Copy paper, case",
+              "qty": 10,
+              "unit_price": 32.0,
+              "line_total": 320.0
+            },
+            {
+              "description": "Toner cartridges",
+              "qty": 4,
+              "unit_price": 45.0,
+              "line_total": 180.0
+            }
+          ],
+          "subtotal": 500.0,
+          "vat_rate": 0.0,
+          "vat_amount": 0.0,
+          "total": 500.0
+        },
+        "latency_ms": 0.37650000012945384,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "read_invoice_document",
+        "arguments": {
+          "document_id": "INV-VEND-3341"
+        },
+        "output": {
+          "document_id": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "invoice_number": "INV-VEND-3341",
+          "issue_date": "2026-08-22",
+          "currency": "USD",
+          "line_items": [
+            {
+              "description": "Copy paper, case",
+              "qty": 10,
+              "unit_price": 32.0,
+              "line_total": 320.0
+            },
+            {
+              "description": "Toner cartridges",
+              "qty": 4,
+              "unit_price": 45.0,
+              "line_total": 180.0
+            }
+          ],
+          "subtotal": 500.0,
+          "vat_rate": 0.0,
+          "vat_amount": 0.0,
+          "total": 500.0
+        },
+        "latency_ms": 0.4025999951409176,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_vendor_expense_category",
+        "arguments": {
+          "vendor_name": "Metro Office Supplies"
+        },
+        "output": {
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies"
+        },
+        "latency_ms": 0.6258000066736713,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_vendor_expense_category",
+        "arguments": {
+          "vendor_name": "Metro Office Supplies"
+        },
+        "output": {
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies"
+        },
+        "latency_ms": 0.7285000028787181,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_quickbooks_draft_invoice",
+        "arguments": {
+          "invoice_number": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies",
+          "total": 500
+        },
+        "output": {
+          "id": "qbo_00001",
+          "status": "draft",
+          "invoice_number": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies",
+          "total": 500
+        },
+        "latency_ms": 0.4668000037781894,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_quickbooks_draft_invoice",
+        "arguments": {
+          "invoice_number": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies",
+          "total": 500
+        },
+        "output": {
+          "id": "qbo_00001",
+          "status": "draft",
+          "invoice_number": "INV-VEND-3341",
+          "vendor_name": "Metro Office Supplies",
+          "expense_category": "6021 \u2014 Office supplies",
+          "total": 500
+        },
+        "latency_ms": 0.5033000052208081,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

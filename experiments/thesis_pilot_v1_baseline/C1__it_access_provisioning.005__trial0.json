@@ -1,0 +1,188 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "it_access_provisioning.005",
+  "trial_index": 0,
+  "status": "ERROR",
+  "error": "OpenAIInvalidRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 1880, in _generate\n    raw_response = self.client.with_raw_response.create(**payload)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_legacy_response.py\", line 369, in wrapped\n    return cast(LegacyAPIResponse[R], func(*args, **kwargs))\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_utils\\_utils.py\", line 298, in wrapper\n    return func(*args, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\resources\\chat\\completions\\completions.py\", line 1296, in create\n    return self._post(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_base_client.py\", line 1368, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\openai\\_base_client.py\", line 1141, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.BadRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\scripts\\run_pilot.py\", line 244, in _fill_box\n    box[\"record\"] = _attempt_trajectory(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\scripts\\run_pilot.py\", line 209, in _attempt_trajectory\n    final_response = adapter.run(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\autobench\\adapters\\langgraph_adapter.py\", line 240, in run\n    for chunk in stream:\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\main.py\", line 2967, in stream\n    for _ in runner.tick(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\_runner.py\", line 207, in tick\n    run_with_retry(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\pregel\\_retry.py\", line 617, in run_with_retry\n    return task.proc.invoke(task.input, config)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\_internal\\_runnable.py\", line 707, in invoke\n    input = context.run(step.invoke, input, config, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langgraph\\_internal\\_runnable.py\", line 447, in invoke\n    ret = self.func(*args, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain\\agents\\factory.py\", line 1483, in model_node\n    model_response = _execute_model_sync(request)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain\\agents\\factory.py\", line 1454, in _execute_model_sync\n    output = model_.invoke(messages)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\runnables\\base.py\", line 6014, in invoke\n    return self.bound.invoke(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 488, in invoke\n    self.generate_prompt(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 1877, in generate_prompt\n    return self.generate(prompt_messages, stop=stop, callbacks=callbacks, **kwargs)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 1684, in generate\n    self._generate_with_cache(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_core\\language_models\\chat_models.py\", line 2022, in _generate_with_cache\n    result = self._generate(\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 1883, in _generate\n    _handle_openai_bad_request(e)\n  File \"C:\\Users\\wajid\\Downloads\\autobench\\.venv\\lib\\site-packages\\langchain_openai\\chat_models\\base.py\", line 642, in _handle_openai_bad_request\n    raise OpenAIInvalidRequestError(\nlangchain_openai.chat_models.base.OpenAIInvalidRequestError: Error code: 400 - {'error': {'message': \"Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'output_parse_failed', 'failed_generation': ''}}\n",
+  "telemetry": {
+    "task_id": "it_access_provisioning.005",
+    "trial_index": 0,
+    "total_tokens": 4866,
+    "prompt_tokens": 3912,
+    "completion_tokens": 954,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 30475.229699994088,
+    "tool_calls": [
+      {
+        "tool_name": "revoke_okta_sso",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "user_id": "EMP-1188",
+          "channel": "okta",
+          "revoked": true
+        },
+        "latency_ms": 0.26190000062342733,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_okta_sso",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "user_id": "EMP-1188",
+          "channel": "okta",
+          "revoked": true
+        },
+        "latency_ms": 0.28469999961089343,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.18799999088514596,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.530099991010502,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.3279999946244061,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.0,
+        "is_error": true,
+        "fault_injected": "HTTP_500"
+      },
+      {
+        "tool_name": "revoke_aws_iam_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "error": "HTTP 500: Internal Server Error"
+        },
+        "latency_ms": 0.43650000588968396,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_github_enterprise_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "user_id": "EMP-1188",
+          "channel": "github_enterprise",
+          "revoked": true
+        },
+        "latency_ms": 0.2714000002015382,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "revoke_github_enterprise_access",
+        "arguments": {
+          "employee_id": "EMP-1188",
+          "user_id": "EMP-1188"
+        },
+        "output": {
+          "user_id": "EMP-1188",
+          "channel": "github_enterprise",
+          "revoked": true
+        },
+        "latency_ms": 0.31779998971614987,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

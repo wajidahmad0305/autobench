@@ -1,0 +1,79 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "it_access_provisioning.001",
+  "trial_index": 0,
+  "seed": "it_access_provisioning.001-0-20260827",
+  "status": "FAIL",
+  "final_response": "",
+  "metrics": {
+    "task_id": "it_access_provisioning.001",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 15792.357600003015,
+    "failed_assertions": [
+      "state[google_workspace_accounts]: expected {'EMP-4471': {'email': 'sofia.martinez@newco.io', 'full_name': 'Sofia Martinez'}} not satisfied by {}",
+      "state[okta_group_memberships]: expected {'EMP-4471': ['okta-eng-all', 'okta-vpn-access']} not satisfied by {}",
+      "state[slack_messages]: expected [{'channel': '#eng-team', 'employee_id': 'EMP-4471'}] not satisfied by []",
+      "tool_call[provision_google_workspace_email]: no call with args containing {'employee_id': 'EMP-4471', 'email': 'sofia.martinez@newco.io'}",
+      "tool_call[add_okta_group]: no call with args containing {'employee_id': 'EMP-4471', 'group': 'okta-eng-all'}",
+      "tool_call[add_okta_group]: no call with args containing {'employee_id': 'EMP-4471', 'group': 'okta-vpn-access'}",
+      "tool_call[post_slack_message]: no call with args containing {'channel': '#eng-team', 'employee_id': 'EMP-4471'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "it_access_provisioning.001",
+    "trial_index": 0,
+    "total_tokens": 3311,
+    "prompt_tokens": 752,
+    "completion_tokens": 2559,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 15792.357600003015,
+    "tool_calls": [
+      {
+        "tool_name": "get_department_provisioning_config",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "okta_groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ],
+          "slack_channel": "#eng-team"
+        },
+        "latency_ms": 0.5440999957500026,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_provisioning_config",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "okta_groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ],
+          "slack_channel": "#eng-team"
+        },
+        "latency_ms": 0.6119000026956201,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

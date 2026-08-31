@@ -1,0 +1,142 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "crm_order_fulfilment.002",
+  "trial_index": 2,
+  "seed": "crm_order_fulfilment.002-2-20260827",
+  "status": "FAIL",
+  "final_response": "\u2705 Refund processed successfully for Shopify order **SHOP-9981** (total\u202f$84.00).  \nThe HubSpot ticket **TICKET-5521** has been marked as **resolved**.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 2,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 16994.294500007527,
+    "failed_assertions": [
+      "state[stripe_refunds]: expected [{'payment_intent_id': 'pi_9981abc', 'amount': 8400, 'currency': 'USD', 'order_id': 'SHOP-9981'}] not satisfied by [{'payment_intent_id': 'pi_9981abc', 'amount': 84, 'currency': 'USD', 'order_id': 'SHOP-9981'}]",
+      "tool_call[get_hubspot_ticket]: no call with args containing {'ticket_id': 'TICKET-5521'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 2,
+    "total_tokens": 2390,
+    "prompt_tokens": 1790,
+    "completion_tokens": 600,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 16994.294500007527,
+    "tool_calls": [
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "order_id": "SHOP-9981",
+          "total": 84.0,
+          "currency": "USD",
+          "delivered_at": "2026-08-15",
+          "payment_intent_id": "pi_9981abc"
+        },
+        "latency_ms": 0.417799994465895,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "order_id": "SHOP-9981",
+          "total": 84.0,
+          "currency": "USD",
+          "delivered_at": "2026-08-15",
+          "payment_intent_id": "pi_9981abc"
+        },
+        "latency_ms": 0.4467000107979402,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_stripe_refund",
+        "arguments": {
+          "payment_intent_id": "pi_9981abc",
+          "amount": 84,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "id": "re_00001",
+          "status": "succeeded",
+          "payment_intent_id": "pi_9981abc",
+          "amount": 84,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "latency_ms": 1.1838000064017251,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_stripe_refund",
+        "arguments": {
+          "payment_intent_id": "pi_9981abc",
+          "amount": 84,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "id": "re_00001",
+          "status": "succeeded",
+          "payment_intent_id": "pi_9981abc",
+          "amount": 84,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "latency_ms": 1.2668999988818541,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_hubspot_ticket_status",
+        "arguments": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved"
+        },
+        "output": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved",
+          "updated": true
+        },
+        "latency_ms": 0.9867000044323504,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_hubspot_ticket_status",
+        "arguments": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved"
+        },
+        "output": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved",
+          "updated": true
+        },
+        "latency_ms": 1.068099998519756,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

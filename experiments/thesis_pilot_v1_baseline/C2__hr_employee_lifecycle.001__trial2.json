@@ -1,0 +1,199 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "hr_employee_lifecycle.001",
+  "trial_index": 2,
+  "seed": "hr_employee_lifecycle.001-2-20260827",
+  "status": "PASS",
+  "final_response": "All set! Marcus Webb (EMP-6612) has been added to Workday under Customer Success with manager EMP-2200, his start\u2011date checklist has been generated and assigned to his manager, and he\u2019s been added to the appropriate Welcomes Slack channel #welcomes-sept-8 for his September\u202f8,\u202f2026 start date. Let me know if anything else is needed.",
+  "metrics": {
+    "task_id": "hr_employee_lifecycle.001",
+    "trial_index": 2,
+    "tsi": 1.0,
+    "sec": 1.0,
+    "sla_compliance": 1.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 17603.650600000037,
+    "failed_assertions": [],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.001",
+    "trial_index": 2,
+    "total_tokens": 4122,
+    "prompt_tokens": 3533,
+    "completion_tokens": 589,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 17603.650600000037,
+    "tool_calls": [
+      {
+        "tool_name": "get_bamboohr_new_hire_form",
+        "arguments": {
+          "form_id": "NHF-6612"
+        },
+        "output": {
+          "form_id": "NHF-6612",
+          "employee_id": "EMP-6612",
+          "full_name": "Marcus Webb",
+          "department": "Customer Success",
+          "manager_id": "EMP-2200",
+          "start_date": "2026-09-08"
+        },
+        "latency_ms": 0.7785000002513698,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_bamboohr_new_hire_form",
+        "arguments": {
+          "form_id": "NHF-6612"
+        },
+        "output": {
+          "form_id": "NHF-6612",
+          "employee_id": "EMP-6612",
+          "full_name": "Marcus Webb",
+          "department": "Customer Success",
+          "manager_id": "EMP-2200",
+          "start_date": "2026-09-08"
+        },
+        "latency_ms": 0.8459000000584638,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_workday_employee_record",
+        "arguments": {
+          "employee_id": "EMP-6612",
+          "full_name": "Marcus Webb",
+          "department": "Customer Success",
+          "manager_id": "EMP-2200"
+        },
+        "output": {
+          "employee_id": "EMP-6612",
+          "created": true
+        },
+        "latency_ms": 0.3044000000045344,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_workday_employee_record",
+        "arguments": {
+          "employee_id": "EMP-6612",
+          "full_name": "Marcus Webb",
+          "department": "Customer Success",
+          "manager_id": "EMP-2200"
+        },
+        "output": {
+          "employee_id": "EMP-6612",
+          "created": true
+        },
+        "latency_ms": 0.3289999999651627,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_welcomes_channel_for_date",
+        "arguments": {
+          "date": "2026-09-08"
+        },
+        "output": {
+          "date": "2026-09-08",
+          "channel": "#welcomes-sept-8"
+        },
+        "latency_ms": 0.24709999979677377,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_welcomes_channel_for_date",
+        "arguments": {
+          "date": "2026-09-08"
+        },
+        "output": {
+          "date": "2026-09-08",
+          "channel": "#welcomes-sept-8"
+        },
+        "latency_ms": 0.27599999975791434,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_start_date_checklist",
+        "arguments": {
+          "employee_id": "EMP-6612",
+          "assigned_to": "EMP-2200"
+        },
+        "output": {
+          "checklist_id": "chk_00001",
+          "employee_id": "EMP-6612",
+          "assigned_to": "EMP-2200",
+          "items": [
+            "laptop",
+            "accounts",
+            "orientation"
+          ]
+        },
+        "latency_ms": 0.34009999990303186,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_start_date_checklist",
+        "arguments": {
+          "employee_id": "EMP-6612",
+          "assigned_to": "EMP-2200"
+        },
+        "output": {
+          "checklist_id": "chk_00001",
+          "employee_id": "EMP-6612",
+          "assigned_to": "EMP-2200",
+          "items": [
+            "laptop",
+            "accounts",
+            "orientation"
+          ]
+        },
+        "latency_ms": 0.3637999998318264,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_to_slack_channel",
+        "arguments": {
+          "channel": "#welcomes-sept-8",
+          "employee_id": "EMP-6612"
+        },
+        "output": {
+          "channel": "#welcomes-sept-8",
+          "employee_id": "EMP-6612",
+          "added": true
+        },
+        "latency_ms": 0.24190000021917513,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_to_slack_channel",
+        "arguments": {
+          "channel": "#welcomes-sept-8",
+          "employee_id": "EMP-6612"
+        },
+        "output": {
+          "channel": "#welcomes-sept-8",
+          "employee_id": "EMP-6612",
+          "added": true
+        },
+        "latency_ms": 0.26630000002114684,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

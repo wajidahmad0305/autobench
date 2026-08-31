@@ -1,0 +1,211 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "financial_reconciliation.003",
+  "trial_index": 1,
+  "seed": "financial_reconciliation.003-1-20260827",
+  "status": "FAIL",
+  "final_response": "\u2705 **Verification Complete**\n\n- **Stripe Payout**: PO-7742  \n  - Amount: **$1,840.00**  \n  - Settlement Window: SW-2026-08-26  \n\n- **Settled Charges in Window**  \n  - ch_1: $900.00 (succeeded)  \n  - ch_2: $940.00 (succeeded)  \n  - ch_3: $120.00 (failed \u2013 excluded)  \n\n- **Sum of Successful Charges**: $900.00 + $940.00 = **$1,840.00**  \n  - Matches the payout amount exactly.\n\n---\n\n### GL Entries Posted\n\n| Account          | Debit ($) | Credit ($) | Reference |\n|------------------|-----------|------------|-----------|\n| Cash             | 1,840.00  | 0.00       | PO-7742   |\n| Stripe Clearing  | 0.00      | 1,840.00   | PO-7742   |\n\n- **Total Debits**: $1,840.00  \n- **Total Credits**: $1,840.00  \n\nThe debits equal the credits, confirming a balanced transaction.\n\n---\n\n**Result**: Payout PO-7742 has been verified against settled charges and successfully posted to the general ledger. No discrepancies found.",
+  "metrics": {
+    "task_id": "financial_reconciliation.003",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 0.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 16471.468900010223,
+    "failed_assertions": [
+      "state[gl_entries]: expected [{'account': 'cash', 'debit': 1840.0, 'credit': 0.0, 'ref': 'PO-7742'}, {'account': 'stripe_clearing', 'debit': 0.0, 'credit': 1840.0, 'ref': 'PO-7742'}] not satisfied by [{'account': 'Cash', 'debit': 1840.0, 'credit': 0.0, 'ref': 'PO-7742'}, {'account': 'Stripe Clearing', 'debit': 0.0, 'credit': 1840.0, 'ref': 'PO-7742'}]",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'cash', 'ref': 'PO-7742'}",
+      "tool_call[post_gl_entry]: no call with args containing {'account': 'stripe_clearing', 'ref': 'PO-7742'}"
+    ],
+    "failed_invariants": [
+      "gl_double_entry_balance.PO-7742 (sql error: no such table: gl_entries)"
+    ]
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.003",
+    "trial_index": 1,
+    "total_tokens": 3873,
+    "prompt_tokens": 2759,
+    "completion_tokens": 1114,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 16471.468900010223,
+    "tool_calls": [
+      {
+        "tool_name": "get_stripe_payout",
+        "arguments": {
+          "payout_id": "PO-7742"
+        },
+        "output": {
+          "payout_id": "PO-7742",
+          "amount": 1840.0,
+          "currency": "USD",
+          "settlement_window_id": "SW-2026-08-26"
+        },
+        "latency_ms": 0.9371000051032752,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_stripe_payout",
+        "arguments": {
+          "payout_id": "PO-7742"
+        },
+        "output": {
+          "payout_id": "PO-7742",
+          "amount": 1840.0,
+          "currency": "USD",
+          "settlement_window_id": "SW-2026-08-26"
+        },
+        "latency_ms": 1.0202999983448535,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "list_settlement_charges",
+        "arguments": {
+          "settlement_window_id": "SW-2026-08-26"
+        },
+        "output": {
+          "settlement_window_id": "SW-2026-08-26",
+          "charges": [
+            {
+              "charge_id": "ch_1",
+              "amount": 900.0,
+              "status": "succeeded"
+            },
+            {
+              "charge_id": "ch_2",
+              "amount": 940.0,
+              "status": "succeeded"
+            },
+            {
+              "charge_id": "ch_3",
+              "amount": 120.0,
+              "status": "failed"
+            }
+          ]
+        },
+        "latency_ms": 0.5471999902511016,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "list_settlement_charges",
+        "arguments": {
+          "settlement_window_id": "SW-2026-08-26"
+        },
+        "output": {
+          "settlement_window_id": "SW-2026-08-26",
+          "charges": [
+            {
+              "charge_id": "ch_1",
+              "amount": 900.0,
+              "status": "succeeded"
+            },
+            {
+              "charge_id": "ch_2",
+              "amount": 940.0,
+              "status": "succeeded"
+            },
+            {
+              "charge_id": "ch_3",
+              "amount": 120.0,
+              "status": "failed"
+            }
+          ]
+        },
+        "latency_ms": 0.6129000103101134,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_gl_entry",
+        "arguments": {
+          "account": "Cash",
+          "ref": "PO-7742",
+          "debit": 1840,
+          "credit": 0
+        },
+        "output": {
+          "id": "gl_00001",
+          "posted": true,
+          "account": "Cash",
+          "debit": 1840.0,
+          "credit": 0.0,
+          "ref": "PO-7742"
+        },
+        "latency_ms": 0.6098000012570992,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_gl_entry",
+        "arguments": {
+          "account": "Cash",
+          "ref": "PO-7742",
+          "debit": 1840,
+          "credit": 0
+        },
+        "output": {
+          "id": "gl_00001",
+          "posted": true,
+          "account": "Cash",
+          "debit": 1840.0,
+          "credit": 0.0,
+          "ref": "PO-7742"
+        },
+        "latency_ms": 0.6530999962706119,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_gl_entry",
+        "arguments": {
+          "account": "Stripe Clearing",
+          "ref": "PO-7742",
+          "debit": 0,
+          "credit": 1840
+        },
+        "output": {
+          "id": "gl_00002",
+          "posted": true,
+          "account": "Stripe Clearing",
+          "debit": 0.0,
+          "credit": 1840.0,
+          "ref": "PO-7742"
+        },
+        "latency_ms": 1.1543000000528991,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_gl_entry",
+        "arguments": {
+          "account": "Stripe Clearing",
+          "ref": "PO-7742",
+          "debit": 0,
+          "credit": 1840
+        },
+        "output": {
+          "id": "gl_00002",
+          "posted": true,
+          "account": "Stripe Clearing",
+          "debit": 0.0,
+          "credit": 1840.0,
+          "ref": "PO-7742"
+        },
+        "latency_ms": 1.232099995831959,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

@@ -1,0 +1,309 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "crm_order_fulfilment.003",
+  "trial_index": 0,
+  "seed": "crm_order_fulfilment.003-0-20260827",
+  "status": "FAIL",
+  "final_response": "\u2705 Nightly CRM\u2011to\u2011Order reconciliation completed.\n\n**Flagged Opportunities**\n\n| Opportunity ID | Account | Close Date | Flagged | Note Added |\n|-----------------|---------|------------|---------|------------|\n| OPP\u20113302 | Nimbus Retail | 2026\u201108\u201110 | \u2705 | \u201cNo Shopify order placed within 7 days of close date (2026\u201108\u201110).\u201d |\n| OPP\u20113303 | Bell Logistics | 2026\u201108\u201125 | \u2705 | \u201cNo Shopify order placed within 7 days of close date (2026\u201108\u201125).\u201d |\n\n**Unflagged Opportunities**\n\n| Opportunity ID | Account | Close Date | Reason |\n|-----------------|---------|------------|--------|\n| OPP\u20113301 | Acme Corp | 2026\u201108\u201120 | Shopify order placed on 2026\u201108\u201121 (within 7 days). |\n\nAll flagged opportunities have been updated with the required note, and no other fields were modified.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.003",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 50248.44660000235,
+    "failed_assertions": [
+      "state[salesforce_opportunities]: expected {'OPP-3301': {'flagged': False}, 'OPP-3302': {'flagged': True}, 'OPP-3303': {'flagged': True}} not satisfied by {'OPP-3301': {'account': 'Acme Corp', 'status': 'Closed Won', 'closed_at': '2026-08-20', 'amount': 12000}, 'OPP-3302': {'account': 'Nimbus Retail', 'status': 'Closed Won', 'closed_at': '2026-08-10', 'amount': 4000, 'flagged': True}, 'OPP-3303': {'account': 'Bell Logistics', 'status': 'Closed Won', 'closed_at': '2026-08-25', 'amount': 7000, 'flagged': True}}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.003",
+    "trial_index": 0,
+    "total_tokens": 7798,
+    "prompt_tokens": 6134,
+    "completion_tokens": 1664,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 50248.44660000235,
+    "tool_calls": [
+      {
+        "tool_name": "list_salesforce_closed_won_opportunities",
+        "arguments": {},
+        "output": {
+          "opportunities": [
+            {
+              "opportunity_id": "OPP-3301",
+              "account": "Acme Corp",
+              "status": "Closed Won",
+              "closed_at": "2026-08-20",
+              "amount": 12000
+            },
+            {
+              "opportunity_id": "OPP-3302",
+              "account": "Nimbus Retail",
+              "status": "Closed Won",
+              "closed_at": "2026-08-10",
+              "amount": 4000
+            },
+            {
+              "opportunity_id": "OPP-3303",
+              "account": "Bell Logistics",
+              "status": "Closed Won",
+              "closed_at": "2026-08-25",
+              "amount": 7000
+            }
+          ]
+        },
+        "latency_ms": 0.606999994488433,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "list_salesforce_closed_won_opportunities",
+        "arguments": {},
+        "output": {
+          "opportunities": [
+            {
+              "opportunity_id": "OPP-3301",
+              "account": "Acme Corp",
+              "status": "Closed Won",
+              "closed_at": "2026-08-20",
+              "amount": 12000
+            },
+            {
+              "opportunity_id": "OPP-3302",
+              "account": "Nimbus Retail",
+              "status": "Closed Won",
+              "closed_at": "2026-08-10",
+              "amount": 4000
+            },
+            {
+              "opportunity_id": "OPP-3303",
+              "account": "Bell Logistics",
+              "status": "Closed Won",
+              "closed_at": "2026-08-25",
+              "amount": 7000
+            }
+          ]
+        },
+        "latency_ms": 0.6674999895039946,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Acme Corp"
+        },
+        "output": {
+          "account": "Acme Corp",
+          "orders": [
+            {
+              "order_id": "SHOP-1",
+              "placed_at": "2026-08-21"
+            }
+          ]
+        },
+        "latency_ms": 0.33150000672321767,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Acme Corp"
+        },
+        "output": {
+          "account": "Acme Corp",
+          "orders": [
+            {
+              "order_id": "SHOP-1",
+              "placed_at": "2026-08-21"
+            }
+          ]
+        },
+        "latency_ms": 0.3730000025825575,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Nimbus Retail"
+        },
+        "output": {
+          "account": "Nimbus Retail",
+          "orders": [
+            {
+              "order_id": "SHOP-2",
+              "placed_at": "2026-07-01"
+            }
+          ]
+        },
+        "latency_ms": 0.19559999054763466,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Nimbus Retail"
+        },
+        "output": {
+          "account": "Nimbus Retail",
+          "orders": [
+            {
+              "order_id": "SHOP-2",
+              "placed_at": "2026-07-01"
+            }
+          ]
+        },
+        "latency_ms": 0.22079999325796962,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Bell Logistics"
+        },
+        "output": {
+          "account": "Bell Logistics",
+          "orders": []
+        },
+        "latency_ms": 0.18659999477677047,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_orders_by_account",
+        "arguments": {
+          "account": "Bell Logistics"
+        },
+        "output": {
+          "account": "Bell Logistics",
+          "orders": []
+        },
+        "latency_ms": 0.2086000022245571,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_opportunity",
+        "arguments": {
+          "opportunity_id": "OPP-3302"
+        },
+        "output": {
+          "opportunity_id": "OPP-3302",
+          "flagged": true
+        },
+        "latency_ms": 0.3009999927598983,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_opportunity",
+        "arguments": {
+          "opportunity_id": "OPP-3302"
+        },
+        "output": {
+          "opportunity_id": "OPP-3302",
+          "flagged": true
+        },
+        "latency_ms": 0.32419999479316175,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_opportunity_note",
+        "arguments": {
+          "opportunity_id": "OPP-3302",
+          "note": "No Shopify order placed within 7 days of close date (2026-08-10)."
+        },
+        "output": {
+          "opportunity_id": "OPP-3302",
+          "note_added": true
+        },
+        "latency_ms": 0.6384000007528812,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_opportunity_note",
+        "arguments": {
+          "opportunity_id": "OPP-3302",
+          "note": "No Shopify order placed within 7 days of close date (2026-08-10)."
+        },
+        "output": {
+          "opportunity_id": "OPP-3302",
+          "note_added": true
+        },
+        "latency_ms": 0.6903000030433759,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_opportunity",
+        "arguments": {
+          "opportunity_id": "OPP-3303"
+        },
+        "output": {
+          "opportunity_id": "OPP-3303",
+          "flagged": true
+        },
+        "latency_ms": 0.7922999939182773,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_opportunity",
+        "arguments": {
+          "opportunity_id": "OPP-3303"
+        },
+        "output": {
+          "opportunity_id": "OPP-3303",
+          "flagged": true
+        },
+        "latency_ms": 0.85860000399407,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_opportunity_note",
+        "arguments": {
+          "opportunity_id": "OPP-3303",
+          "note": "No Shopify order placed within 7 days of close date (2026-08-25)."
+        },
+        "output": {
+          "opportunity_id": "OPP-3303",
+          "note_added": true
+        },
+        "latency_ms": 0.3972999984398484,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_opportunity_note",
+        "arguments": {
+          "opportunity_id": "OPP-3303",
+          "note": "No Shopify order placed within 7 days of close date (2026-08-25)."
+        },
+        "output": {
+          "opportunity_id": "OPP-3303",
+          "note_added": true
+        },
+        "latency_ms": 0.4216999950585887,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

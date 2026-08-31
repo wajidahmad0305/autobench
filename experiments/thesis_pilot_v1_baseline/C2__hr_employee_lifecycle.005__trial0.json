@@ -1,0 +1,388 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "hr_employee_lifecycle.005",
+  "trial_index": 0,
+  "seed": "hr_employee_lifecycle.005-0-20260827",
+  "status": "FAIL",
+  "final_response": "",
+  "metrics": {
+    "task_id": "hr_employee_lifecycle.005",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 0.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 11,
+    "fault_recovered": false,
+    "total_cost_usd": 0.0,
+    "duration_ms": 7710.58660000017,
+    "failed_assertions": [
+      "state[workday_payroll_bonus_entries]: expected [{'employee_id': 'EMP-9101', 'amount': 2500.0}, {'employee_id': 'EMP-9102', 'amount': 1800.0}, {'employee_id': 'EMP-9103', 'amount': 3000.0}, {'employee_id': 'EMP-9104', 'amount': 2200.0}, {'employee_id': 'EMP-9105', 'amount': 1500.0}] not satisfied by []",
+      "state[compensation_history_updates]: expected [{'employee_id': 'EMP-9101', 'bonus_amount': 2500.0}, {'employee_id': 'EMP-9102', 'bonus_amount': 1800.0}, {'employee_id': 'EMP-9103', 'bonus_amount': 3000.0}, {'employee_id': 'EMP-9104', 'bonus_amount': 2200.0}, {'employee_id': 'EMP-9105', 'bonus_amount': 1500.0}] not satisfied by []",
+      "state[bonus_notifications_sent]: expected [{'employee_id': 'EMP-9101'}, {'employee_id': 'EMP-9102'}, {'employee_id': 'EMP-9103'}, {'employee_id': 'EMP-9104'}, {'employee_id': 'EMP-9105'}] not satisfied by []",
+      "tool_call[get_approved_bonus_list]: no call with args containing {'batch_id': 'BONUS-2026-ANNUAL'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9101'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9101'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9102'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9102'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9103'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9103'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9105'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9105'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9105'}"
+    ],
+    "failed_invariants": [
+      "bonus_payout_count_match.BONUS-2026-ANNUAL (sql error: no such table: workday_payroll_bonus_entries)"
+    ]
+  },
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.005",
+    "trial_index": 0,
+    "total_tokens": 12332,
+    "prompt_tokens": 10226,
+    "completion_tokens": 2106,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 7710.58660000017,
+    "tool_calls": [
+      {
+        "tool_name": "get_approved_bonus_list",
+        "arguments": {
+          "batch_id": "representative_slice"
+        },
+        "output": {
+          "batch_id": "BONUS-2026-ANNUAL",
+          "employees": [
+            {
+              "employee_id": "EMP-9101",
+              "bonus_amount": 2500.0
+            },
+            {
+              "employee_id": "EMP-9102",
+              "bonus_amount": 1800.0
+            },
+            {
+              "employee_id": "EMP-9103",
+              "bonus_amount": 3000.0
+            },
+            {
+              "employee_id": "EMP-9104",
+              "bonus_amount": 2200.0
+            },
+            {
+              "employee_id": "EMP-9105",
+              "bonus_amount": 1500.0
+            }
+          ]
+        },
+        "latency_ms": 0.3772999998545856,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_approved_bonus_list",
+        "arguments": {
+          "batch_id": "representative_slice"
+        },
+        "output": {
+          "batch_id": "BONUS-2026-ANNUAL",
+          "employees": [
+            {
+              "employee_id": "EMP-9101",
+              "bonus_amount": 2500.0
+            },
+            {
+              "employee_id": "EMP-9102",
+              "bonus_amount": 1800.0
+            },
+            {
+              "employee_id": "EMP-9103",
+              "bonus_amount": 3000.0
+            },
+            {
+              "employee_id": "EMP-9104",
+              "bonus_amount": 2200.0
+            },
+            {
+              "employee_id": "EMP-9105",
+              "bonus_amount": 1500.0
+            }
+          ]
+        },
+        "latency_ms": 0.4061999998157262,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 19.212100000004284,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 14.234399999622838,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 12.882200000603916,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9102",
+          "amount": 1800
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9102",
+          "amount": 1800
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 15.180099999270169,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9102",
+          "amount": 1800
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9102",
+          "amount": 1800
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 11.208900000383437,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9103",
+          "amount": 3000
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9103",
+          "amount": 3000
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 11.909700000614976,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 14.161799999783398,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 18.339100000048347,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 10.798799999975017,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9103",
+          "amount": 3000
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9103",
+          "amount": 3000
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 11.265000000094005,
+        "is_error": true,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": {
+          "error": "TIMEOUT: simulated tool timeout"
+        },
+        "latency_ms": 10.0,
+        "is_error": true,
+        "fault_injected": "TIMEOUT"
+      },
+      {
+        "tool_name": "post_bonus_to_payroll",
+        "arguments": {
+          "employee_id": "EMP-9101",
+          "amount": 2500
+        },
+        "output": "ERROR: Simulated timeout for tool 'post_bonus_to_payroll'",
+        "latency_ms": 11.594800000239047,
+        "is_error": true,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

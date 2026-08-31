@@ -1,0 +1,141 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "crm_order_fulfilment.002",
+  "trial_index": 1,
+  "seed": "crm_order_fulfilment.002-1-20260827",
+  "status": "FAIL",
+  "final_response": "\u2705 Refund processed successfully for order **SHOP-9981** (total\u202f$84.00).  \nThe refund has been issued to the original payment method, and the HubSpot ticket **TICKET-5521** has been marked as **resolved**.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 15505.449300006148,
+    "failed_assertions": [
+      "tool_call[get_hubspot_ticket]: no call with args containing {'ticket_id': 'TICKET-5521'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 1,
+    "total_tokens": 2345,
+    "prompt_tokens": 1794,
+    "completion_tokens": 551,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 15505.449300006148,
+    "tool_calls": [
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "order_id": "SHOP-9981",
+          "total": 84.0,
+          "currency": "USD",
+          "delivered_at": "2026-08-15",
+          "payment_intent_id": "pi_9981abc"
+        },
+        "latency_ms": 0.33680000342428684,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "order_id": "SHOP-9981",
+          "total": 84.0,
+          "currency": "USD",
+          "delivered_at": "2026-08-15",
+          "payment_intent_id": "pi_9981abc"
+        },
+        "latency_ms": 0.3848000051220879,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_stripe_refund",
+        "arguments": {
+          "payment_intent_id": "pi_9981abc",
+          "amount": 8400,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "id": "re_00001",
+          "status": "succeeded",
+          "payment_intent_id": "pi_9981abc",
+          "amount": 8400,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "latency_ms": 0.34419998701196164,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "create_stripe_refund",
+        "arguments": {
+          "payment_intent_id": "pi_9981abc",
+          "amount": 8400,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "output": {
+          "id": "re_00001",
+          "status": "succeeded",
+          "payment_intent_id": "pi_9981abc",
+          "amount": 8400,
+          "currency": "USD",
+          "order_id": "SHOP-9981"
+        },
+        "latency_ms": 0.3696999920066446,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_hubspot_ticket_status",
+        "arguments": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved"
+        },
+        "output": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved",
+          "updated": true
+        },
+        "latency_ms": 0.3105000068899244,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "update_hubspot_ticket_status",
+        "arguments": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved"
+        },
+        "output": {
+          "ticket_id": "TICKET-5521",
+          "status": "resolved",
+          "updated": true
+        },
+        "latency_ms": 0.3336999943712726,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

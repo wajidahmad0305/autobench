@@ -1,0 +1,216 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "it_access_provisioning.001",
+  "trial_index": 2,
+  "seed": "it_access_provisioning.001-2-20260827",
+  "status": "FAIL",
+  "final_response": "\u2705 **Onboarding Complete for Sofia Martinez (EMP\u20114471)**  \n- **Google Workspace Email**: sofia.martinez@company.com \u2013 provisioned successfully.  \n- **Okta Groups Added**: `okta-eng-all`, `okta-vpn-access`.  \n- **Slack Welcome Message** posted to **#eng-team**.  \n\nSofia is now fully set up for her first day on 2026\u201109\u201101. Let me know if there\u2019s anything else you need!",
+  "metrics": {
+    "task_id": "it_access_provisioning.001",
+    "trial_index": 2,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 31722.675700002583,
+    "failed_assertions": [
+      "state[google_workspace_accounts]: expected {'EMP-4471': {'email': 'sofia.martinez@newco.io', 'full_name': 'Sofia Martinez'}} not satisfied by {'EMP-4471': {'email': 'sofia.martinez@company.com', 'full_name': 'Sofia Martinez'}}",
+      "tool_call[provision_google_workspace_email]: no call with args containing {'employee_id': 'EMP-4471', 'email': 'sofia.martinez@newco.io'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "it_access_provisioning.001",
+    "trial_index": 2,
+    "total_tokens": 5356,
+    "prompt_tokens": 3296,
+    "completion_tokens": 2060,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 31722.675700002583,
+    "tool_calls": [
+      {
+        "tool_name": "get_department_provisioning_config",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "okta_groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ],
+          "slack_channel": "#eng-team"
+        },
+        "latency_ms": 0.4099999932805076,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_provisioning_config",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "okta_groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ],
+          "slack_channel": "#eng-team"
+        },
+        "latency_ms": 0.45760000648442656,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "provision_google_workspace_email",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "email": "sofia.martinez@company.com",
+          "full_name": "Sofia Martinez"
+        },
+        "output": {
+          "employee_id": "EMP-4471",
+          "email": "sofia.martinez@company.com",
+          "provisioned": true
+        },
+        "latency_ms": 0.5703000060748309,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "provision_google_workspace_email",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "email": "sofia.martinez@company.com",
+          "full_name": "Sofia Martinez"
+        },
+        "output": {
+          "employee_id": "EMP-4471",
+          "email": "sofia.martinez@company.com",
+          "provisioned": true
+        },
+        "latency_ms": 0.6188999977894127,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_okta_group",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "group": "okta-eng-all"
+        },
+        "output": {
+          "user_id": "EMP-4471",
+          "group": "okta-eng-all",
+          "added": true,
+          "groups": [
+            "okta-eng-all"
+          ]
+        },
+        "latency_ms": 0.38830000266898423,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_okta_group",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "group": "okta-eng-all"
+        },
+        "output": {
+          "user_id": "EMP-4471",
+          "group": "okta-eng-all",
+          "added": true,
+          "groups": [
+            "okta-eng-all"
+          ]
+        },
+        "latency_ms": 0.42019999818876386,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_okta_group",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "group": "okta-vpn-access"
+        },
+        "output": {
+          "user_id": "EMP-4471",
+          "group": "okta-vpn-access",
+          "added": true,
+          "groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ]
+        },
+        "latency_ms": 0.5553000082727522,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "add_okta_group",
+        "arguments": {
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471",
+          "group": "okta-vpn-access"
+        },
+        "output": {
+          "user_id": "EMP-4471",
+          "group": "okta-vpn-access",
+          "added": true,
+          "groups": [
+            "okta-eng-all",
+            "okta-vpn-access"
+          ]
+        },
+        "latency_ms": 0.6046000053174794,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_slack_message",
+        "arguments": {
+          "channel": "#eng-team",
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471"
+        },
+        "output": {
+          "channel": "#eng-team",
+          "posted": true
+        },
+        "latency_ms": 0.41369999235030264,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "post_slack_message",
+        "arguments": {
+          "channel": "#eng-team",
+          "employee_id": "EMP-4471",
+          "user_id": "EMP-4471"
+        },
+        "output": {
+          "channel": "#eng-team",
+          "posted": true
+        },
+        "latency_ms": 0.45759999193251133,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

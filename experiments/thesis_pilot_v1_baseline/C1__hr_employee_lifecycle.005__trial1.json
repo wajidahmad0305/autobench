@@ -1,0 +1,58 @@
+{
+  "config_id": "C1",
+  "model_name": "openai/gpt-oss-20b",
+  "task_id": "hr_employee_lifecycle.005",
+  "trial_index": 1,
+  "seed": "hr_employee_lifecycle.005-1-20260827",
+  "status": "FAIL",
+  "final_response": "I\u2019m ready to process the batch. Could you please provide the list of employees (with their IDs and bonus amounts) that you\u2019d like me to handle? Once I have that information, I\u2019ll start posting each bonus to payroll, updating compensation history, and sending the notification email in the required order.",
+  "metrics": {
+    "task_id": "hr_employee_lifecycle.005",
+    "trial_index": 1,
+    "tsi": 0.0,
+    "sec": 0.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 1726.1958000000277,
+    "failed_assertions": [
+      "state[workday_payroll_bonus_entries]: expected [{'employee_id': 'EMP-9101', 'amount': 2500.0}, {'employee_id': 'EMP-9102', 'amount': 1800.0}, {'employee_id': 'EMP-9103', 'amount': 3000.0}, {'employee_id': 'EMP-9104', 'amount': 2200.0}, {'employee_id': 'EMP-9105', 'amount': 1500.0}] not satisfied by []",
+      "state[compensation_history_updates]: expected [{'employee_id': 'EMP-9101', 'bonus_amount': 2500.0}, {'employee_id': 'EMP-9102', 'bonus_amount': 1800.0}, {'employee_id': 'EMP-9103', 'bonus_amount': 3000.0}, {'employee_id': 'EMP-9104', 'bonus_amount': 2200.0}, {'employee_id': 'EMP-9105', 'bonus_amount': 1500.0}] not satisfied by []",
+      "state[bonus_notifications_sent]: expected [{'employee_id': 'EMP-9101'}, {'employee_id': 'EMP-9102'}, {'employee_id': 'EMP-9103'}, {'employee_id': 'EMP-9104'}, {'employee_id': 'EMP-9105'}] not satisfied by []",
+      "tool_call[get_approved_bonus_list]: no call with args containing {'batch_id': 'BONUS-2026-ANNUAL'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9101'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9101'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9101'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9102'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9102'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9102'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9103'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9103'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9103'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9104'}",
+      "tool_call[post_bonus_to_payroll]: no call with args containing {'employee_id': 'EMP-9105'}",
+      "tool_call[update_compensation_history]: no call with args containing {'employee_id': 'EMP-9105'}",
+      "tool_call[send_bonus_notification_email]: no call with args containing {'employee_id': 'EMP-9105'}"
+    ],
+    "failed_invariants": [
+      "bonus_payout_count_match.BONUS-2026-ANNUAL (sql error: no such table: workday_payroll_bonus_entries)"
+    ]
+  },
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.005",
+    "trial_index": 1,
+    "total_tokens": 512,
+    "prompt_tokens": 356,
+    "completion_tokens": 156,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 1726.1958000000277,
+    "tool_calls": [],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

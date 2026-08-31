@@ -1,0 +1,231 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "financial_reconciliation.002",
+  "trial_index": 2,
+  "seed": "financial_reconciliation.002-2-20260827",
+  "status": "FAIL",
+  "final_response": "All transactions for today have been processed:\n\n- **TX\u2011501** matched **INV\u20118801** (amount $1,250.00) \u2013 invoice marked as paid.  \n- **TX\u2011502** matched **INV\u20118804** (amount $640.00) \u2013 invoice marked as paid.  \n- **TX\u2011503** had no matching outstanding invoice (reference \u201cUNKNOWN\u2011REF\u201d) \u2013 flagged for manual review.\n\nNo other actions were taken.",
+  "metrics": {
+    "task_id": "financial_reconciliation.002",
+    "trial_index": 2,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 19587.363099999948,
+    "failed_assertions": [
+      "state[review_queue]: expected [{'tx_id': 'TX-503', 'reason': 'no_matching_invoice'}] not satisfied by [{'reason': 'No matching outstanding invoice for amount 999.0 and reference UNKNOWN-REF', 'tx_id': 'TX-503'}]"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "financial_reconciliation.002",
+    "trial_index": 2,
+    "total_tokens": 4069,
+    "prompt_tokens": 3601,
+    "completion_tokens": 468,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 19587.363099999948,
+    "tool_calls": [
+      {
+        "tool_name": "get_bank_feed_transactions",
+        "arguments": {},
+        "output": {
+          "transactions": [
+            {
+              "tx_id": "TX-501",
+              "amount": 1250.0,
+              "reference": "INV-8801",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-502",
+              "amount": 640.0,
+              "reference": "INV-8804",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-503",
+              "amount": 999.0,
+              "reference": "UNKNOWN-REF",
+              "date": "2026-08-27"
+            }
+          ]
+        },
+        "latency_ms": 0.2951999999822874,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_bank_feed_transactions",
+        "arguments": {},
+        "output": {
+          "transactions": [
+            {
+              "tx_id": "TX-501",
+              "amount": 1250.0,
+              "reference": "INV-8801",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-502",
+              "amount": 640.0,
+              "reference": "INV-8804",
+              "date": "2026-08-27"
+            },
+            {
+              "tx_id": "TX-503",
+              "amount": 999.0,
+              "reference": "UNKNOWN-REF",
+              "date": "2026-08-27"
+            }
+          ]
+        },
+        "latency_ms": 0.31820000003790483,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_outstanding_invoices",
+        "arguments": {},
+        "output": {
+          "invoices": {
+            "INV-8801": {
+              "amount": 1250.0,
+              "status": "outstanding"
+            },
+            "INV-8802": {
+              "amount": 300.0,
+              "status": "outstanding"
+            },
+            "INV-8804": {
+              "amount": 640.0,
+              "status": "outstanding"
+            }
+          }
+        },
+        "latency_ms": 0.3907999998773448,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_outstanding_invoices",
+        "arguments": {},
+        "output": {
+          "invoices": {
+            "INV-8801": {
+              "amount": 1250.0,
+              "status": "outstanding"
+            },
+            "INV-8802": {
+              "amount": 300.0,
+              "status": "outstanding"
+            },
+            "INV-8804": {
+              "amount": 640.0,
+              "status": "outstanding"
+            }
+          }
+        },
+        "latency_ms": 0.4397000000153639,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501"
+        },
+        "output": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501",
+          "status": "paid"
+        },
+        "latency_ms": 0.2922000001035485,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501"
+        },
+        "output": {
+          "invoice_id": "INV-8801",
+          "tx_id": "TX-501",
+          "status": "paid"
+        },
+        "latency_ms": 0.32050000004346657,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502"
+        },
+        "output": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502",
+          "status": "paid"
+        },
+        "latency_ms": 0.33750000011423253,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "mark_invoice_paid",
+        "arguments": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502"
+        },
+        "output": {
+          "invoice_id": "INV-8804",
+          "tx_id": "TX-502",
+          "status": "paid"
+        },
+        "latency_ms": 0.3801999998813699,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_transaction_for_review",
+        "arguments": {
+          "tx_id": "TX-503",
+          "reason": "No matching outstanding invoice for amount 999.0 and reference UNKNOWN-REF"
+        },
+        "output": {
+          "tx_id": "TX-503",
+          "flagged": true
+        },
+        "latency_ms": 1.4400000000023283,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "flag_transaction_for_review",
+        "arguments": {
+          "tx_id": "TX-503",
+          "reason": "No matching outstanding invoice for amount 999.0 and reference UNKNOWN-REF"
+        },
+        "output": {
+          "tx_id": "TX-503",
+          "flagged": true
+        },
+        "latency_ms": 1.587599999993472,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

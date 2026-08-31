@@ -1,0 +1,311 @@
+{
+  "config_id": "C2",
+  "model_name": "openai/gpt-oss-120b",
+  "task_id": "hr_employee_lifecycle.004",
+  "trial_index": 0,
+  "seed": "hr_employee_lifecycle.004-0-20260827",
+  "status": "FAIL",
+  "final_response": "**Compensation Adjustment Summary \u2013 Submission MI\u20112026Q3\u2011ENG (Engineering)**  \n\n| Employee ID | Current Salary | Proposed % Increase | New Salary | Status | Reason (if flagged) |\n|-------------|----------------|--------------------|------------|--------|----------------------|\n| EMP\u20118001 | $95,000 | 6\u202f% | **$100,700** | \u2705 Applied | \u2013 |\n| EMP\u20118002 | $110,000 | 10\u202f% | \u2013 | \u274c Flagged | Proposed increase 10\u202f% exceeds department cap of 8\u202f% |\n| EMP\u20118003 | $88,000 | 4\u202f% | \u2013 | \u274c Flagged | Performance rating \u201cbelow\u201d the acceptable threshold |\n\n**Notes**\n\n* The Engineering department\u2019s merit\u2011budget cap is **8\u202f%** per employee.  \n* Only employees with a performance rating of \u201cmeets\u201d or \u201cexceeds\u201d are eligible.  \n* EMP\u20118001 met both criteria, so the increase was applied in Workday (effective next pay cycle).  \n* EMP\u20118002 exceeded the budget cap, and EMP\u20118003 had a \u201cbelow\u201d rating; both proposals were flagged and not applied.  \n\nThe confirmation report has been generated and reflects the applied and flagged changes.",
+  "metrics": {
+    "task_id": "hr_employee_lifecycle.004",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 4493.945599999279,
+    "failed_assertions": [
+      "state[compensation_confirmation_reports]: expected [{'submission_id': 'MI-2026Q3-ENG', 'applied': ['EMP-8001'], 'flagged': [{'employee_id': 'EMP-8002', 'reason': 'exceeds_budget_cap'}, {'employee_id': 'EMP-8003', 'reason': 'performance_rating_below_threshold'}]}] not satisfied by [{'submission_id': 'MI-2026Q3-ENG', 'applied': ['EMP-8001'], 'flagged': [{'employee_id': 'EMP-8002', 'reason': 'Proposed increase 10% exceeds department cap of 8%'}, {'employee_id': 'EMP-8003', 'reason': 'Performance rating below acceptable threshold'}]}]"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "hr_employee_lifecycle.004",
+    "trial_index": 0,
+    "total_tokens": 6777,
+    "prompt_tokens": 5557,
+    "completion_tokens": 1220,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 4493.945599999279,
+    "tool_calls": [
+      {
+        "tool_name": "get_merit_increase_submission",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG"
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "manager_id": "EMP-9000",
+          "department": "Engineering",
+          "proposed_increases": [
+            {
+              "employee_id": "EMP-8001",
+              "current_salary": 95000,
+              "proposed_increase_pct": 6
+            },
+            {
+              "employee_id": "EMP-8002",
+              "current_salary": 110000,
+              "proposed_increase_pct": 10
+            },
+            {
+              "employee_id": "EMP-8003",
+              "current_salary": 88000,
+              "proposed_increase_pct": 4
+            }
+          ]
+        },
+        "latency_ms": 0.3944000000046799,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_merit_increase_submission",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG"
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "manager_id": "EMP-9000",
+          "department": "Engineering",
+          "proposed_increases": [
+            {
+              "employee_id": "EMP-8001",
+              "current_salary": 95000,
+              "proposed_increase_pct": 6
+            },
+            {
+              "employee_id": "EMP-8002",
+              "current_salary": 110000,
+              "proposed_increase_pct": 10
+            },
+            {
+              "employee_id": "EMP-8003",
+              "current_salary": 88000,
+              "proposed_increase_pct": 4
+            }
+          ]
+        },
+        "latency_ms": 0.42979999943781877,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_budget",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "merit_budget_pct_cap": 8
+        },
+        "latency_ms": 0.4345999996075989,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_department_budget",
+        "arguments": {
+          "department": "Engineering"
+        },
+        "output": {
+          "department": "Engineering",
+          "merit_budget_pct_cap": 8
+        },
+        "latency_ms": 0.48940000033326214,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8001"
+        },
+        "output": {
+          "employee_id": "EMP-8001",
+          "rating": "exceeds"
+        },
+        "latency_ms": 0.47699999959149864,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8001"
+        },
+        "output": {
+          "employee_id": "EMP-8001",
+          "rating": "exceeds"
+        },
+        "latency_ms": 0.5220000002736924,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8002"
+        },
+        "output": {
+          "employee_id": "EMP-8002",
+          "rating": "meets"
+        },
+        "latency_ms": 0.36099999942962313,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8002"
+        },
+        "output": {
+          "employee_id": "EMP-8002",
+          "rating": "meets"
+        },
+        "latency_ms": 0.3901999998561223,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8003"
+        },
+        "output": {
+          "employee_id": "EMP-8003",
+          "rating": "below"
+        },
+        "latency_ms": 0.36360000012791716,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_employee_performance_rating",
+        "arguments": {
+          "employee_id": "EMP-8003"
+        },
+        "output": {
+          "employee_id": "EMP-8003",
+          "rating": "below"
+        },
+        "latency_ms": 0.4013999996459461,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "apply_workday_compensation_change",
+        "arguments": {
+          "employee_id": "EMP-8001",
+          "new_salary": null,
+          "current_salary": 95000,
+          "increase_pct": 6
+        },
+        "output": {
+          "applied": true,
+          "employee_id": "EMP-8001",
+          "new_salary": 100700.0,
+          "effective": "next_pay_cycle"
+        },
+        "latency_ms": 0.5935999997745967,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "apply_workday_compensation_change",
+        "arguments": {
+          "employee_id": "EMP-8001",
+          "new_salary": null,
+          "current_salary": 95000,
+          "increase_pct": 6
+        },
+        "output": {
+          "applied": true,
+          "employee_id": "EMP-8001",
+          "new_salary": 100700.0,
+          "effective": "next_pay_cycle"
+        },
+        "latency_ms": 0.6584000002476387,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_compensation_confirmation_report",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG",
+          "flagged": [
+            {
+              "employee_id": "EMP-8002",
+              "reason": "Proposed increase 10% exceeds department cap of 8%"
+            },
+            {
+              "employee_id": "EMP-8003",
+              "reason": "Performance rating below acceptable threshold"
+            }
+          ]
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "applied": [
+            "EMP-8001"
+          ],
+          "flagged": [
+            {
+              "employee_id": "EMP-8002",
+              "reason": "Proposed increase 10% exceeds department cap of 8%"
+            },
+            {
+              "employee_id": "EMP-8003",
+              "reason": "Performance rating below acceptable threshold"
+            }
+          ]
+        },
+        "latency_ms": 0.434099999438331,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "generate_compensation_confirmation_report",
+        "arguments": {
+          "submission_id": "MI-2026Q3-ENG",
+          "flagged": [
+            {
+              "employee_id": "EMP-8002",
+              "reason": "Proposed increase 10% exceeds department cap of 8%"
+            },
+            {
+              "employee_id": "EMP-8003",
+              "reason": "Performance rating below acceptable threshold"
+            }
+          ]
+        },
+        "output": {
+          "submission_id": "MI-2026Q3-ENG",
+          "applied": [
+            "EMP-8001"
+          ],
+          "flagged": [
+            {
+              "employee_id": "EMP-8002",
+              "reason": "Proposed increase 10% exceeds department cap of 8%"
+            },
+            {
+              "employee_id": "EMP-8003",
+              "reason": "Performance rating below acceptable threshold"
+            }
+          ]
+        },
+        "latency_ms": 0.47559999984514434,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}
