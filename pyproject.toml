@@ -64,3 +64,4 @@ target-version = "py310"
 module = ["crewai.*"]
 follow_imports = "skip"
 ignore_missing_imports = true
+

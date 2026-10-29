@@ -85,3 +85,4 @@ def test_end_to_end_environment_with_real_backend() -> None:
     contact = _kvstore.get_item(conn, "hubspot_contacts", "jordan.lee@example.com")
     assert contact is not None
     assert "WGT-100-BLU" in contact.get("tags", [])
+

@@ -83,3 +83,4 @@
     "notes": "Hard four-line settlement posting with a double-entry-balance invariant checked via json_each over kv_state gl_entries for ref po_8801."
   }
 }
+

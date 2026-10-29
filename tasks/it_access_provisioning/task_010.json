@@ -87,3 +87,4 @@
     "notes": "Fault-injection variant of the role-change task (task_003 family): notify_github_enterprise returns HTTP_500 once and must be retried."
   }
 }
+

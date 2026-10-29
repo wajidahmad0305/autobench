@@ -330,3 +330,4 @@ class CrewAIAdapter(BaseAgentAdapter):
             total_tokens=telemetry.total_tokens,
         )
         return final_text
+

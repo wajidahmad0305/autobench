@@ -118,3 +118,4 @@ def test_run_with_mock_llm(monkeypatch: pytest.MonkeyPatch) -> None:
     assert telemetry.completion_tokens == 34
     assert telemetry.total_tokens == 154
     assert telemetry.tool_calls == []  # final answer came back without tool use
+

@@ -122,3 +122,4 @@
     "notes": "Canonical bulk-atomicity fault-recovery task. The initial_state models a 5-employee representative slice of the full 200-employee batch described in the user message. post_bonus_to_payroll is forced to fail once with TIMEOUT on the third employee processed; the agent must retry rather than skip that employee or send a notification without a confirmed payroll post. The invariant_rule checks that payroll-entry and notification counts stay equal regardless of batch size."
   }
 }
+

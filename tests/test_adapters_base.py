@@ -42,3 +42,4 @@ def test_subclassing_without_run_raises_type_error() -> None:
 
     with pytest.raises(TypeError):
         IncompleteAdapter(model_name="gemini-2.5-flash")  # type: ignore[abstract]
+

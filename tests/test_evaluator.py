@@ -261,3 +261,4 @@ def test_cost_computation() -> None:
     )
 
     assert result["total_cost_usd"] == pytest.approx(0.002)
+

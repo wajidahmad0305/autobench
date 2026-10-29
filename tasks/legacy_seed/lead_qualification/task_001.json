@@ -80,3 +80,4 @@
     "notes": "Tests policy adherence more than reasoning. Frontier models frequently override the rubric because they 'know better'; this is exactly the failure mode we want to surface."
   }
 }
+

@@ -17,6 +17,7 @@ This work is an MS thesis (Riga Nordic University). **Defense: Wed 2 Sept 18:00 
 - Session 8 complete: CrewAI adapter with 3 unit tests, all green.
 - Session 9 complete: OpenAI Assistants adapter with 3 unit tests, all green (requires `OPENAI_API_KEY` for real runs; not needed for pilot).
 - C3 config added: `qwen/qwen3.8-27b` via Groq. Single-trajectory diagnostic: harness wiring is correct, but qwen still mis-formats tool arguments (`email=True` instead of the address) and loops to max_iterations — the same tool-schema failure that dropped it as C1. Full N=120 pilot (C1+C2, LangGraph) unaffected and complete.
+- Session 11 complete — expanded pilot run. Original 120 trajectories archived to `experiments/thesis_pilot_v1_baseline/` (+ `summary_n120.md`). Fresh run: **C1 180/180 and C2 180/180 complete and clean; C3 stopped at 26/180** (crm_order_fulfilment 001–009 only) when Groq's per-model daily token cap for `qwen/qwen3.8-27b` hit — the 429 body still reports `service tier on_demand ... TPD Limit 200000`, i.e. the "paid tier clears the cap" assumption held for the `openai/gpt-oss-*` models (360 trajectories / ~1.54M tokens, zero quota 429s) but **not** for qwen. Completing C3 would need ~1.0–1.1M qwen tokens ≈ 5+ daily resets, incompatible with the submission window. Decision: **v1.0 leaderboard is C1 vs C2 (360 trajectories, within-family 20B-vs-120B, full coverage); C3 reported as a documented partial** in `experiments/thesis_pilot/analysis/c3_qwen_diagnostic.md`, cross-family evaluation deferred. Headline: pass_rate C1 31.7% / C2 41.7% / C3 (partial) 11.5%; fault recovery 0% across all configs and fault types (63 injected, 0 recovered); `it_access_provisioning` hardest category. Also surfaced: gpt-oss-20b (C1) trips Groq's server-side tool-call validator on ~9% of trajectories by leaking Harmony channel tokens into tool names (`get_outstanding_invoices<|channel|>commentary`); gpt-oss-120b (C2) never does. Total tokens this run: 1,726,327. Committed `2e7c902`, pushed. New-run traces remain gitignored; `summary.md` + the v1 baseline are the versioned artifacts.
 
 ## Current scope (pilot)
 
@@ -145,3 +146,4 @@ Prefer the simplest working implementation over an elegant one. There is no time
 ## Meta-note about pair programming
 
 Approach each session as follows: **read the current state of the relevant module → propose the smallest change that makes the next test pass → apply → verify → move on.** Do not rewrite files. Do not add features not on the priority list.
+

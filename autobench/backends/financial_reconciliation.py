@@ -191,3 +191,4 @@ _HANDLERS: dict[str, _Handler] = {
     "get_fx_rate": _get_fx_rate,
     "initiate_wire_transfer": _initiate_wire_transfer,
 }
+

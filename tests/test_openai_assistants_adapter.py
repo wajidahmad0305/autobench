@@ -128,3 +128,4 @@ def test_run_with_mock_client(monkeypatch: pytest.MonkeyPatch) -> None:
     assert telemetry.completion_tokens == 12
     assert telemetry.total_tokens == 43
     assert telemetry.tool_calls == []  # run completed without requires_action
+

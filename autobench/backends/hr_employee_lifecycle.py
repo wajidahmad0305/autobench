@@ -285,3 +285,4 @@ _HANDLERS: dict[str, _Handler] = {
     "update_compensation_history": _update_compensation_history,
     "send_bonus_notification_email": _send_bonus_notification_email,
 }
+

@@ -72,3 +72,4 @@ class BaseAgentAdapter(ABC):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(model_name={self.model_name!r})"
+

@@ -210,3 +210,4 @@ class FaultInjectingEnvironment:
         category.
         """
         return self._backend.dispatch(self.db_conn, tool_name, arguments)
+

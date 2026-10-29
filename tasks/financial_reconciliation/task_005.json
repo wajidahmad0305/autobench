@@ -108,3 +108,4 @@
     "notes": "Canonical FX-adjusted payment task. The initiate_wire_transfer call is forced to fail once with HTTP_409 (simulated concurrent account lock); the agent must retry rather than double-pay or fabricate success, and the GL posting must balance after the FX adjustment."
   }
 }
+

@@ -98,3 +98,4 @@
     "notes": "Tests dual-gate validation (budget cap AND performance floor) before a pay-affecting write, with correct flagging of each rejection reason."
   }
 }
+

@@ -99,3 +99,4 @@
     "notes": "Arithmetic consistency check (subtotal + vat = total) is often where naive agents fail — they trust their own re-computation instead of the document."
   }
 }
+

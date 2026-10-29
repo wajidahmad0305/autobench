@@ -173,3 +173,4 @@ def evaluate_trajectory(
     }
     log.info("trajectory_evaluated", **result)
     return result
+

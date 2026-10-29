@@ -114,3 +114,4 @@ def table_names(db_conn: sqlite3.Connection) -> list[str]:
         "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name"
     ).fetchall()
     return [str(r[0]) for r in rows]
+

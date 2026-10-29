@@ -36,3 +36,4 @@
   "trials_per_task": 3,
   "output_dir": "experiments/thesis_pilot/traces/"
 }
+

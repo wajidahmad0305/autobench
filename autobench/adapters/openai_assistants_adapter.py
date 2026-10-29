@@ -311,3 +311,4 @@ def _try_cancel(client: Any, thread_id: str, run_id: str) -> None:
         client.beta.threads.runs.cancel(thread_id=thread_id, run_id=run_id)
     except Exception as exc:  # noqa: BLE001 - best-effort
         log.debug("run_cancel_failed", error=str(exc))
+

@@ -140,3 +140,4 @@ GitHub: [@wajidahmad0305](https://github.com/wajidahmad0305)
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+

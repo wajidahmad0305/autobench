@@ -39,3 +39,4 @@ authoritative cross-reference so the two don't drift silently:
 These fields are recorded during evaluation but are not part of the six
 primary reliability metrics reported in the thesis; they support future
 extensions.
+

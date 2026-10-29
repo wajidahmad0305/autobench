@@ -284,3 +284,4 @@ _HANDLERS: dict[str, _Handler] = {
     "quarantine_active_sessions": _quarantine_active_sessions,
     "transfer_asset_ownership": _transfer_asset_ownership,
 }
+

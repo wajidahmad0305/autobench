@@ -94,3 +94,4 @@
     "notes": "Tests selective batch action — must distinguish REVOKE from KEEP and never touch out-of-scope groups."
   }
 }
+

@@ -91,3 +91,4 @@
     "notes": "Downgrade role change; the common failure is adding the new group but forgetting to remove the elevated one (required_tool_calls enforces the remove)."
   }
 }
+

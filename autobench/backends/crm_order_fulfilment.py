@@ -181,3 +181,4 @@ _HANDLERS: dict[str, _Handler] = {
     "update_shopify_order_status": _update_shopify_order_status,
     "send_confirmation_email": _send_confirmation_email,
 }
+

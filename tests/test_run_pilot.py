@@ -117,3 +117,4 @@ def test_single_trajectory_happy_path(
     assert record["telemetry"]["task_id"] == "crm_order_fulfilment.001"
     assert record["telemetry"]["tool_calls"]
     assert counts["PASS"] == 1
+

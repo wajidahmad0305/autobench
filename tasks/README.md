@@ -40,3 +40,4 @@ Task IDs follow the pattern `<category>.<zero-padded-index>`, e.g. `crm_enrichme
 - **Tool-call requirements are subset matches.** `args_contain` checks that specific keys/values are present in the tool call — the agent may pass additional fields.
 - **Policy violations are separate from task failures.** An agent can complete a task successfully while violating policy (e.g. skipping a required disclosure). Both are recorded independently.
 - **Hard tasks are hard for a specific reason.** Note it in `provenance.notes` (e.g. "long context", "ambiguous user request", "requires tool-call ordering").
+

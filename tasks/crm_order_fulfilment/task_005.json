@@ -83,3 +83,4 @@
     "notes": "Canonical atomic multi-system rollback / fault-recovery task for this category. First send_confirmation_email call is forced to fail with HTTP_500; the agent must retry rather than fabricate success or partially apply the other two actions."
   }
 }
+

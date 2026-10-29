@@ -161,3 +161,4 @@ def validate_all_tasks(tasks_dir: str = "tasks") -> list[TaskSpec]:
         specs.append(spec)
 
     return specs
+

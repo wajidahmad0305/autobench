@@ -25,3 +25,4 @@ def normalize_arguments(arguments: dict[str, Any]) -> dict[str, Any]:
         else:
             normalized[key] = value
     return normalized
+

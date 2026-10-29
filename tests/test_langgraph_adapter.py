@@ -100,3 +100,4 @@ def test_run_with_mock_llm(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result == answer
     assert telemetry.wall_clock_time_ms > 0
     assert telemetry.tool_calls == []  # LLM answered without invoking any tool
+

@@ -90,3 +90,4 @@
     "notes": "Hard bonus-batch task with a count-parity invariant (payroll entries == notifications) checked via json_array_length over kv_state."
   }
 }
+

@@ -754,3 +754,4 @@ def get_tool_schema(category: str, tool_name: str) -> dict[str, Any]:
             f"tool_registry: category {category!r} has no schema for tool {tool_name!r} "
             f"(known: {sorted(schemas)})"
         ) from None
+
