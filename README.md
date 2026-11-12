@@ -1,120 +1,100 @@
 # AutoBench
 
-**A multi-dimensional reliability benchmark for LLM agents in business process automation.**
+A multi-dimensional reliability benchmark for LLM agents in Business Process Automation (BPA).
 
-> ⚠️ **Status: Under active development.** This is an MS thesis project (Riga Nordic University, 2026–2027). Task set, harness, and leaderboard are being built incrementally through Q4 2026 and Q1 2027. Star or watch to follow along.
+AutoBench is the practical component of an MS thesis in Computer Systems at Riga Nordic University (2026–2027). It evaluates LLM agents on realistic back-office workflows and reports six reliability dimensions, not task success alone.
 
----
+## Status
+
+- Task set: 60 tasks in four categories, 15 per category.
+- Evaluation harness: framework-agnostic, with deterministic replay and fault injection.
+- Adapters: LangGraph, CrewAI, OpenAI Assistants.
+- Pilot: two primary configurations and one attempted third configuration. Results are in the thesis, Chapter 5.
+- Planned: a fuller leaderboard across more models, and the thesis defence and preprint.
 
 ## Why AutoBench
 
-LLM-based agents are being deployed across enterprise workflows — CRM enrichment, invoice extraction, lead qualification, support triage, calendar coordination — but existing agent benchmarks were not built to evaluate them.
+Agents are being deployed for enterprise tasks such as invoice reconciliation, HR lifecycle changes, and IT access provisioning. Existing benchmarks mostly measure whether an agent finishes a task under nominal conditions:
 
-- **τ-bench** and **τ²-bench** focus on customer-service dialogues in retail and airline domains.
-- **AgentBench** targets generic reasoning across OS, DB, and web environments.
-- **WebArena / SWE-bench** focus on web tasks and code, respectively.
+- τ-bench and τ²-bench evaluate customer-service dialogue in retail, airline, and telecom domains.
+- WorkBench evaluates office tasks, and reports side effects but not the other dimensions below.
+- AgentBench evaluates general reasoning across eight environments.
+- SWE-bench evaluates repository issue resolution.
 
-None of these measure the reliability dimensions that block production deployment of business-automation agents: **tool-call correctness, hallucination rate, cost per task, latency, and failure recovery**, evaluated over multiple trials on realistic business tasks with realistic tool APIs.
+None of these measure, in one framework, the dimensions that decide whether a business-automation agent can run in production. AutoBench measures them together.
 
-AutoBench fills that gap.
+## What it measures
 
----
-
-## What AutoBench measures
-
-For every `(agent, task)` pair, run over N trials:
+Each trajectory is scored on six dimensions:
 
 | Dimension | Definition |
 |---|---|
-| **Task success** | Did the final state match the expected state? (binary) |
-| **Tool-call correctness** | Fraction of required tool calls made with correct arguments |
-| **Hallucination rate** | Fraction of trials containing forbidden or unsupported claims |
-| **Cost per task** | Total USD spent on API calls (tokens in + tokens out) |
-| **Latency** | End-to-end wall-clock seconds |
-| **Failure recovery** | Given an injected tool error, did the agent recover? |
+| Target State Integrity (TSI) | 1 if every ground-truth state assertion holds on the final state |
+| Side-Effect Containment (SEC) | 1 if there is no global invariant violation and no forbidden action |
+| Fault Recovery Rate (Rfault) | Share of faulted trajectories that still reach TSI |
+| SLA Latency Compliance | 1 if TSI holds and the run finishes within the task's latency budget |
+| Effective Cost (Ceff) | Dollar cost per successful outcome, from token counts |
+| Stochastic repeatability (pass^k) | Probability that all k repeated trials of a task succeed |
 
-Reliability is reported using the `pass^k` methodology of [Yao et al. (2024)](https://arxiv.org/abs/2406.12045): the fraction of tasks an agent solves on **all** of k independent trials.
+The **pass rate** counts a trial as passing when TSI and SEC both hold. Formal definitions are in Section 4.5 of the thesis. The method follows Yao et al. (2024) for pass^k.
 
----
+## Task set
 
-## Task categories
+Sixty tasks across four categories, 15 each:
 
-Five categories drawn from real business automation workflows. Target: 60–100 tasks total at v1.0.
-
-| Category | Example task |
+| Category | Example workflow |
 |---|---|
-| `crm_enrichment` | Given an inbound lead's email + name, enrich the CRM record with company, role, and industry |
-| `invoice_extraction` | Extract line items, totals, VAT, and payment terms from a PDF invoice into a structured record |
-| `lead_qualification` | Score an inbound lead against ICP criteria and route to the correct sales pipeline |
-| `support_triage` | Classify an incoming support ticket, apply the correct SLA, and draft an initial response |
-| `calendar_coordination` | Schedule a meeting across 3+ attendees given constraints on availability and time zones |
+| `crm_order_fulfilment` | Process a customer order across CRM and fulfilment systems |
+| `financial_reconciliation` | Match vendor invoices to purchase orders and post ledger entries |
+| `it_access_provisioning` | Grant or revoke group memberships and write to a security audit log |
+| `hr_employee_lifecycle` | Onboarding, offboarding, and compensation updates, with payroll and notifications |
 
-See [`tasks/schema.json`](tasks/schema.json) for the full task specification.
+Each task is a JSON file that follows `tasks/schema.json`. Tasks run against in-memory SQLite mock backends, not live enterprise systems.
 
----
+## Fault injection
 
-## Planned agent configurations
+The harness can inject HTTP 409, HTTP 429, HTTP 500, timeouts, and schema drift. The pilot used HTTP 409, HTTP 500, and timeouts. HTTP 429 and schema drift are implemented but were not exercised in the pilot.
 
-Leaderboard will cover at minimum:
+## Pilot results
 
-- **Frontier + orchestration:** GPT-5 + LangGraph, Claude Opus 4.7 + native tool use, Gemini 2 + LangGraph
-- **Open-weight:** Llama 3.3 70B + LangGraph, Qwen 2.5 72B + LangGraph
-- **Simple baseline:** ReAct with any of the above (no framework)
-- **Multi-agent:** CrewAI on a frontier model
-- **Managed:** OpenAI Assistants API
+| Configuration | Model | Trials | Pass rate |
+|---|---|---|---|
+| C1 | openai/gpt-oss-20b [CONFIRM] | 180 | 31.7% |
+| C2 | openai/gpt-oss-120b [CONFIRM] | 180 | 41.7% |
+| C3 (attempted) | qwen/qwen3.8-27b [CONFIRM] | 26 of 180 | 11.5%, halted by provider daily token limit |
 
-Each configuration is a **framework adapter** in `autobench/adapters/` — contributions of additional adapters are welcome.
-
----
+386 of 540 planned trajectories completed. No injected fault was recovered from (0 of 63). Per-category results and the full analysis are in Chapter 5 of the thesis.
 
 ## Repository layout
 
 ```
 autobench/
-├── README.md                    # this file
-├── LICENSE                      # MIT
-├── CITATION.cff                 # academic citation
-├── pyproject.toml               # Python project metadata
-├── docs/
-│   └── PROPOSAL.md              # link to the thesis proposal PDF
+├── README.md
+├── LICENSE                 # MIT
+├── CITATION.cff
+├── pyproject.toml          # [CONFIRM]
 ├── tasks/
-│   ├── schema.json              # task specification schema
-│   ├── README.md                # how tasks are structured
-│   └── <category>/task_*.json   # individual tasks
-└── autobench/                   # Python package (harness)
-    └── __init__.py              # placeholder — implementation in W8–11
+│   ├── schema.json         # task specification
+│   └── <category>/         # 60 task files in four categories [CONFIRM folder names]
+├── autobench/              # harness, evaluator, fault injection
+│   └── adapters/           # LangGraph, CrewAI, OpenAI Assistants
+├── tests/                  # unit tests [CONFIRM]
+└── experiments/
+    └── thesis_pilot/       # pilot runner, analysis scripts, outputs [CONFIRM]
 ```
 
----
+## Reproducing the results
 
-## Roadmap
+See [REPRODUCE.md](REPRODUCE.md) for setup, the test suite, a single-task run, and the steps to regenerate the pilot results.
 
-| Milestone | Target date |
-|---|---|
-| Task schema v0.1 + 5 seed tasks (1 per category) | September 2026 ✓ |
-| Full task set (60–100 tasks) | November 2026 |
-| Evaluation harness (Python, framework-agnostic) | December 2026 |
-| First adapters: LangGraph, CrewAI, OpenAI Assistants | December 2026 |
-| Leaderboard v0.1 (frontier models only) | January 2027 |
-| Leaderboard v1.0 (frontier + open-weight) | February 2027 |
-| arXiv preprint + thesis defence | March 2027 |
-| NeurIPS 2027 Datasets & Benchmarks submission | May–June 2027 |
+## Limitations
 
----
-
-## Contributing
-
-The project is at a very early stage. If you're a researcher or practitioner working on agent evaluation, task realism, or specific business-automation domains, please open a discussion — I'd like to talk to you.
-
-- **Task contributions:** open an issue using the "New task proposal" template
-- **Adapter contributions:** open a PR against `autobench/adapters/`
-- **Domain feedback:** open a discussion — especially if you deploy agents in production
-
----
+- Mock backends, not live systems.
+- Synthetic faults.
+- The pilot is descriptive. The third configuration is a diagnostic, not a comparative baseline.
+- No human baseline.
 
 ## Citation
-
-If you use AutoBench in your work, please cite:
 
 ```bibtex
 @misc{ahmad2027autobench,
@@ -126,18 +106,12 @@ If you use AutoBench in your work, please cite:
 }
 ```
 
-See [`CITATION.cff`](CITATION.cff) for a machine-readable version.
-
----
+See CITATION.cff for a machine-readable version.
 
 ## Contact
 
-**Wajid Ahmad** — MS Computer Systems, Riga Nordic University
-GitHub: [@wajidahmad0305](https://github.com/wajidahmad0305)
+Wajid Ahmad, MS Computer Systems, Riga Nordic University. GitHub: [@wajidahmad0305](https://github.com/wajidahmad0305)
 
----
+## Licence
 
-## License
-
-MIT — see [`LICENSE`](LICENSE).
-
+MIT. See LICENSE.
