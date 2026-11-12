@@ -9,7 +9,7 @@ AutoBench is the practical component of an MS thesis in Computer Systems at Riga
 - Task set: 60 tasks in four categories, 15 per category.
 - Evaluation harness: framework-agnostic, with deterministic replay and fault injection.
 - Adapters: LangGraph, CrewAI, OpenAI Assistants.
-- Pilot: two primary configurations and one attempted third configuration. Results are in the thesis, Chapter 5.
+- Pilot: two agent configurations, 360 trajectories. Results are in the thesis, Chapter 5.
 - Planned: a fuller leaderboard across more models, and the thesis defence and preprint.
 
 ## Why AutoBench
@@ -61,26 +61,27 @@ The harness can inject HTTP 409, HTTP 429, HTTP 500, timeouts, and schema drift.
 |---|---|---|---|
 | C1 | openai/gpt-oss-20b [CONFIRM] | 180 | 31.7% |
 | C2 | openai/gpt-oss-120b [CONFIRM] | 180 | 41.7% |
-| C3 (attempted) | qwen/qwen3.8-27b [CONFIRM] | 26 of 180 | 11.5%, halted by provider daily token limit |
 
-386 of 540 planned trajectories completed. No injected fault was recovered from (0 of 63). Per-category results and the full analysis are in Chapter 5 of the thesis.
+360 trajectories across the two configurations. No injected fault was recovered from (0 of 60). Per-category results and the full analysis are in Chapter 5 of the thesis.
 
 ## Repository layout
 
 ```
 autobench/
 ├── README.md
-├── LICENSE                 # MIT
-├── CITATION.cff
+├── LICENSE                 # MIT [CONFIRM]
+├── CITATION.cff            # [CONFIRM]
 ├── pyproject.toml          # [CONFIRM]
 ├── tasks/
 │   ├── schema.json         # task specification
-│   └── <category>/         # 60 task files in four categories [CONFIRM folder names]
+│   └── <category>/         # 60 task files in four categories
 ├── autobench/              # harness, evaluator, fault injection
 │   └── adapters/           # LangGraph, CrewAI, OpenAI Assistants
-├── tests/                  # unit tests [CONFIRM]
+├── tests/                  # unit tests
+├── scripts/                # run_pilot.py, analyse_pilot.py, validate_tasks.py
 └── experiments/
-    └── thesis_pilot/       # pilot runner, analysis scripts, outputs [CONFIRM]
+    ├── thesis_pilot/       # pilot outputs for C1 and C2: config.json, traces/, analysis/
+    └── excluded/           # partial third-configuration run, excluded from all results [CONFIRM: folder created]
 ```
 
 ## Reproducing the results
@@ -91,8 +92,9 @@ See [REPRODUCE.md](REPRODUCE.md) for setup, the test suite, a single-task run, a
 
 - Mock backends, not live systems.
 - Synthetic faults.
-- The pilot is descriptive. The third configuration is a diagnostic, not a comparative baseline.
+- The pilot is descriptive.
 - No human baseline.
+- A third configuration from another model family was planned as a cross-family diagnostic. It was halted by the provider's daily token limit after 26 of 180 trials and is excluded from all reported results. Its partial traces are kept in `experiments/excluded/`.
 
 ## Citation
 
