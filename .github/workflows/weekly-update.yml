@@ -1,0 +1,26 @@
+name: Weekly Auto Update
+
+on:
+  schedule:
+    # Runs at 00:00 every Monday
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # Allows you to manually trigger it anytime for testing
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create or Update Timestamp File
+      run: |
+        echo "Last automated check: $(date)" > .github/last-update.txt
+
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@://github.com"
+        git add .github/last-update.txt
+        git commit -m "chore: automated weekly maintenance check" || exit 0
+        git push
