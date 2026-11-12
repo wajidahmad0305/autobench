@@ -101,9 +101,6 @@ Pass rate is the share of trials where TSI and SEC both hold. Errors count as no
 ### Known differences
 
 - Provider model outputs can change over time, so trajectories will not match the thesis exactly.
-- [CONFIRM] Summary header shows "360/540" and C3 rows with zero trials. Fix `analyse_pilot.py` so the planned total is 360 and C3 rows are removed, then rerun it.
-- [CONFIRM] Model names per configuration. The config file lists C1 as openai/gpt-oss-20b and C2 as openai/gpt-oss-120b.
+- Model names per configuration. The config file lists C1 as openai/gpt-oss-20b and C2 as openai/gpt-oss-120b.
 
-## 6. Record your run
 
-Note the commit hash, the date, and the provider model IDs you used.
