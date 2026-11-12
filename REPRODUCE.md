@@ -1,8 +1,8 @@
 # Reproducing the AutoBench results
 
-This guide covers setup, the test suite, one benchmark task, and the pilot results reported in the thesis. The reported results cover two configurations, C1 and C2.
+This guide covers setup, the test suite, one benchmark trajectory, and the pilot results reported in the thesis. The reported results cover two configurations, C1 and C2.
 
-> **Status: draft, not for publication.** Script and test file names were checked against the local project listing. Command flags, the test count, the model IDs, and the root-level files (README, pyproject, LICENSE, requirements) are not yet verified. Every [CONFIRM] must be resolved before this file is uploaded.
+> **Status: draft, not for publication.** Items marked [CONFIRM] are still unverified. Resolve them before uploading.
 
 ## 1. Repository layout (relevant parts)
 
@@ -19,84 +19,90 @@ autobench/
 │   ├── schema.json
 │   └── legacy_seed/                    # earlier draft tasks, not used in the pilot [CONFIRM: remove or label]
 ├── scripts/
-│   ├── run_pilot.py        # runs the pilot
-│   ├── analyse_pilot.py    # regenerates the analysis
-│   └── validate_tasks.py   # checks task files against the schema
-├── tests/                  # pytest suite
+│   ├── run_pilot.py        # runs the pilot (option: --limit N)
+│   ├── analyse_pilot.py    # regenerates analysis/summary.md (takes no options)
+│   └── validate_tasks.py   # checks task files against the schema [CONFIRM: flags]
+├── tests/                  # pytest suite (39 tests)
+├── pyproject.toml
 └── experiments/
     ├── thesis_pilot/       # pilot for C1 and C2: config.json, traces/, analysis/summary.md
-    └── excluded/           # partial third-configuration run, excluded from all results [CONFIRM: folder created and not read by analyse_pilot.py]
+    └── excluded/           # partial third-configuration run, excluded from all results
 ```
 
 ## 2. Environment
 
 - Python 3.10 (the pilot was run with Python 3.10.7).
-- Create and activate a virtual environment, then install the project. [CONFIRM: install command, e.g. `pip install -e .` or `pip install -r requirements.txt`]
-- Set your provider key as an environment variable. Never commit it. [CONFIRM: variable name]
+- The project is installed from `pyproject.toml`. There is no `requirements.txt`.
 
 Windows (PowerShell):
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install [CONFIRM]
-$env:GROQ_API_KEY = "your_key_here"   # [CONFIRM variable name]
+pip install -e ".[dev]"
+$env:GROQ_API_KEY = "your_key_here"
 ```
+
+The provider key is read from the `GROQ_API_KEY` environment variable. Never commit it.
 
 ## 3. Run the tests
 
-```bash
+```powershell
 pytest
 ```
 
-Expected: all tests in `tests/` pass. [CONFIRM: number of tests]
+Expected: 39 tests collected and passing.
 
-Optional checks:
+## 4. Run one benchmark trajectory
 
-```bash
-python scripts/validate_tasks.py      # every task file matches tasks/schema.json
-python scripts/verify_invariant_rules.py
+`run_pilot.py` has no per-task option. To check one trajectory end to end, run the test that executes a single trajectory:
+
+```powershell
+pytest tests\test_run_pilot.py::test_single_trajectory_happy_path -v
 ```
 
-## 4. Run one benchmark task
+This test does not call the Groq API. [CONFIRM: confirm with the test source]
 
-```bash
-python scripts/run_pilot.py --help    # [CONFIRM: flags for a single task and a single trial]
+To run one real trajectory against the provider, run the pilot with a limit of 1. This calls the Groq API and uses tokens:
+
+```powershell
+python scripts\run_pilot.py --limit 1
 ```
-
-Expected output: the trajectory, the six metric values for that trial, and a pass or fail verdict. [CONFIRM: where the output is written]
-
-To see fault injection, enable a fault rule for the same task. [CONFIRM: flag or config key]
 
 ## 5. Reproduce the pilot results
 
-The pilot ran 60 tasks, three trials each, for each of two configurations (C1 and C2).
+The pilot ran 60 tasks, three trials each, for each of two configurations (C1 and C2). Configuration details are in `experiments\thesis_pilot\config.json`.
 
-```bash
-python scripts/run_pilot.py --help    # [CONFIRM: config flag for C1 and C2]
-python scripts/analyse_pilot.py --help  # [CONFIRM: input and output paths]
+```powershell
+python scripts\run_pilot.py
+python scripts\analyse_pilot.py
 ```
 
-The analysis writes `experiments/thesis_pilot/analysis/summary.md`. [CONFIRM output path]
+`run_pilot.py` skips trajectories already saved in `experiments\thesis_pilot\traces\`, so a rerun resumes rather than repeats. `analyse_pilot.py` writes `experiments\thesis_pilot\analysis\summary.md`.
+
+Note: `analyse_pilot.py` takes no options. Running it with `--help` runs the analysis and overwrites the summary.
 
 ### Expected headline values
 
-Compare your regenerated `summary.md` with these. Small differences are expected because provider models are not deterministic.
+Compare your regenerated `summary.md` with these. Provider model outputs are not deterministic, so small differences are expected.
 
 | Item | Expected |
 |---|---|
 | Completed trajectories | 360 (C1: 180, C2: 180) |
+| Outcomes | PASS 132, FAIL 211, ERROR 17 |
 | C1 pass rate | 31.7% |
 | C2 pass rate | 41.7% |
 | Injected faults | 60 (C1: 28, C2: 32) |
 | Faults recovered | 0 |
+| Total tokens | 1,543,065 |
 
 Pass rate is the share of trials where TSI and SEC both hold. Errors count as non-passes.
 
 ### Known differences
 
 - Provider model outputs can change over time, so trajectories will not match the thesis exactly.
-- [CONFIRM] Model names per configuration. Check `experiments/thesis_pilot/config.json` against the final run. An older config lists C1 as qwen, but the final pilot lists C1 as openai/gpt-oss-20b.
+- [CONFIRM] Summary header shows "360/540" and C3 rows with zero trials. Fix `analyse_pilot.py` so the planned total is 360 and C3 rows are removed, then rerun it.
+- [CONFIRM] Model names per configuration. The config file lists C1 as openai/gpt-oss-20b and C2 as openai/gpt-oss-120b.
 
 ## 6. Record your run
 
