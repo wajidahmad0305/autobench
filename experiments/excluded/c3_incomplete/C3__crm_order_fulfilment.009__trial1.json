@@ -1,0 +1,552 @@
+{
+  "config_id": "C3",
+  "model_name": "qwen/qwen3.8-27b",
+  "task_id": "crm_order_fulfilment.009",
+  "trial_index": 1,
+  "status": "ERROR",
+  "error": "killed: token_cap",
+  "reason": "token_cap",
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.009",
+    "trial_index": 1,
+    "total_tokens": 15352,
+    "prompt_tokens": 14532,
+    "completion_tokens": 820,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 0.0,
+    "tool_calls": [
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.9715000001051521,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 1.0096000000885397,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.40399999988949276,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.43159999995623366,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 1.671600000008766,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 1.7694999996820115,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 1.8081999996866216,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 1.9290000000182772,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.24950000033641118,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.27399999999033753,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.5544999999074207,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.5958000001555774,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.46380000003409805,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.5244999997557898,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.6235999999262276,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.6739000000379747,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 1.3521999999284162,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 1.3877000001230044,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 1.1661000003186928,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 1.2096999998902902,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.21569999989878852,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.241100000039296,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.2449000003252877,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.2696999999898253,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.37309999970602803,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.43409999989307835,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.30970000034358236,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.3500999996504106,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.6883000000925676,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.7595000001856533,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.48759999981484725,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.5478000002767658,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.6874000000607339,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.7739000002402463,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.5849999997735722,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.6525000003421155,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.2196999998886895,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.246300000071642,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.22330000001602457,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.2517999996598519,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.39319999996223487,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 7015
+        },
+        "output": {
+          "ticket_id": 7015
+        },
+        "latency_ms": 0.440599999819824,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.5583000001934124,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 14001
+        },
+        "output": {
+          "order_id": 14001
+        },
+        "latency_ms": 0.602699999944889,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

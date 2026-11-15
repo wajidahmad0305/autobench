@@ -1,4 +1,4 @@
-"""Concrete :class:`BaseAgentAdapter` backed by the OpenAI Assistants API (v2).
+﻿"""Concrete :class:`BaseAgentAdapter` backed by the OpenAI Assistants API (v2).
 
 Unlike the LangGraph and CrewAI adapters, this one **cannot** run through Groq:
 Groq is OpenAI-compatible for chat completions but not for
@@ -144,16 +144,6 @@ class OpenAIAssistantsAdapter(BaseAgentAdapter):
             if output.get("is_error"):
                 is_error = True
 
-        telemetry.add_tool_call(
-            ToolCallRecord(
-                tool_name=tool_name,
-                arguments=dict(kwargs),
-                output=output,
-                latency_ms=latency_ms,
-                is_error=is_error,
-                fault_injected=fault_injected,
-            )
-        )
         log.debug(
             "tool_call",
             tool=tool_name,

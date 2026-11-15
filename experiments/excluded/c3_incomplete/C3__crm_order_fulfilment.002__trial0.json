@@ -1,0 +1,92 @@
+{
+  "config_id": "C3",
+  "model_name": "qwen/qwen3.8-27b",
+  "task_id": "crm_order_fulfilment.002",
+  "trial_index": 0,
+  "seed": "crm_order_fulfilment.002-0-20260827",
+  "status": "FAIL",
+  "final_response": "I've retrieved both the ticket and the order, but the responses came back with only the IDs \u2014 no details about the order's delivery date, payment intent, amount, or currency.\n\nBefore I can proceed, I need to verify the following per policy:\n1. **Original order details** \u2014 including the actual delivery date (the ticket claims 12 days ago, but I must confirm from the order record itself).\n2. **Payment intent ID, amount, and currency** \u2014 required to issue the Stripe refund.\n\nCould you please provide:\n- The order's confirmed delivery date\n- The payment intent ID\n- The order amount and currency\n\nOnce I have these and can confirm the delivery was within the 30-day refund window, I'll issue the refund and then mark the ticket as resolved.",
+  "metrics": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 0,
+    "tsi": 0.0,
+    "sec": 1.0,
+    "sla_compliance": 0.0,
+    "faults_encountered": 0,
+    "fault_recovered": null,
+    "total_cost_usd": 0.0,
+    "duration_ms": 8028.687300000001,
+    "failed_assertions": [
+      "state[stripe_refunds]: expected [{'payment_intent_id': 'pi_9981abc', 'amount': 8400, 'currency': 'USD', 'order_id': 'SHOP-9981'}] not satisfied by []",
+      "state[hubspot_tickets]: expected {'TICKET-5521': {'status': 'resolved'}} not satisfied by {'TICKET-5521': {'status': 'open', 'subject': 'Refund request', 'order_id': 'SHOP-9981', 'customer_email': 'priya.nair@example.com'}}",
+      "tool_call[get_hubspot_ticket]: no call with args containing {'ticket_id': 'TICKET-5521'}",
+      "tool_call[get_shopify_order]: no call with args containing {'order_id': 'SHOP-9981'}",
+      "tool_call[create_stripe_refund]: no call with args containing {'payment_intent_id': 'pi_9981abc'}",
+      "tool_call[update_hubspot_ticket_status]: no call with args containing {'ticket_id': 'TICKET-5521', 'status': 'resolved'}"
+    ],
+    "failed_invariants": []
+  },
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.002",
+    "trial_index": 0,
+    "total_tokens": 1484,
+    "prompt_tokens": 1252,
+    "completion_tokens": 232,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 8028.687300000001,
+    "tool_calls": [
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 5521
+        },
+        "output": {
+          "ticket_id": 5521
+        },
+        "latency_ms": 0.3799000000981323,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_ticket",
+        "arguments": {
+          "ticket_id": 5521
+        },
+        "output": {
+          "ticket_id": 5521
+        },
+        "latency_ms": 0.4088999999112275,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 9981
+        },
+        "output": {
+          "order_id": 9981
+        },
+        "latency_ms": 0.36649999992732774,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_shopify_order",
+        "arguments": {
+          "order_id": 9981
+        },
+        "output": {
+          "order_id": 9981
+        },
+        "latency_ms": 0.38949999998294516,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

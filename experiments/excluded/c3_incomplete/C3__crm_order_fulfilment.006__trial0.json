@@ -1,0 +1,332 @@
+{
+  "config_id": "C3",
+  "model_name": "qwen/qwen3.8-27b",
+  "task_id": "crm_order_fulfilment.006",
+  "trial_index": 0,
+  "status": "ERROR",
+  "error": "killed: timeout",
+  "reason": "timeout",
+  "telemetry": {
+    "task_id": "crm_order_fulfilment.006",
+    "trial_index": 0,
+    "total_tokens": 12019,
+    "prompt_tokens": 11670,
+    "completion_tokens": 349,
+    "total_cost_usd": 0.0,
+    "wall_clock_time_ms": 0.0,
+    "tool_calls": [
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3910999998879561,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.43380000033721444,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.2559999998084095,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.28119999979026034,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.1961000002665969,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.2214000001004024,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.49290000015389523,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.5474999998114072,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.43580000010479125,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.5128000002514455,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3457000002526911,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3861000000142667,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.43039999991378863,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.4742999999507447,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.7552000001851411,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.8626000003459922,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.24119999989125063,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.2737999998316809,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.32499999997526174,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3523000000313914,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3360999999131309,
+        "is_error": false,
+        "fault_injected": null
+      },
+      {
+        "tool_name": "get_hubspot_contact_by_email",
+        "arguments": {
+          "email": null
+        },
+        "output": {
+          "email": null,
+          "found": false,
+          "contact": null
+        },
+        "latency_ms": 0.3753000000870088,
+        "is_error": false,
+        "fault_injected": null
+      }
+    ],
+    "state_diffs": {},
+    "success": false,
+    "invariants_passed": false,
+    "unauthorized_side_effects": []
+  }
+}

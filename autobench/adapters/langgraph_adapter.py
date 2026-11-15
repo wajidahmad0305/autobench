@@ -1,4 +1,4 @@
-"""Concrete :class:`BaseAgentAdapter` backed by LangChain's ``create_agent``.
+﻿"""Concrete :class:`BaseAgentAdapter` backed by LangChain's ``create_agent``.
 
 A single :class:`LangGraphAdapter` drives *any* OpenAI-compatible chat
 endpoint. Gemini 2.5 Flash (via Google's OpenAI-compat layer) and Llama 3.3
@@ -102,16 +102,6 @@ class LangGraphAdapter(BaseAgentAdapter):
                 if output.get("is_error"):
                     is_error = True
 
-            telemetry.add_tool_call(
-                ToolCallRecord(
-                    tool_name=tool_name,
-                    arguments=dict(kwargs),
-                    output=output,
-                    latency_ms=latency_ms,
-                    is_error=is_error,
-                    fault_injected=fault_injected,
-                )
-            )
             log.debug(
                 "tool_call",
                 tool=tool_name,

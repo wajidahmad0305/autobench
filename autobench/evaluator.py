@@ -1,9 +1,9 @@
-"""Compute the six AutoBench reliability metrics for one finished trajectory.
+﻿"""Compute the six AutoBench reliability metrics for one finished trajectory.
 
 Mirrors thesis Ch. 4, Listing 4.5.
 
 Schema note: the brief describes TSI as ``SELECT * FROM <target_entity>`` over
-per-entity tables plus ``ground_truth.state_assertions``. Neither exists — the
+per-entity tables plus ``ground_truth.state_assertions``. Neither exists â€” the
 mock backends store all state as JSON blobs in a single ``kv_state`` table
 (:mod:`autobench.backends._kvstore`), and the schema carries
 ``ground_truth.expected_final_state`` (a partial-spec nested dict) plus
@@ -138,6 +138,8 @@ def evaluate_trajectory(
     failed_invariants: list[str] = []
     forbidden_called = _check_side_effects(task_spec, db_conn, telemetry, failed_invariants)
     sec = 1.0 if not failed_invariants and not forbidden_called else 0.0
+    telemetry.success = tsi == 1.0 and sec == 1.0
+    telemetry.invariants_passed = not failed_invariants and not forbidden_called
 
     # --- 3. SLA latency compliance ---------------------------------------
     duration_ms = telemetry.wall_clock_time_ms

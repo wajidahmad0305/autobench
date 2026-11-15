@@ -1,4 +1,4 @@
-"""Concrete :class:`BaseAgentAdapter` backed by CrewAI.
+﻿"""Concrete :class:`BaseAgentAdapter` backed by CrewAI.
 
 A single :class:`CrewAIAdapter` drives any OpenAI-compatible chat endpoint
 through a one-agent / one-task sequential CrewAI crew. Like
@@ -167,16 +167,6 @@ class CrewAIAdapter(BaseAgentAdapter):
             if output.get("is_error"):
                 is_error = True
 
-        telemetry.add_tool_call(
-            ToolCallRecord(
-                tool_name=tool_name,
-                arguments=dict(kwargs),
-                output=output,
-                latency_ms=latency_ms,
-                is_error=is_error,
-                fault_injected=fault_injected,
-            )
-        )
         log.debug(
             "tool_call",
             tool=tool_name,

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any
 
@@ -62,8 +62,7 @@ def test_tool_spec_conversion() -> None:
         "tool": "get_order",
         "args": {"order_id": "A1"},
     }
-    assert len(telemetry.tool_calls) == 1
-    assert telemetry.tool_calls[0].tool_name == "get_order"
+    assert len(telemetry.tool_calls) == 0  # the environment executor records calls, not the adapter
 
 
 class _FakeLLM(GenericFakeChatModel):
